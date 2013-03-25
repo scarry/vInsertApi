@@ -77,7 +77,7 @@ public class FishBot extends StatefulScript<FishBot.ScriptState> {
 	/**
 	 * Equipment Ids
 	 */
-	public static final int HARPOON_ID = 312;
+	public static final int HARPOON_ID = 312; 
 	public static final int CAGE_ID = 302;
 
 	/**

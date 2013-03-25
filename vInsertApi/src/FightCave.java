@@ -1,17 +1,15 @@
 import java.awt.Graphics2D;
 
-import org.vinsert.bot.script.StatefulScript;
 import org.vinsert.bot.script.api.GameObject;
 import org.vinsert.bot.script.api.Npc;
 import org.vinsert.bot.script.api.Tile;
 import org.vinsert.bot.script.api.generic.Filters;
 
-import api.Node;
-import api.Utilities;
+import api.ScriptBase;
 
 
 
-public class FightCave extends StatefulScript{
+public class FightCave extends ScriptBase{
 	
 	/**
 	 * Ids
@@ -28,6 +26,7 @@ public class FightCave extends StatefulScript{
 	 * Center of the fight cave
 	 */
 	public static Tile fightCaveCenter = null;
+	public static int bankTokkulEvery;
 	
 	/**
 	 * Boolean helper methods
@@ -50,78 +49,59 @@ public class FightCave extends StatefulScript{
 	
 	public boolean isEnemyLoaded() {
 		Npc enemy = npcs.getNearest(ENEMY_IDS);
-		if (enemy != null && enemy.getLocation().isWalkable())
+		if (enemy != null) //TODO add enemy.getLocation().isWalkable()
 			return true;
 		return false;
 	}
 	
 	public boolean isEnemyOnscreen() {
-		NPC enemy = Npcs.getNearest(ENEMY_IDS);
-		if (enemy != null && Utilities.isOnScreen(enemy) && !enemy.isDead() && enemy.getLocation().isWalkable())
+		Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
+		if (enemy != null && camera.isVisible(enemy)) //TODO add !isDead && enemy.getLocation().isWalkable()
 			return true;
 		return false;
 	}
 	
 	public boolean needToBank() {
-		if (Inventory.getCount(TOKKUL_ID, true) > bankTokkulEvery)
+		if (inventory.getCount(true, TOKKUL_ID) > bankTokkulEvery)
 			return true;
 		return false;
 	}
 	
 	public boolean isBankerOnscreen() {
-		NPC banker = Npcs.getNearest(BANK_NPC_ID);
-		if (banker != null && Utilities.isOnScreen(banker))
+		Npc banker = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(BANK_NPC_ID));
+		if (banker != null && camera.isVisible(banker))
 			return true;
 		return false;
 	}
 	
 	public boolean isBankerLoaded() {
-		NPC banker = Npcs.getNearest(BANK_NPC_ID);
+		Npc banker = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(BANK_NPC_ID));
 		if (banker != null)
 			return true;
 		return false;
 	}
 		
 	public boolean isEntranceOnscreen() {
-		GameObject entrance = Objects.getNearest(ENTRANCE_ID);
-		if (entrance != null && ExUtilities.isOnScreen(entrance) && entrance.distance() < 4)
+		GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
+		if (entrance != null && camera.isVisible(entrance) && localPlayer.getLocation().distanceTo(entrance.getLocation()) < 4)
 			return true;
 		return false;
+		
 	}
 	
 	public boolean isEntranceLoaded() {
-		GameObject entrance = Objects.getNearest(ENTRANCE_ID);
+		GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
 		if (entrance != null)
 			return true;
 		return false;
 	}
 	
 	public boolean isInCombat() {
-		return Players.getLocal().inCombat();
-	}
-	
-	
-	
-	
-
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
+		return localPlayer.isInCombat();
 	}
 
-	@Override
-	public Enum determine() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int handle(Enum state) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+	
+	
 	@Override
 	public boolean init() {
 		// TODO Auto-generated method stub
@@ -130,30 +110,10 @@ public class FightCave extends StatefulScript{
 
 	@Override
 	public void render(Graphics2D arg0) {
-		// TODO Auto-generated method stub	
+		// TODO Auto-generated method stub
+		
 	}
 	
-	public class SetCaveCenter extends Node<ScriptState> {
-		public SetCaveCenter() {
-			super(ScriptState.SET_CAVE_CENTER);
-		}
-		
-		@Override
-		public boolean determine() {
-			
-			return false;
-		}
 
-		@Override
-		public void handle() {
-			// TODO Auto-generated method stub
-			return;
-		}
-		
-	}
-	
-	public static enum ScriptState {
-		SET_CAVE_CENTER, WALK_TO_BANK, OPEN_BANK, DEPOSIT_BANK, WALK_TO_CENTER, WALK_TO_ENEMY, ATTACK_ENEMY, ENTER_CAVE, WALK_TO_ENTRANCE, ERROR
-	}
 
 }

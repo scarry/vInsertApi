@@ -1,13 +1,10 @@
 package api;
 
-public abstract class Node<T extends Enum> {
-
-	public T state;
+public abstract class Node {
+	public abstract boolean activate();
+	public abstract void execute();
 	
-	public Node(T state) {
-		this.state = state;
+	public void stop() {
+		ScriptBase.setReturn(-1);
 	}
-
-	public abstract boolean determine();
-	public abstract void handle();
 }
