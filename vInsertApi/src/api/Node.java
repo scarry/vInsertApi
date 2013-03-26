@@ -18,5 +18,5 @@ public abstract class Node implements ProjectionListener{
 	}
 	
 	@Override
-	public abstract void render(Graphics2D arg0);
+	public void render(Graphics2D arg0) {}
 }
