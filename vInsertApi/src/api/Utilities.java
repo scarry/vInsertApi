@@ -85,20 +85,19 @@ public class Utilities {
 		return false;
 	}
 	
-	public boolean isVisible(Actor actor) {
+	public void interact(Actor actor, String action) {
 		if (actor == null)
-			return false;
-		if (localPlayer.getLocation().distanceTo(actor.getLocation()) < 4)
-			return true;
-		return false;
-	}
-	
-	public boolean isVisible(GameObject object) {
-		if (object == null)
-			return false;
-		if (localPlayer.getLocation().distanceTo(object.getLocation()) < 4)
-			return true;
-		return false;
+			return;
+		Point point = actor.hullPoint(actor.hull());
+		mouse.move(point.x, point.y);
+		int index = menu.getIndex(action);
+		if (index == -1)
+			return;
+		if (index == 0) {
+			mouse.click();
+			return;
+		}
+		actor.interact(action);
 	}
 	
 	public Tile walkableLocation(Tile loc) {

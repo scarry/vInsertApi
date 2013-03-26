@@ -88,7 +88,7 @@ public class FightCave extends ScriptBase{
 	
 	private boolean isEnemyOnscreen() {
 		Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
-		if (enemy != null && utilities.isVisible(enemy) && enemy.getHealth() != 0) //TODO add !isDead && enemy.getLocation().isWalkable()
+		if (enemy != null && camera.isVisible(enemy)) //TODO add !isDead && enemy.getLocation().isWalkable()
 			return true;
 		return false;
 	}
@@ -101,7 +101,7 @@ public class FightCave extends ScriptBase{
 	
 	private boolean isBankerOnscreen() {
 		Npc banker = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(BANK_NPC_ID));
-		if (banker != null && utilities.isVisible(banker))
+		if (banker != null && camera.isVisible(banker))
 			return true;
 		return false;
 	}
@@ -115,7 +115,7 @@ public class FightCave extends ScriptBase{
 		
 	private boolean isEntranceOnscreen() {
 		GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
-		if (entrance != null && utilities.isVisible(entrance) && localPlayer.getLocation().distanceTo(entrance.getLocation()) < 4)
+		if (entrance != null && camera.isVisible(entrance) && localPlayer.getLocation().distanceTo(entrance.getLocation()) < 4)
 			return true;
 		return false;
 		
@@ -173,7 +173,7 @@ public class FightCave extends ScriptBase{
 			Npc banker = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(BANK_NPC_ID));
 			if (banker != null)
 			{
-				if (utilities.isVisible(banker))
+				if (camera.isVisible(banker))
 					banker.interact("Bank");
 				sleep(random(1000, 2000));
 			}
@@ -236,10 +236,12 @@ public class FightCave extends ScriptBase{
 			GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
 			if(entrance != null)
 			{
-				if(utilities.isVisible(entrance))
+				if(camera.isVisible(entrance))
 				{
 					entrance.interact("Enter");
 					sleep(1000, 1500);
+				} else {
+					camera.rotateToObject(entrance);
 				}
 			}
 		}
@@ -265,7 +267,7 @@ public class FightCave extends ScriptBase{
 		@Override
 		public boolean activate() {
 
-			if(isInCave() && !isEnemyOnscreen() && isEnemyLoaded() && !isInCombat())
+			if(isInCave() && !isEnemyOnscreen() && isEnemyLoaded())
 				return true;
 			return false;
 		}
@@ -295,7 +297,7 @@ public class FightCave extends ScriptBase{
 		public void execute() {
 			Npc enemy = npcs.getNearest(ENEMY_IDS);
 			if (enemy != null) {
-				enemy.interact("Attack");
+				utilities.interact(enemy, "Attack");
 				sleep(500, 700);
 			}
 		}
@@ -367,6 +369,12 @@ public class FightCave extends ScriptBase{
         g.drawLine(383, 21, 495, 21);
 		
         g.drawString("Run Time:  " + TIMER.toElapsedString(), point[0], point[1] += height);
+        
+		Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
+		if (enemy != null)
+			g.drawString("enemy: " + enemy.getName(), point[0], point[1]+=height);
+		else
+			g.drawString("null", point[0], point[1]+=height);
 		
         g.drawString("Node: " + ScriptBase.getActiveNode().toString(), point[0], point[1]+=height);
         g.drawString("caveCenterSet: " + String.valueOf(isCaveCenterSet()), point[0], point[1] += height);
