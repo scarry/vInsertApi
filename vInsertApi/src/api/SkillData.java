@@ -1,5 +1,7 @@
 package api;
 
+import java.text.DecimalFormat;
+
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.api.tools.Skills;
 
@@ -15,10 +17,51 @@ public final class SkillData {
 	public static final int NUM_SKILL = 23;
 	public final int[] initialExp = new int[NUM_SKILL];
 	public final int[] initialLevels = new int[NUM_SKILL];
+	
+	private static final String[] SKILL_NAMES = {
+		"Attack", "Defense", "Strength", "Hitpoints", "Range", "Prayer", "Magic", "Cooking", "Woodcutting", "Fletching", "Fishing", "Firemaking", 
+		"Crafting", "Smithing", "Mining", "Herblore", "Agility", "Thieving", "Slayer", "Farming", "Runecrafting", "Hunter", "Construction", "Summoning"
+	};
 
 	private Skills skills;
-
 	private Timer timer;
+	
+	public String getName(int index) {
+		if (index < 0 || index > NUM_SKILL) {
+			throw new IllegalArgumentException("0 > index < " + NUM_SKILL);
+		}
+		return SKILL_NAMES[index];
+	}
+	
+	public String perHour(int gained) {
+		return formatNumber((int) ((gained) * 3600000D / (System.currentTimeMillis() - this.timer.getElapsed())));
+	}
+	
+	public String formatNumber(int start) {
+		DecimalFormat nf = new DecimalFormat("0.0");
+		double i = start;
+		if(i >= 1000000) {
+			return nf.format((i / 1000000)) + "m";
+		}
+		if(i >=  1000) {
+			return nf.format((i / 1000)) + "k";
+		}
+		return ""+start;
+	}
+	
+	public final String generateSkillString(int index, SkillData sd) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(getName(index));
+		sb.append(" - Level: ");
+		sb.append(sd.getLevel(index));
+		sb.append("(+" + sd.level(index) + ")");
+		sb.append("\n - Exp/hr: ");
+		sb.append(perHour(sd.experience(index)));
+		sb.append("(+" + sd.experience(index) + ")");
+		sb.append("\n - TTL: ");
+		sb.append(Time.format(sd.timeToLevel(Rate.HOUR, index)));
+		return sb.toString();
+	}
 
 	public static enum Rate {
 		MINUTE(60000d),
