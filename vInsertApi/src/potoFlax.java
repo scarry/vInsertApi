@@ -2,7 +2,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.net.URL;
@@ -14,15 +13,14 @@ import org.vinsert.bot.script.api.Path;
 import org.vinsert.bot.script.api.Tile;
 import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
 import org.vinsert.bot.util.Filter;
-import org.vinsert.bot.util.Utils;
 import org.vinsert.bot.script.ScriptManifest;
 
-import randoms.SimpleRandoms;
+//import randoms.SimpleRandoms;
 
 import api.Node;
 import api.ScriptBase;
 
-@ScriptManifest(name = "potoFlax", authors = { "potofreak" }, description = "Picks and Banks Flax", version = 0.02)
+@ScriptManifest(name = "potoFlax", authors = { "potofreak" }, description = "Picks and Banks Flax", version = 0.04)
 public class potoFlax extends ScriptBase{
 
 	public static final int FLAX_ID = 	17045;
@@ -35,6 +33,8 @@ public class potoFlax extends ScriptBase{
 			new Tile(2737, 3443), new Tile(2732,3444), new Tile(2728, 3451), new Tile(2727, 3459), new Tile(2726, 3466),
 			new Tile(2726, 3475), new Tile(2725, 3481), new Tile(2726, 3487), BANK_TILE
 			);
+	
+	Path pathToFlax = pathToBank.reverse();
 	
 	public class pickFlax extends Node{
 
@@ -75,8 +75,7 @@ public class potoFlax extends ScriptBase{
 
 		@Override
 		public void execute() {
-			if(navigation.getEnergy() >= 60)
-				navigation.setRunning(true);
+			//navigation.toggleRunning();
 			navigation.navigate(pathToBank, 1, NavigationPolicy.MINIMAP);	
 			sleep(500, 800);
 		}
@@ -87,7 +86,7 @@ public class potoFlax extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return inventory.freeSpace() < 28 && BANK_TILE.distanceTo(players.getLocalPlayer().getLocation()) < 1;
+			return inventory.freeSpace() < 28 && BANK_TILE.distanceTo(players.getLocalPlayer().getLocation()) <= 1;
 		}
 
 		@Override
@@ -126,7 +125,7 @@ public class potoFlax extends ScriptBase{
 
 		@Override
 		public void execute() {
-			navigation.navigate(pathToBank.reverse(), 1, NavigationPolicy.MINIMAP);
+			navigation.navigate(pathToFlax, 1, NavigationPolicy.MINIMAP);
 			sleep(500, 800);
 		}
 		
@@ -193,6 +192,8 @@ public class potoFlax extends ScriptBase{
 	    //g.drawString(status, 260, 460);
 	    if(ScriptBase.getActiveNode() != null)
 	    	g.drawString("Node: " + ScriptBase.getActiveNode().toString(),260,460);
+	    else
+	    	g.drawString(status.toString(),260,475);
 	    g.setColor(COLOR_PINK);	
 	}
 
