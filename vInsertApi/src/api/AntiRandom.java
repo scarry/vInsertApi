@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 
 import org.vinsert.bot.script.ScriptContext;
 
-public class AntiRandom extends Node{
+public abstract class AntiRandom extends Node{
 
 	ScriptContext sc;
 	
@@ -16,28 +16,22 @@ public class AntiRandom extends Node{
 	}
 	
 	@Override
-	public boolean activate() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	public abstract boolean activate();
 
 	@Override
-	public void execute() {
-		// TODO Auto-generated method stub
-		
-	}
+	public abstract void execute();
 
     //START: Code generated using Enfilade's Easel
-    private final Color color1 = new Color(255, 0, 50, 127);
-    private final Color color2 = new Color(255, 0, 51);
-    private final Color color3 = new Color(0, 0, 0);
+    protected final Color color1 = new Color(255, 0, 50, 127);
+    protected final Color color2 = new Color(255, 0, 51);
+    protected final Color color3 = new Color(0, 0, 0);
 
-    private final BasicStroke stroke1 = new BasicStroke(5);
+    protected final BasicStroke stroke1 = new BasicStroke(5);
 
-    private final Font font1 = new Font("Calibri", 0, 32);
+    protected final Font font1 = new Font("Calibri", 0, 32);
 
     @Override
-    public void render(Graphics2D g1) {
+	public void render(Graphics2D g1) {
         Graphics2D g = (Graphics2D)g1;
         g.setColor(color1);
         g.fillRect(1, 1, 761, 502);
@@ -48,6 +42,5 @@ public class AntiRandom extends Node{
         g.setColor(color3);
         g.drawString(this.toString(), 15, 38);
     }
-    //END: Code generated using Enfilade's Easel
 
 }
