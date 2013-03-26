@@ -30,6 +30,7 @@ public class potoFlax extends ScriptBase{
 	public static int BANK_ID = 		22836;
 	
 	Path pathToBank = new Path (
+			new Tile(2739, 3441), new Tile(2740, 3446), new Tile(2737, 3443), new Tile(2733, 3443), new Tile(2730, 3445),
 			new Tile(2737, 3443), new Tile(2732,3444), new Tile(2728, 3451), new Tile(2727, 3459), new Tile(2726, 3466),
 			new Tile(2726, 3475), new Tile(2725, 3481), new Tile(2726, 3487), BANK_TILE
 			);
