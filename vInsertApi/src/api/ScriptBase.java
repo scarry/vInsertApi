@@ -3,6 +3,7 @@ package api;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import org.vinsert.bot.Bot;
 import org.vinsert.bot.script.Script;
 import org.vinsert.bot.util.Utils;
 

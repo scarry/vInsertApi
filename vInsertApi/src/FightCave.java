@@ -31,6 +31,7 @@ import org.vinsert.bot.script.api.tools.Skills;
 import api.Node;
 import api.ScriptBase;
 import api.Timer;
+import api.Utilities;
 
 
 @ScriptManifest(name = "FightCave", authors = {"Fortruce"}, description = "Fight Cave Bot", version = 1.0)
@@ -45,7 +46,6 @@ public class FightCave extends ScriptBase{
 	 * Ids
 	 */
 	private static final int ENTRANCE_ID = 18723;
-//	private static final int EXIT_ID = 9357;
 	private static final int BANK_NPC_ID = 2619;
 	private static final int TOKKUL_ID = 6530; 
 	private static final int ENTRANCE_NPC_ID = 2617;
@@ -61,6 +61,7 @@ public class FightCave extends ScriptBase{
 	private static Tile fightCaveCenter = null;
 	private static int bankTokkulEvery;
 	public static int skillToTrain;
+	private Utilities utilities;
 	
 	/**
 	 * Boolean helper methods
@@ -94,7 +95,7 @@ public class FightCave extends ScriptBase{
 	
 	private boolean isEnemyOnscreen() {
 		Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
-		if (enemy != null && camera.isVisible(enemy)) //TODO add !isDead && enemy.getLocation().isWalkable()
+		if (enemy != null && camera.isVisible(enemy) && enemy.getHealth() != 0) //TODO add !isDead && enemy.getLocation().isWalkable()
 			return true;
 		return false;
 	}
@@ -196,7 +197,7 @@ public class FightCave extends ScriptBase{
 		@Override
 		public void execute() {
 			int amount = inventory.getCount(true, TOKKUL_ID);
-			bank.deposit(new Item(TOKKUL_ID, amount), amount);
+			bank.deposit(inventory.getItem(TOKKUL_ID), amount);
 			sleep(random(500, 800));
 		}
 		
@@ -316,7 +317,7 @@ public class FightCave extends ScriptBase{
 
 		@Override
 		public void execute() {
-			navigation.navigate(fightCaveCenter, NavigationPolicy.MINIMAP);
+			navigation.navigate(utilities.walkableLocation(fightCaveCenter), NavigationPolicy.MINIMAP);
 			sleep(1000, 1700);
 		}
 		
@@ -334,7 +335,11 @@ public class FightCave extends ScriptBase{
 		 * TODO
 		 * Auto Login
 		 * Set Attack Mode
-		 */
+		 */	
+		
+		bankTokkulEvery = 99999;
+		
+		utilities = new Utilities(this.getContext());
 		
 		submit(new SetCaveCenter());
 		submit(new WalkToBank());
