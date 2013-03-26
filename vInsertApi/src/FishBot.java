@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.StatefulScript;
-import org.vinsert.bot.script.api.Actor;
 import org.vinsert.bot.script.api.GameObject;
 import org.vinsert.bot.script.api.Item;
 import org.vinsert.bot.script.api.Npc;

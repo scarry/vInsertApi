@@ -5,7 +5,6 @@ import java.awt.Point;
 import org.vinsert.bot.Bot;
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.api.Actor;
-import org.vinsert.bot.script.api.GameObject;
 import org.vinsert.bot.script.api.Item;
 import org.vinsert.bot.script.api.Player;
 import org.vinsert.bot.script.api.Tile;

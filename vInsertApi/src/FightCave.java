@@ -21,7 +21,6 @@ import javax.swing.SwingConstants;
 
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.GameObject;
-import org.vinsert.bot.script.api.Item;
 import org.vinsert.bot.script.api.Npc;
 import org.vinsert.bot.script.api.Tile;
 import org.vinsert.bot.script.api.generic.Filters;
