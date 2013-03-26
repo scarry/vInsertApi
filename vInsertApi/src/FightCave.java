@@ -88,7 +88,7 @@ public class FightCave extends ScriptBase{
 	
 	private boolean isEnemyOnscreen() {
 		Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
-		if (enemy != null && camera.isVisible(enemy) && enemy.getHealth() != 0) //TODO add !isDead && enemy.getLocation().isWalkable()
+		if (enemy != null && utilities.isVisible(enemy) && enemy.getHealth() != 0) //TODO add !isDead && enemy.getLocation().isWalkable()
 			return true;
 		return false;
 	}
@@ -101,7 +101,7 @@ public class FightCave extends ScriptBase{
 	
 	private boolean isBankerOnscreen() {
 		Npc banker = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(BANK_NPC_ID));
-		if (banker != null && camera.isVisible(banker))
+		if (banker != null && utilities.isVisible(banker))
 			return true;
 		return false;
 	}
@@ -115,7 +115,7 @@ public class FightCave extends ScriptBase{
 		
 	private boolean isEntranceOnscreen() {
 		GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
-		if (entrance != null && camera.isVisible(entrance) && localPlayer.getLocation().distanceTo(entrance.getLocation()) < 4)
+		if (entrance != null && utilities.isVisible(entrance) && localPlayer.getLocation().distanceTo(entrance.getLocation()) < 4)
 			return true;
 		return false;
 		
@@ -173,7 +173,7 @@ public class FightCave extends ScriptBase{
 			Npc banker = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(BANK_NPC_ID));
 			if (banker != null)
 			{
-				if (camera.isVisible(banker))
+				if (utilities.isVisible(banker))
 					banker.interact("Bank");
 				sleep(random(1000, 2000));
 			}
@@ -236,7 +236,7 @@ public class FightCave extends ScriptBase{
 			GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
 			if(entrance != null)
 			{
-				if(camera.isVisible(entrance))
+				if(utilities.isVisible(entrance))
 				{
 					entrance.interact("Enter");
 					sleep(1000, 1500);
@@ -294,8 +294,10 @@ public class FightCave extends ScriptBase{
 		@Override
 		public void execute() {
 			Npc enemy = npcs.getNearest(ENEMY_IDS);
-			enemy.interact("Attack");
-			sleep(500, 700);
+			if (enemy != null) {
+				enemy.interact("Attack");
+				sleep(500, 700);
+			}
 		}
 
 	}

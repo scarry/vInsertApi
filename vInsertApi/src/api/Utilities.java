@@ -4,6 +4,8 @@ import java.awt.Point;
 
 import org.vinsert.bot.Bot;
 import org.vinsert.bot.script.ScriptContext;
+import org.vinsert.bot.script.api.Actor;
+import org.vinsert.bot.script.api.GameObject;
 import org.vinsert.bot.script.api.Item;
 import org.vinsert.bot.script.api.Player;
 import org.vinsert.bot.script.api.Tile;
@@ -80,6 +82,22 @@ public class Utilities {
 		int slot = inventory.indexOf(item);
 		Point point = inventory.getClickPoint(slot);
 		mouse.click(point.x, point.y);
+		return false;
+	}
+	
+	public boolean isVisible(Actor actor) {
+		if (actor == null)
+			return false;
+		if (localPlayer.getLocation().distanceTo(actor.getLocation()) < 4)
+			return true;
+		return false;
+	}
+	
+	public boolean isVisible(GameObject object) {
+		if (object == null)
+			return false;
+		if (localPlayer.getLocation().distanceTo(object.getLocation()) < 4)
+			return true;
 		return false;
 	}
 	
