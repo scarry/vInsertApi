@@ -1,5 +1,6 @@
 package randoms;
 
+import java.awt.Graphics2D;
 import java.util.Random;
 
 import org.vinsert.bot.script.Script;
@@ -296,5 +297,11 @@ public class SimpleRandoms extends Node {
 			}
 			//log("Rick Turpentine Random");
 		}
+	}
+
+	@Override
+	public void render(Graphics2D arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
