@@ -5,8 +5,16 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
+import org.vinsert.bot.script.ScriptContext;
+
 public class AntiRandom extends Node{
 
+	ScriptContext sc;
+	
+	public AntiRandom(ScriptContext context){
+		sc = context;
+	}
+	
 	@Override
 	public boolean activate() {
 		// TODO Auto-generated method stub
