@@ -5,8 +5,13 @@ import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
 import org.vinsert.bot.script.ScriptContext;
+import org.vinsert.bot.script.api.GameObject;
 import org.vinsert.bot.script.api.Player;
 import org.vinsert.bot.script.api.Tile;
+import org.vinsert.bot.script.api.generic.Filters;
+import org.vinsert.bot.script.api.tools.Keyboard;
+import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
+import org.vinsert.bot.util.Utils;
  
 import api.Path.TraversableObject.Direction;
  
@@ -36,6 +41,11 @@ public class Path {
 			this.interaction = interaction;
 			this.direction = direction;
 		}
+		
+		@Override
+		public String toString() {
+			return String.format("%d", this.objectId) + " " + this.location.toString();
+		}
 	}
  
 	public Path(final Tile[] tiles, TraversableObject[] objects, ScriptContext context) {
@@ -59,29 +69,15 @@ public class Path {
 	}
  
 	/**
-	 * Loops through the path to completely traverse it.
-	 */
-	public void traverseCompletely() {
-		traverseCompletely(true);
-	}
- 
-	public void traverseCompletely(final boolean run) {
-		Tile next;
-		while ((next = next()) != null && !isAtEnd(next)) {
-			traverse(next, run);
-		}
-	}
- 
-	/**
 	 * Traverses the path. This method must be looped.
 	 */
-	public void traverse() {
-		traverse(true);
+	public void traverse(Direction direction) {
+		traverse(direction, true);
 	}
  
-	public void traverse(final boolean run) {
+	public void traverse(Direction direction, final boolean run) {
 		final Tile next = next();
-		traverse(next, run);
+		traverse(next, direction, run);
 	}
 
 	/**
@@ -96,28 +92,64 @@ public class Path {
 	 * @param force
 	 * 		Force a closer distance check for destination.
 	 */
-	public void traverseObjects(TraversableObject[] objects, final Direction direction, final boolean run, final boolean force) {
-		final Tile next = next();
-
-		for (int i = 0; i < objects.length; i++) {
-			GameObject object = Objects.getNearest(objects[i].objectId);
-			if(object != null && object.getLocation().equals(objects[i].location) 
-					&& Game.getPlane() == objects[i].plane &&
-					(objects[i].direction == direction || objects[i].direction == Direction.BOTH)) {
-				if (object.isVisible()) {
-				//found matching object
-				Methods.log("Found matching object -- interacting");
-				//traverse thru object
-				object.interact(objects[i].interaction);
-				}
-				else {
-					log("walking to object");
-					Walking.walkTo(objects[i].location);
-					ExConditions.waitFor(new ExConditions.isObjectVisible(objects[i].objectId), 2000);
+//	public void traverseObjects(TraversableObject[] objects, final Direction direction, final boolean run, final boolean force) {
+//		final Tile next = next();
+//
+//		for (int i = 0; i < objects.length; i++) {
+//			GameObject object = Objects.getNearest(objects[i].objectId);
+//			if(object != null && object.getLocation().equals(objects[i].location) 
+//					&& Game.getPlane() == objects[i].plane &&
+//					(objects[i].direction == direction || objects[i].direction == Direction.BOTH)) {
+//				if (object.isVisible()) {
+//				//found matching object
+//				Methods.log("Found matching object -- interacting");
+//				//traverse thru object
+//				object.interact(objects[i].interaction);
+//				}
+//				else {
+//					log("walking to object");
+//					Walking.walkTo(objects[i].location);
+//					ExConditions.waitFor(new ExConditions.isObjectVisible(objects[i].objectId), 2000);
+//				}
+//			}
+//			else
+//				traverse(next, run, force);
+//		}
+//	}
+	
+	private void traverse(final Tile next, Direction direction, final boolean run, int deviation) {
+		if (objects != null) {
+			for (TraversableObject obj : objects) {
+				GameObject gameObj = context.objects.getNearest(Filters.objectId(obj.objectId));
+				if (gameObj != null && gameObj.getLocation().equals(obj.location) &&
+						context.getClient().getPlane() == obj.plane &&
+						(obj.direction == direction || obj.direction == Direction.BOTH)) {
+					//found obj - traverse
+					if (context.camera.isVisible(gameObj)) {
+						log("found object " + obj.toString() + " traversing...");
+						gameObj.interact(obj.interaction);
+						Utils.sleep(Utils.random(1000, 1500));
+					} else {
+						log("walking to " + obj.toString() + "...");
+						context.navigation.navigate(gameObj.getLocation(), NavigationPolicy.MINIMAP);
+						Utils.sleep(Utils.random(1000, 1500));
+					}
 				}
 			}
-			else
-				traverse(next, run, force);
+		} else if (context.game.getGameState().id() == 30
+				&& next != null && !isAtEnd(next, deviation)
+				&& next.distanceTo(this.getEnd())> 3) { //TODO check the this.getEnd()
+			if (run) {
+				//Keyboard.pressKey(KeyEvent.VK_CONTROL);
+				context.keyboard.press(KeyEvent.VK_CONTROL);
+				Utils.sleep(Utils.random(80, 150));
+			}
+			context.navigation.navigate(next, NavigationPolicy.MINIMAP);
+			if (run) {
+				//Keyboard.releaseKey(KeyEvent.VK_CONTROL,Random.nextInt(80, 150));
+				context.keyboard.press(KeyEvent.VK_CONTROL);
+				Utils.sleep(Utils.random(1000, 2000));
+			}
 		}
 	}
  
@@ -128,9 +160,9 @@ public class Path {
 	 * @param force
 	 * 			Toggle close distance check for end checking.
 	 */
-	public void traverse(final boolean run, final boolean force) {
+	public void traverse(Direction direction, final boolean run, int deviation) {
 		final Tile next = next();
-		traverse(next, run, force);
+		traverse(next, direction, run, deviation);
 	}
 
 	/**
@@ -140,28 +172,9 @@ public class Path {
 	 *            The next <code>Tile</code>
 	 */
 
-	private void traverse(final Tile next, final boolean run) {
-		traverse(next, run, false);
+	private void traverse(final Tile next, Direction direction, final boolean run) {
+		traverse(next, direction, run, 3);
 	}
-
-	private void traverse(final Tile next, final boolean run, final boolean force) {
-		if (Game.getGameState() == 30
-				&& next != null && !isAtEnd(next, force)
-				&& next.distanceTo(Walking.getDestination())> 3) {
-			if (run) {
-				//Keyboard.pressKey(KeyEvent.VK_CONTROL);
-				Keyboard.pressKey((char) KeyEvent.VK_CONTROL);
-				Methods.sleep(80, 150);
-			}
-			Walking.walkTo(next);
-			if (run) {
-				//Keyboard.releaseKey(KeyEvent.VK_CONTROL,Random.nextInt(80, 150));
-				Keyboard.releaseKey((char) KeyEvent.VK_CONTROL);
-				Methods.sleep(1000, 2000);
-			}
-		}
-	}
-
 
  
 	/**
@@ -170,12 +183,12 @@ public class Path {
 	 * @return Whether the given <code>Tile</code> is at the end of the path.
 	 */
 	private boolean isAtEnd(Tile next) {
-		return isAtEnd(next, false);
+		return isAtEnd(next, 3);
 	}
 
 	private boolean isAtEnd(Tile next, int deviation) {
-		return distanceTo(next) < deviation
-				|| Calculations.distanceTo(Walking.getDestination()) < deviation;
+		return localPlayer.getLocation().distanceTo(next) < deviation
+				|| localPlayer.getLocation().distanceTo(this.getEnd()) < deviation; //TODO check getEnd()
 	}
  
 	/**
@@ -204,12 +217,6 @@ public class Path {
 			reversed = new Path(reversedTiles, this.context);
 		}
 		return reversed;
-	}
- 
-	public void draw(Graphics g) {
-		for (int i = 0; i < tiles.length; i++) {
-			tiles[i].draw(g);
-		}
 	}
  
 	@Override

@@ -39,13 +39,18 @@ public abstract class ScriptBase extends Script {
 
 	@Override
 	public int pulse() {
-		if(nodes.size() > 0) {
-			for (Node n : nodes) {
-				if (n.activate()) {
-					currnode = n.getClass().getSimpleName();
-					n.execute();
+		try {
+			if(nodes.size() > 0) {
+				for (Node n : nodes) {
+					if (n.activate()) {
+						currnode = n.getClass().getSimpleName();
+						n.execute();
+					}
 				}
 			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 		return getReturn();
 	}
