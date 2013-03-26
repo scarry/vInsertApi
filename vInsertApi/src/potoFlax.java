@@ -20,10 +20,11 @@ import org.vinsert.bot.script.ScriptManifest;
 import api.Node;
 import api.ScriptBase;
 
-@ScriptManifest(name = "potoFlax", authors = { "potofreak" }, description = "Picks and Banks Flax", version = 0.04)
+@ScriptManifest(name = "potoFlax", authors = { "potofreak" }, description = "Picks and Banks Flax", version = 0.05)
 public class potoFlax extends ScriptBase{
 
 	public static final int FLAX_ID = 	17045;
+	public static final int FLAX_INV = 	1780;
 	public String 						status;
 	public static Tile BANK_TILE = 		new Tile(2729,3493);
 	public static Tile FLAX_TILE = 		new Tile(2741,3447);
@@ -41,11 +42,13 @@ public class potoFlax extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return inventory.freeSpace() > 0 && FLAX_TILE.distanceTo(players.getLocalPlayer().getLocation()) <= 11;
+			return inventory.freeSpace() > 0 && FLAX_TILE.distanceTo(players.getLocalPlayer().getLocation()) <= 7;
 		}
 
 		@Override
 		public void execute() {
+			pathToBank.reset();
+			pathToFlax.reset();
 			GameObject flax = objects.getNearest(new Filter<GameObject>(){
 				public boolean accept(GameObject obj) {
 					if (obj.getId() == FLAX_ID)
@@ -55,7 +58,8 @@ public class potoFlax extends ScriptBase{
 			});
 			if(flax != null){
 				//Fancy math for single click on flax
-				mouse.click(flax.hullPoint(flax.hull()).x, flax.hullPoint(flax.hull()).y);
+				flax.interact("Pick");
+				//mouse.click(flax.hullPoint(flax.hull()).x, flax.hullPoint(flax.hull()).y);
 				//Point[] points = flax.getPoints();
 				//log("Points: " + points.length);
 				//mouse.click(flax.getPoints()[1].x, flax.getPoints()[1].y);
@@ -121,7 +125,7 @@ public class potoFlax extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return inventory.freeSpace() == 28 && FLAX_TILE.distanceTo(players.getLocalPlayer().getLocation()) >= 1;
+			return inventory.getCount(false, FLAX_INV) != 28 && FLAX_TILE.distanceTo(players.getLocalPlayer().getLocation()) > 7;
 		}
 
 		@Override
@@ -177,7 +181,10 @@ public class potoFlax extends ScriptBase{
         
 	    g.setColor(COLOR_WHITE);
 	    g.setFont(expFont);
-	    
+	    g.drawString("pickFlax: " + new pickFlax().activate(),110, 355);
+	    g.drawString("walkToBank: " + new walkToBank().activate(),110,370);
+	    g.drawString("bankFlax: " + new bankFlax().activate(),110,385);
+	    g.drawString("walkToFlax: " + new walkToFlax().activate(),110,400);
 	    //g.drawString("GP/HR: " + Utilities.perHour(gp-gpStart) + " (+" + (gp-gpStart) + ")",13,445);
 	    g.drawString("Distance to BANK: " + BANK_TILE.distanceTo(players.getLocalPlayer().getLocation()),13,425);
 	    g.drawString("Distance to FLAX: " + FLAX_TILE.distanceTo(players.getLocalPlayer().getLocation()),13,445);
