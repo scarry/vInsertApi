@@ -67,19 +67,12 @@ public class FightCave extends ScriptBase{
 	 * Boolean helper methods
 	 */
 	private boolean isCaveCenterSet() {
-		GameObject exit = objects.getNearest(Filters.objectId(ENTRANCE_ID));
-		if (exit != null && fightCaveCenter != null && 
-				fightCaveCenter.equals(new Tile(exit.getLocation().getX() - 12, exit.getLocation().getY() - 30)))
+		if (fightCaveCenter != null)
 			return true;
 		return false;
 	}
 	
 	private boolean isInCave() {
-//		GameObject exit = objects.getNearest(Filters.objectId(EXIT_ID));
-//		if (exit == null)
-//			return false;
-//		else
-//			return true;
 		Npc entranceNpc = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENTRANCE_NPC_ID));
 		if (entranceNpc != null)
 			return false;
@@ -239,6 +232,7 @@ public class FightCave extends ScriptBase{
 
 		@Override
 		public void execute() {
+			fightCaveCenter = null;
 			GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
 			if(entrance != null)
 			{
@@ -281,7 +275,7 @@ public class FightCave extends ScriptBase{
 			Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
 			if (enemy != null) {
 				navigation.navigate(enemy.getLocation(), NavigationPolicy.MINIMAP);
-				sleep(1000, 1500);
+				sleep(500, 900);
 			}
 		}
 		
@@ -383,6 +377,7 @@ public class FightCave extends ScriptBase{
         g.drawString("entranceOnscreen: " + String.valueOf(isEntranceOnscreen()), point[0], point[1] += height);
         g.drawString("entranceLoaded: " + String.valueOf(isEntranceLoaded()), point[0], point[1] += height);
         g.drawString("inCombat: " + String.valueOf(isInCombat()), point[0], point[1] += height);
+        g.drawString("center: " + fightCaveCenter.toString(), point[0], point[1]+=height);
 	}
 	
 

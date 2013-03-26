@@ -86,7 +86,8 @@ public class Utilities {
 	public Tile walkableLocation(Tile loc) {
 		if (localPlayer.getLocation().distanceTo(loc) < 17)
 			return loc;
-		log(String.format("[%d, %d]", loc.getX(), loc.getY()));
-		return walkableLocation(halveDistance(localPlayer.getLocation(), loc));
+		Tile halfway = halveDistance(localPlayer.getLocation(), loc);
+		log(String.format("pl: [%d, %d]\thd: [%d, %d]\tel: [%d, %d]", localPlayer.getLocation().getX(), localPlayer.getLocation().getY(), halfway.getX(), halfway.getY(), loc.getX(), loc.getY()));
+		return walkableLocation(halfway);
 	}
 }
