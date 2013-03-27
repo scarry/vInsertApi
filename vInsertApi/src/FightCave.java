@@ -50,7 +50,6 @@ public class FightCave extends ScriptBase{
 	private static final int TOKKUL_ID = 6530; 
 	private static final int ENTRANCE_NPC_ID = 2617;
 	private static final int[] ENEMY_IDS = {2734, 2735, 2736, 2737, 2738, 2739};
-	private static final int DEATH_ANIMATION_ID = 836;
 	
 	private static final Tile BANK_LOC = new Tile(2445, 5178);
 	private static final Tile ENTRANCE_LOC = new Tile(2438, 5169);
@@ -71,9 +70,7 @@ public class FightCave extends ScriptBase{
 	 * Boolean helper methods
 	 */
 	private boolean isCaveCenterSet() {
-		GameObject exit = objects.getNearest(Filters.objectId(EXIT_ID));
-		if (exit != null && fightCaveCenter != null && 
-				fightCaveCenter.equals(new Tile(exit.getLocation().getX() + CENTER_X_OFFSET, exit.getLocation().getY() + CENTER_Y_OFFSET)))
+		if (fightCaveCenter != null)
 			return true;
 		return false;
 	}
@@ -238,7 +235,8 @@ public class FightCave extends ScriptBase{
 
 		@Override
 		public void execute() {
-//			fightCaveCenter = null;
+			log("Entering cave");
+			fightCaveCenter = null;
 			GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
 			if(entrance != null)
 			{
@@ -408,11 +406,6 @@ public class FightCave extends ScriptBase{
 	/* GUI STUFF */
 	private FightCaveGui fbg = new FightCaveGui();
 	private static boolean guiWait = true;
-	
-	private static String username;
-	private static String password;
-	private static boolean autoLoginEnabled = false;
-	private static int autoLoginEvery = 0;
 	/* END GUI STUFF */
 	
 	/* GUI CODE BELOW */
@@ -437,13 +430,6 @@ public class FightCave extends ScriptBase{
 			else if (skillString.equals("Defense"))
 				skillToTrain = Skills.DEFENSE;
 			bankTokkulEvery = Integer.parseInt(tfBankEvery.getText());
-			
-			if (cbAutoLoginEnabled.isSelected()) {
-				autoLoginEnabled = true;
-				FightCave.username = tfUsername.getText().toString();
-				FightCave.password = tfPassword.getText().toString();
-				autoLoginEvery = Integer.parseInt(tfLoginEvery.getText().toString());
-			}
 
 			guiWait = false;
 			this.dispose();
