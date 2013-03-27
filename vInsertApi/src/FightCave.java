@@ -44,7 +44,7 @@ public class FightCave extends ScriptBase{
 	/**
 	 * Ids
 	 */
-	private static final int ENTRANCE_ID = 18723;
+	private static final int ENTRANCE_ID = 9356;
 	private static final int BANK_NPC_ID = 2619;
 	private static final int TOKKUL_ID = 6530; 
 	private static final int ENTRANCE_NPC_ID = 2617;
@@ -347,6 +347,7 @@ public class FightCave extends ScriptBase{
 		submit(new AttackEnemy());
 		submit(new EnterCave()); 
 		submit(new WalkToEntrance());
+		log("starting bot");
 		
 		return true;
 	}
@@ -375,7 +376,8 @@ public class FightCave extends ScriptBase{
 		else
 			g.drawString("null", point[0], point[1]+=height);
 		
-        g.drawString("Node: " + ScriptBase.getActiveNode().toString(), point[0], point[1]+=height);
+		if (ScriptBase.getActiveNode() != null)
+			g.drawString("Node: " + ScriptBase.getActiveNode().toString(), point[0], point[1]+=height);
         g.drawString("caveCenterSet: " + String.valueOf(isCaveCenterSet()), point[0], point[1] += height);
         g.drawString("isInCave: " + String.valueOf(isInCave()), point[0], point[1] += height);
         g.drawString("enemyLoaded: " + String.valueOf(isEnemyLoaded()), point[0], point[1] += height);
@@ -386,7 +388,9 @@ public class FightCave extends ScriptBase{
         g.drawString("entranceOnscreen: " + String.valueOf(isEntranceOnscreen()), point[0], point[1] += height);
         g.drawString("entranceLoaded: " + String.valueOf(isEntranceLoaded()), point[0], point[1] += height);
         g.drawString("inCombat: " + String.valueOf(isInCombat()), point[0], point[1] += height);
+        if (fightCaveCenter != null) {
         g.drawString("center: " + fightCaveCenter.toString(), point[0], point[1]+=height);
+        }
 	}
 	
 
