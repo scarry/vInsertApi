@@ -108,19 +108,6 @@ public class Utilities {
 	}
 	
 	public boolean isOnMinimap(Tile t) {
-//		Tile player = localPlayer.getLocation();
-//		int px = player.getX();
-//		int py = player.getY();
-//		int x, y;
-//		x = t.getX();
-//		y = t.getY();
-//		
-//		x = (x * 4 + 2) - (px >> 5);
-//		y = (y * 4 + 2) - (py >> 5);
-//		
-//		if (x * x + y * y > 5184) //6400
-//			return false;
-//		return true;
 		if (localPlayer.getLocation().distanceTo(t) < 17)
 			return true;
 		return false;
