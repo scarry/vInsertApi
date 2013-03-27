@@ -17,6 +17,8 @@ import api.Path.TraversableObject.Direction;
  
 public class Path {
 	private final Tile[] tiles;
+	private final Tile[] reverseTiles;
+	
 	private final TraversableObject[] objects;
 	private Path reversed;
 	private ScriptContext context;
@@ -50,10 +52,17 @@ public class Path {
  
 	public Path(final Tile[] tiles, TraversableObject[] objects, ScriptContext context) {
 		this.tiles = tiles;
+		
+		this.reverseTiles = new Tile[this.tiles.length];
+		for (int i = 0; i < this.tiles.length; i++) {
+			this.reverseTiles[i] = this.tiles[this.tiles.length - 1 - i];
+		}
+		
 		if (objects.length == 0)
 			this.objects = null;
 		else
 			this.objects = objects;
+		
 		this.context = context;
 		this.utilities = new Utilities(context);
 		this.localPlayer = context.players.getLocalPlayer();
@@ -194,16 +203,6 @@ public class Path {
 		traverse(next, direction, run, 3);
 	}
 
- 
-	/**
-	 * @param next
-	 *            The next <code>Tile</code>
-	 * @return Whether the given <code>Tile</code> is at the end of the path.
-	 */
-	private boolean isAtEnd(Tile next) {
-		return isAtEnd(next, 3);
-	}
-
 	private boolean isAtEnd(Tile next, int deviation) {
 		return localPlayer.getLocation().distanceTo(next) < deviation
 				|| localPlayer.getLocation().distanceTo(this.getEnd()) < deviation; //TODO check getEnd()
@@ -224,21 +223,21 @@ public class Path {
 		return null;
 	}
  
-	/**
-	 * Lazily reverses this <code>TilePath</code>.
-	 *
-	 * @return The reversed <code>TilePath</code>
-	 */
-	public Path reverse() {
-		if (reversed == null) {
-			Tile[] reversedTiles = new Tile[tiles.length];
-			for (int i = tiles.length - 1; i >= 0; i--) {
-				reversedTiles[tiles.length - 1 - i] = tiles[i];
-			}
-			reversed = new Path(reversedTiles, this.context);
-		}
-		return reversed;
-	}
+//	/**
+//	 * Lazily reverses this <code>TilePath</code>.
+//	 *
+//	 * @return The reversed <code>TilePath</code>
+//	 */
+//	public Path reverse() {
+//		if (reversed == null) {
+//			Tile[] reversedTiles = new Tile[tiles.length];
+//			for (int i = tiles.length - 1; i >= 0; i--) {
+//				reversedTiles[tiles.length - 1 - i] = tiles[i];
+//			}
+//			reversed = new Path(reversedTiles, this.context);
+//		}
+//		return reversed;
+//	}
  
 	@Override
 	public String toString() {

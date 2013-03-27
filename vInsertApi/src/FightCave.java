@@ -45,6 +45,7 @@ public class FightCave extends ScriptBase{
 	 * Ids
 	 */
 	private static final int ENTRANCE_ID = 9356;
+	private static final int EXIT_ID = 9357;
 	private static final int BANK_NPC_ID = 2619;
 	private static final int TOKKUL_ID = 6530; 
 	private static final int ENTRANCE_NPC_ID = 2617;
@@ -53,6 +54,10 @@ public class FightCave extends ScriptBase{
 	
 	private static final Tile BANK_LOC = new Tile(2445, 5178);
 	private static final Tile ENTRANCE_LOC = new Tile(2438, 5169);
+	
+	private static final int CENTER_X_OFFSET = -12;
+	private static final int CENTER_Y_OFFSET = -30;
+	
 	
 	/**
 	 * Center of the fight cave
@@ -66,16 +71,18 @@ public class FightCave extends ScriptBase{
 	 * Boolean helper methods
 	 */
 	private boolean isCaveCenterSet() {
-		if (fightCaveCenter != null)
+		GameObject exit = objects.getNearest(Filters.objectId(EXIT_ID));
+		if (exit != null && fightCaveCenter != null && 
+				fightCaveCenter.equals(new Tile(exit.getLocation().getX() + CENTER_X_OFFSET, exit.getLocation().getY() + CENTER_Y_OFFSET)))
 			return true;
 		return false;
 	}
 	
 	private boolean isInCave() {
 		Npc entranceNpc = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENTRANCE_NPC_ID));
-		if (entranceNpc != null)
-			return false;
-		return true;
+		if (entranceNpc == null)
+			return true;
+		return false;
 	}
 	
 	private boolean isEnemyLoaded() {
@@ -231,7 +238,7 @@ public class FightCave extends ScriptBase{
 
 		@Override
 		public void execute() {
-			fightCaveCenter = null;
+//			fightCaveCenter = null;
 			GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
 			if(entrance != null)
 			{
@@ -255,9 +262,10 @@ public class FightCave extends ScriptBase{
 
 		@Override
 		public void execute() {
-			GameObject exit = objects.getNearest(Filters.objectId(ENTRANCE_ID));
+			log("setting cave center");
+			GameObject exit = objects.getNearest(Filters.objectId(EXIT_ID));
 			if (exit != null)
-				fightCaveCenter = new Tile(exit.getLocation().getX() - 12, exit.getLocation().getY() -30);
+				fightCaveCenter = new Tile(exit.getLocation().getX() + CENTER_X_OFFSET, exit.getLocation().getY() + CENTER_Y_OFFSET);
 		}
 	}
 
