@@ -331,7 +331,8 @@ public class potoThievWatchman extends ScriptBase{
 	
 	public void doPickpocket(){
 		status = "Pickpocket";
-		mouse.click(watchman);
+		watchman.interact("Pickpocket");
+		//mouse.click(watchman);
 		//watchman.interact("Pickpocket");
 		sleep(300, 500);
 		//if(!ExConditions.waitFor(new isStealing(),1500))
