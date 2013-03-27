@@ -50,7 +50,10 @@ public class Path {
  
 	public Path(final Tile[] tiles, TraversableObject[] objects, ScriptContext context) {
 		this.tiles = tiles;
-		this.objects = objects;
+		if (objects.length == 0)
+			this.objects = null;
+		else
+			this.objects = objects;
 		this.context = context;
 		this.utilities = new Utilities(context);
 		this.localPlayer = context.players.getLocalPlayer();
@@ -78,6 +81,11 @@ public class Path {
 	public void traverse(Direction direction, final boolean run) {
 		final Tile next = next();
 		traverse(next, direction, run);
+	}
+	
+	public void traverse(Direction direction, final boolean run, int deviation) {
+		final Tile next = next();
+		traverse(next, direction, run, deviation);
 	}
 
 	/**
@@ -118,13 +126,18 @@ public class Path {
 //	}
 	
 	private void traverse(final Tile next, Direction direction, final boolean run, int deviation) {
+//		log("in traverse");
+		boolean traversingObject = false;
 		if (objects != null) {
+			log("objects not null");
 			for (TraversableObject obj : objects) {
 				GameObject gameObj = context.objects.getNearest(Filters.objectId(obj.objectId));
 				if (gameObj != null && gameObj.getLocation().equals(obj.location) &&
 						context.getClient().getPlane() == obj.plane &&
 						(obj.direction == direction || obj.direction == Direction.BOTH)) {
 					//found obj - traverse
+					log("traversing object");
+					traversingObject = true;
 					if (context.camera.isVisible(gameObj)) {
 						log("found object " + obj.toString() + " traversing...");
 						gameObj.interact(obj.interaction);
@@ -136,9 +149,18 @@ public class Path {
 					}
 				}
 			}
-		} else if (context.game.getGameState().id() == 30
+		}
+//		log(String.format("%d", context.game.getGameState().id()));
+//		if (next == null) log("ERROR: next == null");
+//		if (next.distanceTo(this.getEnd()) > 3) log("distance to end true");
+//		else log("distance to end false");
+//		if (!traversingObject) log("not traversing object");
+//		else log("traversing object");
+		if (context.game.getGameState().id() == 30
 				&& next != null && !isAtEnd(next, deviation)
-				&& next.distanceTo(this.getEnd())> 3) { //TODO check the this.getEnd()
+//				&& next.distanceTo(this.getEnd())> 3
+				&& !traversingObject) { //TODO check the this.getEnd()
+//			log("walking");
 			if (run) {
 				//Keyboard.pressKey(KeyEvent.VK_CONTROL);
 				context.keyboard.press(KeyEvent.VK_CONTROL);
@@ -160,10 +182,6 @@ public class Path {
 	 * @param force
 	 * 			Toggle close distance check for end checking.
 	 */
-	public void traverse(Direction direction, final boolean run, int deviation) {
-		final Tile next = next();
-		traverse(next, direction, run, deviation);
-	}
 
 	/**
 	 * Walks one step in the path.
@@ -195,11 +213,14 @@ public class Path {
 	 * @return The next walkable <code>Tile</code> on the minimap.
 	 */
 	private Tile next() {
+		log("getting next");
 		for (int i = tiles.length - 1; i >= 0; --i) {
 			if (utilities.isOnMinimap(tiles[i])) { //TODO add isWalkable check
+				log("found next");
 				return tiles[i];
 			}
 		}
+		log("didn't find next");
 		return null;
 	}
  
