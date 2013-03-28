@@ -18,17 +18,12 @@ import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
 import org.vinsert.bot.script.api.tools.Skills;
 import org.vinsert.bot.util.Utils;
 
-import randoms.RandomHandler;
-
 import api.Node;
-import api.SkillData.Rate;
 import api.ScriptBase;
-import api.SkillData;
-import api.Time;
 import api.Timer;
 import api.Utilities;
 
-@ScriptManifest(name = "potoMasterThiver", authors = { "potofreak" }, description = "Thieves Master Farmer", version = 0.1)
+@ScriptManifest(name = "potoMasterThiver2", authors = { "potofreak" }, description = "Thieves Master Farmer", version = 0.1)
 
 public class potoMasterThiever2 extends ScriptBase{
 	
@@ -65,6 +60,8 @@ public class potoMasterThiever2 extends ScriptBase{
 	int currentState = 0;
 	
 	int thievExp, thievStartExp;
+	
+	Utilities utilities;
 
 	/*
 	private final String generateString(int index){
@@ -180,7 +177,8 @@ public class potoMasterThiever2 extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return FARMER_TILE.distanceTo(localPlayer.getLocation()) > 7 && inventory.getCount(false,BREAD_ID) == NumOfFood;
+			return FARMER_TILE.distanceTo(localPlayer.getLocation()) > 7 && 
+					inventory.getCount(false,BREAD_ID) == NumOfFood;
 		}
 
 		@Override
@@ -196,7 +194,7 @@ public class potoMasterThiever2 extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return true;
+			return farmer == null;
 		}
 
 		@Override
@@ -231,8 +229,6 @@ public class potoMasterThiever2 extends ScriptBase{
 		}
 	}
 	
-
-
 	public class MoveMouseRandom extends Node{
 
 		@Override
@@ -247,8 +243,7 @@ public class potoMasterThiever2 extends ScriptBase{
 		}
 		
 	}
-		
-	
+			
 	public class PickpocketFarmer extends Node{
 		@Override
 		public boolean activate() {
@@ -266,14 +261,12 @@ public class potoMasterThiever2 extends ScriptBase{
 				mouse.move(Utils.random(100, 500), Utils.random(100, 500));
 			}
 			status = "Stealing from Farmer";
-			farmer.interact("Pickpocket");
+			utilities.interact(farmer, "Pickpocket");
 			sleep(Utils.random(100, 300));
 			health = players.getLocalPlayer().getHealth();
 			status = "Checking Stun";
 			}
 	}
-
-	
 	
 	/*
 	public class CheckStun extends Node{
@@ -342,7 +335,8 @@ public class potoMasterThiever2 extends ScriptBase{
 	@Override
 	public boolean init() {
 		//submit(new TestCastle());
-		new RandomHandler(BANK_TILE,Skills.HITPOINTS,this);
+		//new RandomHandler(BANK_TILE,Skills.HITPOINTS,this);
+		utilities = new Utilities(getContext());
 		submit(new Heal());
 		submit(new GetFarmer());
 		submit(new PickpocketFarmer());
@@ -427,26 +421,31 @@ public class potoMasterThiever2 extends ScriptBase{
         */
         //Draw Custom Background and Sig
     
-        //g.drawImage(back, 4, 342, null);
-	    //g.drawImage(logo, 230, 305, null);
-        
+        g.drawImage(back, 4, 342, null);
+	    g.drawImage(logo, 230, 305, null);
+    	
 	    g.setColor(COLOR_WHITE);
 	    g.setFont(expFont);
 	    g.drawString("Health:" + health, 13, 365);
-	    g.drawString("Animation: " + players.getLocalPlayer().getAnimation(), 13, 385);
-	   // g.drawString(generateString(Skills.THIEVING), 13, 405);
-	    g.drawString("Capacity: " + inventory.getCapacity(), 13, 425);
-	    g.drawString("Test test", 13, 445);
-	    g.drawString("Test test123", 13, 465);
+	    g.drawString("WalkToBank: " + new WalkToBank().activate(), 13, 380);
+	    g.drawString("OpenBank: " + new OpenBank().activate(), 13, 395);
+	    g.drawString("DepositAll: " + new DepositAll().activate(), 13, 410);
+	    g.drawString("WalkToFarmerTile: " + new WalkToFarmerTile().activate(), 13, 425);
+	    g.drawString("GetFarmer: " + new GetFarmer().activate(), 13, 440);
+	    //g.drawString("MoveMouseRandom: " + new MoveMouseRandom().activate(), 13, 455);
+	    // g.drawString(generateString(Skills.THIEVING), 13, 405);
+	    g.drawString("PickpocketFarmer: " + new PickpocketFarmer().activate(), 150, 440);
+	    
+	    g.drawString("Heal: " + new Heal().activate(), 13, 455);
 	    //g.setFont(statusFont);
 	    //String time = String.format("Time: %02d:%02d:%02d",hours,minutes,seconds);
 	    g.drawString("Time: " + timer.toElapsedString(), 320, 410);
 	    
-	    g.drawString("Status: ", 340, 435);
-	    if(this.getActiveNode() != null)
-	    	g.drawString(status, 260, 460);
+	    //g.drawString("Status: ", 340, 435);
+	    //if(this.getActiveNode() != null)
+	    //	g.drawString(status, 260, 460);
 	    
-	    g.setColor(COLOR_RANDOM);
+	    g.setColor(COLOR_BLACK);
 	    if(farmer != null){
 	     	g.fillPolygon(farmer.hull());
 		//}
