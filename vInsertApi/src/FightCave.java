@@ -29,7 +29,7 @@ import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
 import org.vinsert.bot.script.api.tools.Skills;
 
 
-@ScriptManifest(name = "FightCave", authors = {"Fortruce"}, description = "Fight Cave Bottt", version = 1.0)
+@ScriptManifest(name = "FightCave", authors = {"Fortruce"}, description = "Fight Cave Bot", version = 1.0)
 public class FightCave extends ScriptBase{
 	
 	/**
