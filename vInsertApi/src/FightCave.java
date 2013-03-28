@@ -274,7 +274,7 @@ public class FightCave extends ScriptBase{
                 fightcaveTopRight = new Tile(centerX + 6, centerY + 12);
 
                 //create idle path (for when enemy is attacking but not loaded
-                utilities.createPath(5, fightCaveCenter, fightCaveTopLeft, fightcaveTopRight, fightCaveBotRight, fightCaveBotLeft);
+                fightCaveIdlePath = utilities.createPath(5, fightCaveCenter, fightCaveTopLeft, fightcaveTopRight, fightCaveBotRight, fightCaveBotLeft);
             }
 		}
 	}
@@ -290,7 +290,8 @@ public class FightCave extends ScriptBase{
 
         @Override
         public void execute() {
-
+            fightCaveIdlePath.traverse(true);
+            sleep(500, 1000);
         }
     }
 
