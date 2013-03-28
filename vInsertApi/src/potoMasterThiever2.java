@@ -28,7 +28,7 @@ import api.Time;
 import api.Timer;
 import api.Utilities;
 
-@ScriptManifest(name = "potoMasterThiver", authors = { "potofreak" }, description = "Thieves Master Farmer", version = 0.1)
+@ScriptManifest(name = "potoMasterThiver", authors = { "potofreak" }, description = "Thieves Master Farmer", version = 0.3)
 
 public class potoMasterThiever2 extends ScriptBase{
 	
@@ -196,7 +196,7 @@ public class potoMasterThiever2 extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return true;
+			return farmer == null || Utils.random(1, 20) == 4;
 		}
 
 		@Override
@@ -273,8 +273,8 @@ public class potoMasterThiever2 extends ScriptBase{
 			}
 	}
 
-	
-	
+
+
 	/*
 	public class CheckStun extends Node{
 
@@ -425,13 +425,24 @@ public class potoMasterThiever2 extends ScriptBase{
         float expPerMin = expPerSec * 60;
         float expPerHour = expPerMin * 60;
         */
-        //Draw Custom Background and Sig
-    
-        //g.drawImage(back, 4, 342, null);
-	    //g.drawImage(logo, 230, 305, null);
+        //Draw Custom Background and Si
+
+
+        g.drawImage(back, 4, 342, null);
+	    g.drawImage(logo, 230, 305, null);
         
 	    g.setColor(COLOR_WHITE);
 	    g.setFont(expFont);
+
+        g.drawString("PickpocketFarmer: " + new PickpocketFarmer().activate(),13,150);
+        g.drawString("Heal: " + new Heal().activate(),13,165);
+        g.drawString("WalkToBank: " + new WalkToBank().activate(),13,180);
+        g.drawString("OpenBank: " + new OpenBank().activate(),13,195);
+        g.drawString("DepositAll: " + new DepositAll().activate(),13,210);
+        g.drawString("WithdrawFood: " + new WithdrawFood().activate(),13,225);
+        g.drawString("WalkToFarmerTile: " + new WalkToFarmerTile().activate(),13,240);
+        g.drawString("WalkToFarmer: " + new WalkToFarmer().activate(),13,255);
+
 	    g.drawString("Health:" + health, 13, 365);
 	    g.drawString("Animation: " + players.getLocalPlayer().getAnimation(), 13, 385);
 	   // g.drawString(generateString(Skills.THIEVING), 13, 405);
