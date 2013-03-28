@@ -45,7 +45,7 @@ public abstract class ScriptBase extends Script {
 					if (n.activate()) {
 						currnode = n.getClass().getSimpleName();
 						n.execute();
-						break;
+						return getReturn();
 					}
 				}
 			}
