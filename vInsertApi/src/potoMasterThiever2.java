@@ -46,7 +46,7 @@ public class potoMasterThiever2 extends ScriptBase{
 	Tile BANK_TILE = new Tile(Utils.random(3092,3095), Utils.random(3242,3244));
 	Tile FARMER_TILE = new Tile(Utils.random(3078,3081),Utils.random(3249,3251));
 	
-	int NumOfFood = 8;
+	int NumOfFood = 6;
 	int foodHeal = 4;
 	int[] CAKE_3 = {1892};
 	int[] CAKE_2 = {1894};
@@ -55,9 +55,10 @@ public class potoMasterThiever2 extends ScriptBase{
 	
 	int STUN_ANIMATION = 424;
 	int STEAL_ANIMATION = 881;
+
+    Utilities utilities;
 	
 	public Npc farmer;
-    Utilities utilities;
 	
 	boolean foodAvailable = true;
 	
@@ -264,13 +265,13 @@ public class potoMasterThiever2 extends ScriptBase{
 		public void execute() {
 			if(Utils.random(1, 10) == 4){
 				camera.rotateToActor(farmer);
-				mouse.move(Utils.random(100, 500), Utils.random(100, 500));
+				//mouse.move(Utils.random(100, 500), Utils.random(100, 500));
 			}
 			status = "Stealing from Farmer";
+
             utilities.interact(farmer,"Pickpocket");
-			sleep(Utils.random(100, 300));
+			sleep(Utils.random(100, 200));
 			health = players.getLocalPlayer().getHealth();
-			status = "Checking Stun";
 			}
 	}
 
@@ -343,8 +344,9 @@ public class potoMasterThiever2 extends ScriptBase{
 	@Override
 	public boolean init() {
 		//submit(new TestCastle());
-		new RandomHandler(BANK_TILE,Skills.HITPOINTS,this);
-		submit(new Heal());
+		//new RandomHandler(BANK_TILE,Skills.HITPOINTS,this);
+		utilities = new Utilities(getContext());
+        submit(new Heal());
 		submit(new GetFarmer());
 		submit(new PickpocketFarmer());
 		//submit(new DropTrash());		
