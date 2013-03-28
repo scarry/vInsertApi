@@ -389,7 +389,7 @@ public class FightCave extends ScriptBase{
         		g.drawString("null", point[0], point[1]+=height);
 
         	if (ScriptBase.getActiveNode() != null)
-        		g.drawString("Node: " + ScriptBase.getActiveNode().toString(), point[0], point[1]+=height);
+        		g.drawString((String.format("%s", "Node: " + ScriptBase.getActiveNode().toString())), point[0], point[1]+=height);
         	g.drawString("caveCenterSet: " + String.valueOf(isCaveCenterSet()), point[0], point[1] += height);
         	g.drawString("isInCave: " + String.valueOf(isInCave()), point[0], point[1] += height);
         	g.drawString("enemyLoaded: " + String.valueOf(isEnemyLoaded()), point[0], point[1] += height);

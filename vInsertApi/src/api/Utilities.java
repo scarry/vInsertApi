@@ -83,6 +83,44 @@ public class Utilities {
 		mouse.click(point.x, point.y);
 		return false;
 	}
+
+    /**
+     * Creates a path between src and dest tiles.
+     * @param src
+     * 		The start tile of the path.
+     * @param dest
+     * 		The destination tile of the path.
+     * @param distance
+     * 		The desired distance between path tiles.
+     * @return
+     * 		The created path.
+     */
+    public Path createPath(Tile src, Tile dest, int distance) {
+        if (!(distance > 0) || src == null || dest == null)
+            return null;
+
+        int totalDistance = src.distanceTo(dest);
+        int numberOfTiles = totalDistance / distance;
+
+        Tile[] pathTiles = new Tile[numberOfTiles + 1];
+
+        int srcX = src.getX();
+        int srcY = src.getY();
+
+        int deltaX = dest.getX() - srcX;
+        int deltaY = dest.getY() - srcY;
+
+        int adjustX = deltaX / numberOfTiles;
+        int adjustY = deltaY / numberOfTiles;
+
+        pathTiles[0] = src;
+        pathTiles[pathTiles.length - 1] = dest;
+        for (int i = 1; i < pathTiles.length - 1; i++) {
+            pathTiles[i] = new Tile(srcX + adjustX, srcY + adjustY);
+        }
+
+        return new Path(pathTiles, this.context);
+    }
 	
 	public void interact(Actor actor, String action) {
 		if (actor == null)
