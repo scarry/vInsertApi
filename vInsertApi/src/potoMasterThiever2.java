@@ -150,7 +150,7 @@ public class potoMasterThiever2 extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return bank.isOpen() && inventory.freeSpace() < 28;
+			return bank.isOpen() && inventory.getCount(false, BREAD_ID) != NumOfFood && !inventory.isEmpty();
 		}
 
 		@Override
@@ -166,7 +166,7 @@ public class potoMasterThiever2 extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return bank.isOpen() && inventory.getCount(false, BREAD_ID) != NumOfFood;
+			return bank.isOpen() && inventory.getCount(false, BREAD_ID) != NumOfFood && inventory.isEmpty();
 		}
 
 		@Override
@@ -392,7 +392,7 @@ public class potoMasterThiever2 extends ScriptBase{
 	
 	private final Color COLOR_BLACK = new Color(0,0,0);
 	private final Color COLOR_WHITE = new Color(255,255,255);
-	private final Color COLOR_RANDOM = new Color(69,69,69);
+	private final Color COLOR_RANDOM = new Color(227, 72, 15, 238);
 	private Rectangle backgroundBox = new Rectangle(3, 341, 514, 475);
 	private final Font statusFont = new Font("Garamond", 1, 20);
 	private final Font expFont = new Font("Garamond",1,12);
@@ -461,9 +461,16 @@ public class potoMasterThiever2 extends ScriptBase{
 	    if(this.getActiveNode() != null)
 	    	g.drawString(status, 260, 460);
 	    
-	    g.setColor(COLOR_RANDOM);
+
 	    if(farmer != null){
-	     	g.fillPolygon(farmer.hull());
+            Polygon[] drawing = farmer.getModel().getPolygons();
+            g.setColor(COLOR_RANDOM);
+	     	//g.fillPolygon(farmer.hull());
+            for(Polygon i : drawing)
+                g.fillPolygon(i);
+            g.setColor(COLOR_BLACK);
+            g.drawPolygon(farmer.hull());
+
 		//}
 		
 		/*
