@@ -12,19 +12,20 @@ import org.vinsert.bot.util.Utils;
 import api.Node;
 import api.ScriptBase;
 
-@ScriptManifest(name = "potoCakeThief", authors = { "potofreak" }, description = "Power thieves cake stall", version = 0.1)
+@ScriptManifest(name = "potoCakeThief", authors = { "potofreak" }, description = "Power thieves cake stall", version = 0.2)
 
 public class potoCakeThief extends ScriptBase{
 
 	
-	public static Tile CAKE_TILE =  	new Tile(2657, 3312);
-	public static Tile SAFE_TILE =  	new Tile(2671, 3306);
+	public static Tile CAKE_TILE =  	new Tile(2658, 3312);
+	public static Tile SAFE_TILE =  	new Tile(2650, 3306);
 	public static int[] STALL_ID = 		{2561};
-	int[] CAKE_3 = 						{1892};
-	int[] CAKE_2 = 						{1894};
-	int[] CAKE_1 = 						{1896};
-	int[] CHOCOLATE_CAKE_ID = 			{1902};
-	int[] BREAD_ID = 					{2310};
+	int CAKE_3 = 						1892;
+	int CAKE_2 = 						1894;
+	int CAKE_1 = 						1896;
+	int CHOCOLATE_CAKE_ID = 			1902;
+	int BREAD_ID = 						2310;
+	int[] FOOD_ID = 					{CAKE_3,CAKE_2,CAKE_1,BREAD_ID,CHOCOLATE_CAKE_ID};
 	public int health;
 	
 	public class StealFromStall extends Node{
@@ -34,7 +35,8 @@ public class potoCakeThief extends ScriptBase{
 			return localPlayer.getLocation().distanceTo(CAKE_TILE) <= 2 && 
 					objects.getNearest(Filters.objectId(STALL_ID)) != null &&
 					!localPlayer.isInCombat() && 
-					localPlayer.getLocation().getX() > 2656;
+					localPlayer.getLocation().getX() > 2656 &&
+					!inventory.isFull();
  		}
 
 		@Override
@@ -42,7 +44,7 @@ public class potoCakeThief extends ScriptBase{
 			GameObject stall = objects.getNearest(Filters.objectId(STALL_ID));
 			if(stall != null){
 				stall.interact("Steal-from");
-				sleep(200, 400);
+				//sleep(50, 100);
 			}
 			
 		}
@@ -95,20 +97,15 @@ public class potoCakeThief extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return localPlayer.getLocation().distanceTo(CAKE_TILE) <= 2 && 
-					objects.getNearest(Filters.objectId(STALL_ID)) == null &&
-					!localPlayer.isInCombat(); 
+			return !localPlayer.isInCombat() && inventory.isFull(); 
 		}
 
 		@Override
 		public void execute() {
-			for(int i = 1; i < 28; i++){
-				Item drop = inventory.getItem(i);
-				if(drop != null){
-					int slot = inventory.indexOf(drop);
-					inventory.interact(slot, "Drop");
-					break;
-				}
+			Item drop = inventory.getItem(FOOD_ID);
+			if(drop != null){
+				int slot = inventory.indexOf(drop);
+				inventory.interact(slot, "Drop");
 			}
 			sleep(200, 400);			
 		}
@@ -119,64 +116,26 @@ public class potoCakeThief extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return  health < 8 && 
-					(inventory.getCount(false, CAKE_1) > 0 ||
-					 inventory.getCount(false, CAKE_2) > 0 ||
-					 inventory.getCount(false, CAKE_3) > 0 ||
-					 inventory.getCount(false, CHOCOLATE_CAKE_ID) > 0 ||
-					 inventory.getCount(false, BREAD_ID) > 0) &&
-					 localPlayer.getLocation().distanceTo(SAFE_TILE) < 4;			
+			return health < 8 && 
+					inventory.getItem(FOOD_ID) != null && 
+					localPlayer.getLocation().distanceTo(SAFE_TILE) < 6 &&
+					!localPlayer.isInCombat();
 		}
 
 		@Override
 		public void execute() {
 			Item food;
-			if(inventory.getCount(false, CHOCOLATE_CAKE_ID) > 0){
-				food = inventory.getItem(CHOCOLATE_CAKE_ID);
+			if(inventory.getItem(FOOD_ID) != null){
+				food = inventory.getItem(FOOD_ID);
 				int slot = inventory.indexOf(food);
 				Point pFood = inventory.getClickPoint(slot);
 				mouse.click(pFood.x, pFood.y);
 				sleep(Utils.random(900, 1400));
 			}
-			else if(inventory.getCount(false, BREAD_ID) > 0){
-				food = inventory.getItem(BREAD_ID);
-				if(food != null){
-					int slot = inventory.indexOf(food);
-					Point pFood = inventory.getClickPoint(slot);
-					mouse.click(pFood.x, pFood.y);
-					sleep(Utils.random(900, 1400));
-				}
-			}
-			else if(inventory.getCount(false, CAKE_3) > 0){
-				food = inventory.getItem(CAKE_3);
-				if(food != null){
-					int slot = inventory.indexOf(food);
-					Point pFood = inventory.getClickPoint(slot);
-					mouse.click(pFood.x, pFood.y);
-					sleep(Utils.random(900, 1400));
-				}
-			}
-			else if(inventory.getCount(false, CAKE_2) > 0){
-				food = inventory.getItem(CAKE_2);
-				if(food != null){
-					int slot = inventory.indexOf(food);
-					Point pFood = inventory.getClickPoint(slot);
-					mouse.click(pFood.x, pFood.y);
-					sleep(Utils.random(900, 1400));
-				}
-			}
-			else if(inventory.getCount(false, CAKE_1) > 0){
-				food = inventory.getItem(CAKE_1);
-				if(food != null){
-					int slot = inventory.indexOf(food);
-					Point pFood = inventory.getClickPoint(slot);
-					mouse.click(pFood.x, pFood.y);
-					sleep(Utils.random(900, 1400));
-				}
-			}
 			health = players.getLocalPlayer().getHealth();
-			}	
 		}
+	}
+
 	
 	@Override
 	public boolean init() {
@@ -184,6 +143,7 @@ public class potoCakeThief extends ScriptBase{
 		submit(new RunToSafeSpot());
 		submit(new RunToStall());
 		submit(new MakeRoom());
+		submit(new Heal());
 		return true;
 	}
 
