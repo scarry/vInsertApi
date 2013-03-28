@@ -2,6 +2,7 @@ package api;
 
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.vinsert.bot.script.ScriptContext;
@@ -51,11 +52,7 @@ public class Path {
  
 	public Path(final Tile[] tiles, TraversableObject[] objects, ScriptContext context) {
 		this.tiles = tiles;
-		
-		this.reverseTiles = new Tile[this.tiles.length];
-		for (int i = 0; i < this.tiles.length; i++) {
-			this.reverseTiles[i] = this.tiles[this.tiles.length - 1 - i];
-		}
+		this.reverseTiles = reverseTiles(tiles);
 		
 		if (objects.length == 0)
 			this.objects = null;
@@ -70,6 +67,37 @@ public class Path {
 	public Path(final Tile[] tiles, ScriptContext context) {
 		this(tiles, new TraversableObject[] {}, context);
 	}
+
+    private Tile[] reverseTiles(final Tile[] tiles) {
+        Tile[] reverse = new Tile[this.tiles.length];
+        for (int i = 0; i < this.tiles.length; i++) {
+            reverse[i] = this.tiles[this.tiles.length - 1 - i];
+        }
+        return reverse;
+    }
+
+    public Path(ScriptContext context, final Path ... paths) {
+        ArrayList<Tile> tiles = new ArrayList<>();
+        ArrayList<TraversableObject> traversableObjects = new ArrayList<>();
+        for (Path p : paths) {
+            for (Tile t : p.tiles) {
+                tiles.add(t);
+            }
+            for (TraversableObject object : p.objects) {
+                traversableObjects.add(object);
+            }
+        }
+
+        this.tiles = tiles.toArray(new Tile[tiles.size()]);
+        this.reverseTiles = reverseTiles(this.tiles);
+        if (traversableObjects.isEmpty())
+            this.objects = null;
+        else
+            this.objects = traversableObjects.toArray(new TraversableObject[traversableObjects.size()]);
+        this.context = context;
+        this.utilities = new Utilities(context);
+        this.localPlayer = context.players.getLocalPlayer();
+    }
 
 	public Tile getStart(boolean forward) {
 		if (forward && tiles.length > 0)

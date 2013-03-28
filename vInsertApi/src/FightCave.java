@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 
+import api.*;
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.GameObject;
 import org.vinsert.bot.script.api.Npc;
@@ -26,12 +27,6 @@ import org.vinsert.bot.script.api.Tile;
 import org.vinsert.bot.script.api.generic.Filters;
 import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
 import org.vinsert.bot.script.api.tools.Skills;
-
-import api.Node;
-import api.ScriptBase;
-import api.SkillData;
-import api.Timer;
-import api.Utilities;
 
 
 @ScriptManifest(name = "FightCave", authors = {"Fortruce"}, description = "Fight Cave Bottt", version = 1.0)
@@ -64,6 +59,11 @@ public class FightCave extends ScriptBase{
 	 * Center of the fight cave
 	 */
 	private static Tile fightCaveCenter = null;
+    private static Tile fightCaveTopLeft = null;
+    private static Tile fightcaveTopRight = null;
+    private static Tile fightCaveBotLeft = null;
+    private static Tile fightCaveBotRight = null;
+    private static Path fightCaveIdlePath;
 	private static int bankTokkulEvery;
 	public static int skillToTrain;
 	private Utilities utilities;
@@ -264,10 +264,35 @@ public class FightCave extends ScriptBase{
 		public void execute() {
 			log("setting cave center");
 			GameObject exit = objects.getNearest(Filters.objectId(EXIT_ID));
-			if (exit != null)
-				fightCaveCenter = new Tile(exit.getLocation().getX() + CENTER_X_OFFSET, exit.getLocation().getY() + CENTER_Y_OFFSET);
+			if (exit != null) {
+                int centerX = exit.getLocation().getX() + CENTER_X_OFFSET;
+                int centerY = exit.getLocation().getY() + CENTER_Y_OFFSET;
+                fightCaveCenter = new Tile(centerX, centerY);
+                fightCaveBotLeft = new Tile(centerX - 11, centerY - 14);
+                fightCaveBotRight = new Tile(centerX + 10, centerY - 6);
+                fightCaveTopLeft = new Tile(centerX - 10, centerY + 10);
+                fightcaveTopRight = new Tile(centerX + 6, centerY + 12);
+
+                //create idle path (for when enemy is attacking but not loaded
+                utilities.createPath(5, fightCaveCenter, fightCaveTopLeft, fightcaveTopRight, fightCaveBotRight, fightCaveBotLeft);
+            }
 		}
 	}
+
+    public class FindEnemy extends Node {
+
+        @Override
+        public boolean activate() {
+            if (isInCave() && !isEnemyLoaded() && fightCaveCenter != null && isInCombat())
+                return true;
+            return false;
+        }
+
+        @Override
+        public void execute() {
+
+        }
+    }
 
 	public class WalkToEnemy extends Node {
 		
@@ -430,12 +455,17 @@ public class FightCave extends ScriptBase{
 
 		private void startButtonClicked(ActionEvent e) {
 			String skillString = cbAttackSkill.getSelectedItem().toString();
-			if (skillString.equals("Attack"))
-				skillToTrain = Skills.ATTACK;
-			else if (skillString.equals("Strength"))
-				skillToTrain = Skills.STRENGTH;
-			else if (skillString.equals("Defense"))
-				skillToTrain = Skills.DEFENSE;
+            switch (skillString) {
+                case "Attack":
+                    skillToTrain = Skills.ATTACK;
+                    break;
+                case "Strength":
+                    skillToTrain = Skills.STRENGTH;
+                    break;
+                case "Defense":
+                    skillToTrain = Skills.DEFENSE;
+                    break;
+            }
 			bankTokkulEvery = Integer.parseInt(tfBankEvery.getText());
 
 			guiWait = false;

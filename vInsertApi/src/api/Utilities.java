@@ -1,6 +1,7 @@
 package api;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
 import org.vinsert.bot.Bot;
 import org.vinsert.bot.script.ScriptContext;
@@ -95,7 +96,7 @@ public class Utilities {
      * @return
      * 		The created path.
      */
-    public Path createPath(Tile src, Tile dest, int distance) {
+    private Path createPath(Tile src, Tile dest, int distance) {
         if (!(distance > 0) || src == null || dest == null)
             return null;
 
@@ -115,11 +116,18 @@ public class Utilities {
 
         pathTiles[0] = src;
         pathTiles[pathTiles.length - 1] = dest;
-        for (int i = 1; i < pathTiles.length - 1; i++) {
-            pathTiles[i] = new Tile(srcX + adjustX, srcY + adjustY);
-        }
+        for (int i = 1; i < pathTiles.length - 1; i++)
+            pathTiles[i] = new Tile(srcX + (adjustX * i), srcY + (adjustY * i));
 
         return new Path(pathTiles, this.context);
+    }
+
+    public Path createPath(int distance, Tile ... tiles) {
+        ArrayList<Path> paths = new ArrayList<>();
+        for (int i = 0; i < tiles.length - 1; i++) {
+            paths.add(createPath(tiles[i], tiles[i+1], distance));
+        }
+        return new Path(this.context, paths.toArray(new Path[paths.size()]));
     }
 	
 	public void interact(Actor actor, String action) {
