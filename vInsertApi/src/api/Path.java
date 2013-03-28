@@ -20,7 +20,6 @@ public class Path {
 	private final Tile[] reverseTiles;
 	
 	private final TraversableObject[] objects;
-	private Path reversed;
 	private ScriptContext context;
 	private Utilities utilities;
 	private Player localPlayer;
@@ -72,172 +71,128 @@ public class Path {
 		this(tiles, new TraversableObject[] {}, context);
 	}
 
-	public Tile getStart() {
-		return tiles[0];
-	}
- 
-	public Tile getEnd() {
-		return tiles[tiles.length - 1];
+	public Tile getStart(boolean forward) {
+		if (forward && tiles.length > 0)
+			return tiles[0];
+		else if (reverseTiles.length > 0)
+			return reverseTiles[0];
+		return null;
 	}
  
 	/**
-	 * Traverses the path. This method must be looped.
+	 * Gets the last tile in the path.
+	 * @param forward
+	 * 		True for last tile in forward direction, False for last tile in reversed direction.
+	 * @return
+	 * 		Last tile in path
 	 */
-	public void traverse(Direction direction) {
-		traverse(direction, true);
+	public Tile getEnd(boolean forward) {
+		if (forward && tiles.length > 0)
+			return tiles[tiles.length - 1];
+		else if (reverseTiles.length > 0)
+			return reverseTiles[reverseTiles.length - 1];
+		return null;
 	}
  
-	public void traverse(Direction direction, final boolean run) {
-		final Tile next = next();
-		traverse(next, direction, run);
-	}
-	
-	public void traverse(Direction direction, final boolean run, int deviation) {
-		final Tile next = next();
-		traverse(next, direction, run, deviation);
-	}
-
 	/**
-	 * Traverses a path walking thru objects (doors, ladders, caves) that are identified.
-	 * @param objects
-	 * 		Array of TraversableObjects to be walked through.
-	 * @param direction
-	 * 		The direction relative to the path that the object should be traversed (forward if you would call
-	 * 		with path, reverse if you would call with path.reverse, or both)
+	 * Traverses path in specified direction.
+	 * @param forward
+	 * 		Direction to traverse the path.
+	 */
+	public void traverse(boolean forward) {
+		traverse(forward, true);
+	}
+ 
+	/**
+	 * Traverses the path in specified direction.
+	 * @param forward
+	 * 		Direction to traverse the path.
 	 * @param run
-	 * 		Toggle run on/off
-	 * @param force
-	 * 		Force a closer distance check for destination.
+	 * 		Toggle run.
 	 */
-//	public void traverseObjects(TraversableObject[] objects, final Direction direction, final boolean run, final boolean force) {
-//		final Tile next = next();
-//
-//		for (int i = 0; i < objects.length; i++) {
-//			GameObject object = Objects.getNearest(objects[i].objectId);
-//			if(object != null && object.getLocation().equals(objects[i].location) 
-//					&& Game.getPlane() == objects[i].plane &&
-//					(objects[i].direction == direction || objects[i].direction == Direction.BOTH)) {
-//				if (object.isVisible()) {
-//				//found matching object
-//				Methods.log("Found matching object -- interacting");
-//				//traverse thru object
-//				object.interact(objects[i].interaction);
-//				}
-//				else {
-//					log("walking to object");
-//					Walking.walkTo(objects[i].location);
-//					ExConditions.waitFor(new ExConditions.isObjectVisible(objects[i].objectId), 2000);
-//				}
-//			}
-//			else
-//				traverse(next, run, force);
-//		}
-//	}
+	public void traverse(boolean forward, final boolean run) {
+		final Tile next = next(forward);
+		traverse(next, forward, run, 3);
+	}
 	
-	private void traverse(final Tile next, Direction direction, final boolean run, int deviation) {
-//		log("in traverse");
+	/**
+	 * Traverses path in specified direction.
+	 * @param forward
+	 * 		Direction to traverse the path.
+	 * @param run
+	 * 		Toggle run.
+	 * @param deviation
+	 * 		Amount of deviation.
+	 */
+	public void traverse(boolean forward, final boolean run, int deviation) {
+		final Tile next = next(forward);
+		traverse(next, forward, run, deviation);
+	}
+	
+	private boolean directionCheck(Direction direction, boolean forward) {
+		if (direction == Direction.BOTH)
+			return true;
+		if (direction == Direction.FORWARD && forward)
+			return true;
+		if (direction == Direction.REVERSE && !forward)
+			return true;
+		return false;
+	}
+	
+	private void traverse(final Tile next, boolean forward, final boolean run, int deviation) {
 		boolean traversingObject = false;
 		if (objects != null) {
-			log("objects not null");
 			for (TraversableObject obj : objects) {
 				GameObject gameObj = context.objects.getNearest(Filters.objectId(obj.objectId));
 				if (gameObj != null && gameObj.getLocation().equals(obj.location) &&
 						context.getClient().getPlane() == obj.plane &&
-						(obj.direction == direction || obj.direction == Direction.BOTH)) {
+						directionCheck(obj.direction, forward)) {
 					//found obj - traverse
-					log("traversing object");
 					traversingObject = true;
 					if (context.camera.isVisible(gameObj)) {
-						log("found object " + obj.toString() + " traversing...");
 						gameObj.interact(obj.interaction);
 						Utils.sleep(Utils.random(1000, 1500));
 					} else {
-						log("walking to " + obj.toString() + "...");
 						context.navigation.navigate(gameObj.getLocation(), NavigationPolicy.MINIMAP);
 						Utils.sleep(Utils.random(1000, 1500));
 					}
 				}
 			}
 		}
-//		log(String.format("%d", context.game.getGameState().id()));
-//		if (next == null) log("ERROR: next == null");
-//		if (next.distanceTo(this.getEnd()) > 3) log("distance to end true");
-//		else log("distance to end false");
-//		if (!traversingObject) log("not traversing object");
-//		else log("traversing object");
 		if (context.game.getGameState().id() == 30
-				&& next != null && !isAtEnd(next, deviation)
-//				&& next.distanceTo(this.getEnd())> 3
+				&& next != null && !isAtEnd(next, deviation, forward)
 				&& !traversingObject) { //TODO check the this.getEnd()
-//			log("walking");
 			if (run) {
-				//Keyboard.pressKey(KeyEvent.VK_CONTROL);
 				context.keyboard.press(KeyEvent.VK_CONTROL);
 				Utils.sleep(Utils.random(80, 150));
 			}
 			context.navigation.navigate(next, NavigationPolicy.MINIMAP);
 			if (run) {
-				//Keyboard.releaseKey(KeyEvent.VK_CONTROL,Random.nextInt(80, 150));
 				context.keyboard.press(KeyEvent.VK_CONTROL);
 				Utils.sleep(Utils.random(1000, 2000));
 			}
 		}
 	}
- 
-	/**
-	 * Walks one step in path.
-	 * @param run
-	 * 			Toggle run on off.
-	 * @param force
-	 * 			Toggle close distance check for end checking.
-	 */
 
-	/**
-	 * Walks one step in the path.
-	 *
-	 * @param next
-	 *            The next <code>Tile</code>
-	 */
-
-	private void traverse(final Tile next, Direction direction, final boolean run) {
-		traverse(next, direction, run, 3);
-	}
-
-	private boolean isAtEnd(Tile next, int deviation) {
+	private boolean isAtEnd(Tile next, int deviation, boolean forward) {
 		return localPlayer.getLocation().distanceTo(next) < deviation
-				|| localPlayer.getLocation().distanceTo(this.getEnd()) < deviation; //TODO check getEnd()
+				|| localPlayer.getLocation().distanceTo(this.getEnd(forward)) < deviation; //TODO check getEnd()
 	}
- 
-	/**
-	 * @return The next walkable <code>Tile</code> on the minimap.
-	 */
-	private Tile next() {
-		log("getting next");
-		for (int i = tiles.length - 1; i >= 0; --i) {
-			if (utilities.isOnMinimap(tiles[i])) { //TODO add isWalkable check
-				log("found next");
-				return tiles[i];
+	
+	private Tile next(boolean forward) {
+		Tile[] temp;
+		if (forward)
+			temp = tiles;		
+		else
+			temp = reverseTiles;
+
+		for (int i = temp.length - 1; i >= 0; --i) {
+			if (utilities.isOnMinimap(temp[i])) { //TODO add isWalkable check
+				return temp[i];
 			}
 		}
-		log("didn't find next");
 		return null;
 	}
- 
-//	/**
-//	 * Lazily reverses this <code>TilePath</code>.
-//	 *
-//	 * @return The reversed <code>TilePath</code>
-//	 */
-//	public Path reverse() {
-//		if (reversed == null) {
-//			Tile[] reversedTiles = new Tile[tiles.length];
-//			for (int i = tiles.length - 1; i >= 0; i--) {
-//				reversedTiles[tiles.length - 1 - i] = tiles[i];
-//			}
-//			reversed = new Path(reversedTiles, this.context);
-//		}
-//		return reversed;
-//	}
  
 	@Override
 	public String toString() {

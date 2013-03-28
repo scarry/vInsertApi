@@ -10,32 +10,26 @@ import api.Node;
 import api.Path;
 import api.ScriptBase;
 import api.Timer;
-import api.Path.TraversableObject.Direction;
 
 
 @ScriptManifest(authors = { "Fortruce" }, name = "Path Tester")
 public class PathTester extends ScriptBase {
 
-	Area fishingGuildArea = new Area(new Tile[] { new Tile(2589, 3397), new Tile(2594, 3397), new Tile(2599, 3397), 
-			new Tile(2604, 3397), new Tile(2609, 3397), new Tile(2614, 3397), 
-			new Tile(2619, 3397), new Tile(2624, 3397), new Tile(2624, 3384), 
-			new Tile(2588, 3384), new Tile(2588, 3397), new Tile(2594, 3397) });
+	Area fishingGuildArea = new Area(new Tile[] { new Tile(2598, 3394), new Tile(2618, 3394), new Tile(2618, 3382), 
+			new Tile(2598, 3382) });
 
-	Area ardyArea = new Area(new Tile[] { new Tile(2602, 3300), new Tile(2602, 3292), new Tile(2608, 3292), 
-			new Tile(2608, 3300) });
+	Area ardyArea = new Area(new Tile[] { new Tile(2602, 3302), new Tile(2602, 3292), new Tile(2610, 3292), 
+			new Tile(2610, 3302) });
 
-	Tile[] fishToArdyPathTiles = new Tile[] { new Tile(2608, 3394), new Tile(2609, 3389), new Tile(2610, 3384), 
-			new Tile(2611, 3379), new Tile(2611, 3374), new Tile(2611, 3370), 
-			new Tile(2611, 3365), new Tile(2612, 3360), new Tile(2612, 3355), 
-			new Tile(2612, 3350), new Tile(2612, 3345), new Tile(2612, 3340), 
-			new Tile(2608, 3338), new Tile(2606, 3334), new Tile(2606, 3330), 
-			new Tile(2607, 3325), new Tile(2607, 3320), new Tile(2606, 3315), 
-			new Tile(2606, 3310), new Tile(2606, 3306), new Tile(2606, 3301), 
-			new Tile(2606, 3296), new Tile(2607, 3296), new Tile(2607, 3297), 
-			new Tile(2606, 3297) };
+	Tile[] fishToArdyPathTiles = new Tile[] { new Tile(2609, 3392), new Tile(2609, 3387), new Tile(2609, 3382), 
+			new Tile(2611, 3377), new Tile(2613, 3372), new Tile(2614, 3367), 
+			new Tile(2613, 3362), new Tile(2613, 3357), new Tile(2612, 3352), 
+			new Tile(2612, 3347), new Tile(2612, 3342), new Tile(2610, 3339), 
+			new Tile(2608, 3336), new Tile(2607, 3332), new Tile(2607, 3327), 
+			new Tile(2607, 3322), new Tile(2607, 3317), new Tile(2606, 3312), 
+			new Tile(2606, 3307), new Tile(2607, 3302), new Tile(2607, 3297) };
 	
 	Path fishToArdyPath;
-	Path ardyToFishPath;
 	boolean walkingToFish = false;
 	boolean walkingToBank = false;
 	
@@ -71,7 +65,7 @@ public class PathTester extends ScriptBase {
 		@Override
 		public void execute() {
 			log("traversing");
-			fishToArdyPath.traverse(Direction.FORWARD);
+			fishToArdyPath.traverse(true);
 			sleep(1000, 2000);
 		}
 		
@@ -92,7 +86,7 @@ public class PathTester extends ScriptBase {
 		@Override
 		public void execute() {
 			log("traversing");
-			ardyToFishPath.traverse(Direction.FORWARD);
+			fishToArdyPath.traverse(false);
 			sleep(1000, 2000);
 		}
 		
@@ -103,7 +97,6 @@ public class PathTester extends ScriptBase {
 		// TODO Auto-generated method stub
 		
 		fishToArdyPath = new Path(fishToArdyPathTiles, getContext());
-		ardyToFishPath = fishToArdyPath.reverse();
 		
 		submit(new WalkToFish());
 		submit(new WalkToArdy());

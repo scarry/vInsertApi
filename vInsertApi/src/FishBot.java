@@ -20,10 +20,12 @@ import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
 import org.vinsert.bot.util.Filter;
 import org.vinsert.bot.util.Utils;
 
+import api.ScriptBase;
 import api.Timer;
+import api.Node;
 
 @ScriptManifest(name = "FishBot", authors = {"Fortruce"}, description = "fishing bot", version = 1.0)
-public class FishBot extends StatefulScript<FishBot.ScriptState> {
+public class FishBot extends ScriptBase {
 
 	/**
 	 * Animation Ids
@@ -102,8 +104,6 @@ public class FishBot extends StatefulScript<FishBot.ScriptState> {
 			new Tile(2591, 3416),
 			new Tile(2595, 3414)
 			);
-	private Path bankPath = fishPath.reverse();
-	
 	private Timer lastFishTimer = new Timer(0);
 	
 	private boolean needToBank() {
@@ -123,11 +123,9 @@ public class FishBot extends StatefulScript<FishBot.ScriptState> {
 			return false;
 		return true;
 	}
-	
 	private boolean isAtBank() {
 		return bankArea.contains(localPlayer);
 	}
-	
 	private boolean isFishLoaded() {
 		Npc fish = npcs.getNearest(localPlayer.getLocation(), new Filter<Npc>() {
 			@Override
@@ -143,7 +141,6 @@ public class FishBot extends StatefulScript<FishBot.ScriptState> {
 			return true;
 		return false;
 	}
-	
 	private boolean isFishClose() {
 		Npc fish = npcs.getNearest(localPlayer.getLocation(), new Filter<Npc>() {
 			@Override
@@ -159,19 +156,16 @@ public class FishBot extends StatefulScript<FishBot.ScriptState> {
 			return true;
 		return false;
 	}
-	
 	private boolean canFish() {
 		if (!needEquipment() && !inventory.isFull())
 			return true;
 		return false;
 	}
-	
 	private boolean isFishing() {
 		if (FISH_ANIMATION_IDS.contains(localPlayer.getAnimation()))
 			return true;
 		return false;
 	}
-	
 	private boolean needToDeposit() {
 		if (inventory.isFull() || (bank.isOpen() && inventory.contains(new Filter<Item>() {
 			@Override
@@ -184,13 +178,11 @@ public class FishBot extends StatefulScript<FishBot.ScriptState> {
 			return true;
 		return false;
 	}
-	
 	private boolean needToWithdraw() {
 		if (needEquipment())
 			return true;
 		return false;
 	}
-	
 	private boolean actionsContain(GameObject object, String action) {
 		Point point = object.hullPoint(object.hull());
 		mouse.move(point.x, point.y);
@@ -200,140 +192,233 @@ public class FishBot extends StatefulScript<FishBot.ScriptState> {
 		else return true;
 	}
 	
-	@Override
-	public ScriptState determine() {
-		Player player = localPlayer;
-		
-		if (needToBank() && !isAtBank())
-			return ScriptState.WALK_TO_BANK;
-		else if (!isFishLoaded() && canFish())
-			return ScriptState.WALK_TO_FISH;
-		else if ((isFishLoaded() && !isFishClose()) && canFish() && player.getInteracting() == null)
-			return ScriptState.APPROACH_FISH;
-		else if (isFishClose() && canFish() && 
-				(!isFishing() || TimeUnit.SECONDS.convert(lastFishTimer.getElapsed(), TimeUnit.MILLISECONDS) > random(75, 250)))
-			return ScriptState.FISH;
-		else if (!bank.isOpen() && isAtBank() && (needToDeposit() || needToWithdraw()))
-			return ScriptState.OPEN_BANK;
-		else if (bank.isOpen() && needToDeposit())
-			return ScriptState.DEPOSIT_BANK;
-		else if (bank.isOpen() && needToWithdraw())
-			return ScriptState.WITHDRAW_BANK;
-		else if (isFishing())
-			return ScriptState.FISHING;
-		
-		
-		return ScriptState.ERROR;
-	}
+//	@Override
+//	public ScriptState determine() {
+//		Player player = localPlayer;
+//		
+//		if (needToBank() && !isAtBank())
+//			return ScriptState.WALK_TO_BANK;
+//		else if (!isFishLoaded() && canFish())
+//			return ScriptState.WALK_TO_FISH;
+//		else if ((isFishLoaded() && !isFishClose()) && canFish() && player.getInteracting() == null)
+//			return ScriptState.APPROACH_FISH;
+//		else if (isFishClose() && canFish() && 
+//				(!isFishing() || TimeUnit.SECONDS.convert(lastFishTimer.getElapsed(), TimeUnit.MILLISECONDS) > random(75, 250)))
+//			return ScriptState.FISH;
+//		else if (!bank.isOpen() && isAtBank() && (needToDeposit() || needToWithdraw()))
+//			return ScriptState.OPEN_BANK;
+//		else if (bank.isOpen() && needToDeposit())
+//			return ScriptState.DEPOSIT_BANK;
+//		else if (bank.isOpen() && needToWithdraw())
+//			return ScriptState.WITHDRAW_BANK;
+//		else if (isFishing())
+//			return ScriptState.FISHING;
+//		
+//		
+//		return ScriptState.ERROR;
+//	}
+//	
+//	@Override
+//	public int handle(ScriptState state) {
+//		log("state: " + state.name());
+//		
+//		Npc fish;
+//		
+//		switch(state) {
+//		case WALK_TO_BANK:
+//			navigation.navigate(bankPath, 1, NavigationPolicy.MINIMAP);
+//			break;
+//			
+//		case WALK_TO_FISH:
+//			navigation.navigate(fishPath, 1, NavigationPolicy.MINIMAP);
+//			break;
+//			
+//		case APPROACH_FISH:
+//			fish = npcs.getNearest(localPlayer.getLocation(), new Filter<Npc>() {
+//				@Override
+//				public boolean accept(Npc element) {
+//					for (int id : CAGE_HARPOON_FISH_ID) {
+//						if (id == element.getId() && element.containsAction("Cage"))
+//							return true;
+//					}
+//					return false;
+//				}
+//			});
+//			if (fish != null) {
+//				 navigation.navigate(fish.getLocation(), NavigationPolicy.MINIMAP);
+//				 sleep(random(1000, 1500));
+//			}
+//			break;
+//			
+//		case FISH:
+//			fish = npcs.getNearest(localPlayer.getLocation(), new Filter<Npc>() {
+//				@Override
+//				public boolean accept(Npc element) {
+//					for (int id : CAGE_HARPOON_FISH_ID) {
+//						if (id == element.getId() && element.containsAction("Cage"))
+//							return true;
+//					}
+//					return false;
+//				}
+//			});
+//			if (fish != null) {
+//				fish.interact("Cage");
+//				lastFishTimer = new Timer(0);
+//				sleep(800, 1500);
+//			}
+//			break;
+//			
+//		case OPEN_BANK:
+//			GameObject bankStall = objects.getNearest(new Filter<GameObject>() {
+//				@Override
+//				public boolean accept(GameObject element) {
+//					return element.getId() == BANK_STALL && actionsContain(element, "Bank");
+//				}
+//			});
+//			if (bankStall != null) {
+//				log("bank found...");
+//				if (!camera.isVisible(bankStall)) {
+//					log("rotating to bank");
+//					camera.rotateToObject(bankStall);
+//					sleep(1200, 1600);
+//				}
+//				log("interacting with bank");
+//				bankStall.interact("Bank");
+//				sleep(800, 1200);
+//			}
+//			else
+//				log("bank not found");
+//			break;
+//			
+//		case DEPOSIT_BANK:
+//			bank.depositAllExcept(Filters.itemId(CAGE_ID));
+//			sleep(random(250, 350));
+//			break;
+//			
+//		case WITHDRAW_BANK:
+//			bank.withdraw(Filters.itemId(CAGE_ID), 1);
+//			sleep(random(250, 350));
+//			break;
+//			
+//		case FISHING:
+//			sleep(random(100, 200));
+//			break;
+//			
+//		case ERROR:
+//			log("Entered ERROR state - something went wrong...");
+//			break;
+//			
+//		}
+//		return random(50, 100);
+//	}
 	
-	@Override
-	public int handle(ScriptState state) {
-		log("state: " + state.name());
-		
-		Npc fish;
-		
-		switch(state) {
-		case WALK_TO_BANK:
-			navigation.navigate(bankPath, 1, NavigationPolicy.MINIMAP);
-			break;
-			
-		case WALK_TO_FISH:
-			navigation.navigate(fishPath, 1, NavigationPolicy.MINIMAP);
-			break;
-			
-		case APPROACH_FISH:
-			fish = npcs.getNearest(localPlayer.getLocation(), new Filter<Npc>() {
-				@Override
-				public boolean accept(Npc element) {
-					for (int id : CAGE_HARPOON_FISH_ID) {
-						if (id == element.getId() && element.containsAction("Cage"))
-							return true;
-					}
-					return false;
-				}
-			});
-			if (fish != null) {
-				 navigation.navigate(fish.getLocation(), NavigationPolicy.MINIMAP);
-				 sleep(random(1000, 1500));
-			}
-			break;
-			
-		case FISH:
-			fish = npcs.getNearest(localPlayer.getLocation(), new Filter<Npc>() {
-				@Override
-				public boolean accept(Npc element) {
-					for (int id : CAGE_HARPOON_FISH_ID) {
-						if (id == element.getId() && element.containsAction("Cage"))
-							return true;
-					}
-					return false;
-				}
-			});
-			if (fish != null) {
-				fish.interact("Cage");
-				lastFishTimer = new Timer(0);
-				sleep(800, 1500);
-			}
-			break;
-			
-		case OPEN_BANK:
-			GameObject bankStall = objects.getNearest(new Filter<GameObject>() {
-				@Override
-				public boolean accept(GameObject element) {
-					return element.getId() == BANK_STALL && actionsContain(element, "Bank");
-				}
-			});
-			if (bankStall != null) {
-				log("bank found...");
-				if (!camera.isVisible(bankStall)) {
-					log("rotating to bank");
-					camera.rotateToObject(bankStall);
-					sleep(1200, 1600);
-				}
-				log("interacting with bank");
-				bankStall.interact("Bank");
-				sleep(800, 1200);
-			}
-			else
-				log("bank not found");
-			break;
-			
-		case DEPOSIT_BANK:
-			bank.depositAllExcept(Filters.itemId(CAGE_ID));
-			sleep(random(250, 350));
-			break;
-			
-		case WITHDRAW_BANK:
-			bank.withdraw(Filters.itemId(CAGE_ID), 1);
-			sleep(random(250, 350));
-			break;
-			
-		case FISHING:
-			sleep(random(100, 200));
-			break;
-			
-		case ERROR:
-			log("Entered ERROR state - something went wrong...");
-			break;
+	public class OpenBank extends Node {
+		@Override
+		public boolean activate() {
+			if (!bank.isOpen() && isAtBank() && (needToDeposit() || needToWithdraw()))
+				return true;
+			return false;
+		}
+		@Override
+		public void execute() {
+			// TODO Auto-generated method stub
 			
 		}
-		return random(50, 100);
+	}
+	
+	public class DepositBank extends Node {
+		@Override
+		public boolean activate() {
+			if (bank.isOpen() && needToDeposit())
+				return true;
+			return false;
+		}
+		@Override
+		public void execute() {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	public class WithdrawBank extends Node {
+		@Override
+		public boolean activate() {
+			if (bank.isOpen() && needToWithdraw())
+				return true;
+			return false;
+		}
+		@Override
+		public void execute() {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	public class Fish extends Node {
+		@Override
+		public boolean activate() {
+			if (isFishClose() && canFish() && 
+					(!isFishing() || TimeUnit.SECONDS.convert(lastFishTimer.getElapsed(), TimeUnit.MILLISECONDS) > random(75, 250)))
+					return true;
+			return false;
+		}
+		@Override
+		public void execute() {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	public class ApproachFish extends Node {
+		@Override
+		public boolean activate() {
+			if ((isFishLoaded() && !isFishClose()) && canFish() && localPlayer.getInteracting() == null)
+				return true;
+			return false;
+		}
+		@Override
+		public void execute() {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	public class WalkToBank extends Node {
+		@Override
+		public boolean activate() {
+			if (needToBank() && !isAtBank())
+				return true;
+			return false;
+		}
+		@Override
+		public void execute() {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	public class WalkToFish extends Node {
+		@Override
+		public boolean activate() {
+			if (!isFishLoaded() && canFish())
+				return true;
+			return false;
+		}
+		@Override
+		public void execute() {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	@Override
 	public boolean init() {
-		return true;
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	@Override
-	public void close() {
-		log("FisBot finished.");
-	}
-
-	@Override
 	public void render(Graphics2D g) {
-		g.drawString("State: "+determine(), 50, 100);
-		
 		//box
         g.setColor(new Color(63, 63, 43, 200));
         g.draw3DRect(375, 5, 139, 300, true);
@@ -358,10 +443,6 @@ public class FishBot extends StatefulScript<FishBot.ScriptState> {
         g.drawString("nToDeposit: " + String.valueOf(needToDeposit()), point[0], point[1]+=height);
         g.drawString("nToWithdrw: " + String.valueOf(needToWithdraw()), point[0], point[1]+=height);
         }
-	}
-	
-	public static enum ScriptState {
-		WALK_TO_BANK, WALK_TO_FISH, APPROACH_FISH, FISH, OPEN_BANK, DEPOSIT_BANK, WITHDRAW_BANK, FISHING, ERROR
 	}
 
 }
