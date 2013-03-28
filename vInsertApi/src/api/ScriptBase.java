@@ -8,7 +8,7 @@ import org.vinsert.bot.script.Script;
 public abstract class ScriptBase extends Script {
 	
 	private static String currnode;
-	ArrayList<Node> nodes = new ArrayList<Node>();
+	ArrayList<Node> nodes = new ArrayList<>();
 	private static int ret = 50;
 	
 	public static int getReturn() {
@@ -45,7 +45,7 @@ public abstract class ScriptBase extends Script {
 					if (n.activate()) {
 						currnode = n.getClass().getSimpleName();
 						n.execute();
-						return getReturn();
+						return 0; // getReturn();
 					}
 				}
 			}

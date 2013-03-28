@@ -46,7 +46,7 @@ public class potoMasterThiever2 extends ScriptBase{
 	Tile BANK_TILE = new Tile(Utils.random(3092,3095), Utils.random(3242,3244));
 	Tile FARMER_TILE = new Tile(Utils.random(3078,3081),Utils.random(3249,3251));
 	
-	int NumOfFood = 10;
+	int NumOfFood = 8;
 	int foodHeal = 4;
 	int[] CAKE_3 = {1892};
 	int[] CAKE_2 = {1894};
@@ -56,7 +56,8 @@ public class potoMasterThiever2 extends ScriptBase{
 	int STUN_ANIMATION = 424;
 	int STEAL_ANIMATION = 881;
 	
-	public static Npc farmer;
+	public Npc farmer;
+    Utilities utilities;
 	
 	boolean foodAvailable = true;
 	
@@ -215,7 +216,7 @@ public class potoMasterThiever2 extends ScriptBase{
 					(inventory.getCount(false,CAKE_1) > 0 ||
 					 inventory.getCount(false,CAKE_2) > 0 ||
 					 inventory.getCount(false,BREAD_ID) > 0) &&
-					 localPlayer.getLocation().distanceTo(farmer.getLocation()) > 3; 
+					 !camera.isVisible(farmer);
 					 //&& !farmer.isVisible();
 		}
 
@@ -224,14 +225,13 @@ public class potoMasterThiever2 extends ScriptBase{
 			status = "walking to farmer";
 			if(Utils.random(1, 6) == 3)
 				camera.rotateToTile(farmer.getLocation());
-			if(localPlayer.getLocation().distanceTo(farmer.getLocation()) > 3){
+			if(localPlayer.getLocation().distanceTo(farmer.getLocation()) > 1){
 				navigation.navigate(farmer.getLocation(),NavigationPolicy.MINIMAP);
 				sleep(Utils.random(300, 500));
 				}
 		}
 	}
 	
-
 
 	public class MoveMouseRandom extends Node{
 
@@ -255,7 +255,8 @@ public class potoMasterThiever2 extends ScriptBase{
 			return farmer != null && health >= 7 && 
 					(inventory.getCount(false,CAKE_1) > 0 || 
 						inventory.getCount(false,CAKE_2) > 0 || 
-						inventory.getCount(false,BREAD_ID) > 0);
+						inventory.getCount(false,BREAD_ID) > 0) &&
+                    camera.isVisible(farmer);
 						//&& farmer.isVisible();
 		}
 
@@ -266,7 +267,7 @@ public class potoMasterThiever2 extends ScriptBase{
 				mouse.move(Utils.random(100, 500), Utils.random(100, 500));
 			}
 			status = "Stealing from Farmer";
-			farmer.interact("Pickpocket");
+            utilities.interact(farmer,"Pickpocket");
 			sleep(Utils.random(100, 300));
 			health = players.getLocalPlayer().getHealth();
 			status = "Checking Stun";
@@ -353,7 +354,7 @@ public class potoMasterThiever2 extends ScriptBase{
 		submit(new WithdrawFood());
 		submit(new WalkToFarmerTile());
 		submit(new WalkToFarmer());
-		submit(new MoveMouseRandom());
+		//submit(new MoveMouseRandom());
 		//submit(new CheckStun());
 		return true;
 	}
@@ -389,7 +390,7 @@ public class potoMasterThiever2 extends ScriptBase{
 	
 	private final Color COLOR_BLACK = new Color(0,0,0);
 	private final Color COLOR_WHITE = new Color(255,255,255);
-	private final Color COLOR_RANDOM = new Color(69,69,69,25);
+	private final Color COLOR_RANDOM = new Color(69,69,69);
 	private Rectangle backgroundBox = new Rectangle(3, 341, 514, 475);
 	private final Font statusFont = new Font("Garamond", 1, 20);
 	private final Font expFont = new Font("Garamond",1,12);
@@ -442,6 +443,7 @@ public class potoMasterThiever2 extends ScriptBase{
         g.drawString("WithdrawFood: " + new WithdrawFood().activate(),13,225);
         g.drawString("WalkToFarmerTile: " + new WalkToFarmerTile().activate(),13,240);
         g.drawString("WalkToFarmer: " + new WalkToFarmer().activate(),13,255);
+        g.drawString("Farmer visible: " + camera.isVisible(farmer), 13, 270);
 
 	    g.drawString("Health:" + health, 13, 365);
 	    g.drawString("Animation: " + players.getLocalPlayer().getAnimation(), 13, 385);
