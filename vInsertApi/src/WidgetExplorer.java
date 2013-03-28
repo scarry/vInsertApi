@@ -134,8 +134,18 @@ public class WidgetExplorer extends ScriptBase {
 	}
 	
 	public static void paintWidget(Widget w) {
-		if (w != null)
-			WidgetExplorer.drawWidget = new Rectangle(w.getX(), w.getY(), w.getWidth(), w.getHeight());
+		if (w != null) {
+			int x, y;
+			Widget parent = w.getParent();
+			if (parent != null) {
+				x = parent.getBounds().x + w.getBounds().x;
+				y = parent.getBounds().y + w.getBounds().y;
+			} else {
+				x = w.getBounds().x;
+				y = w.getBounds().y;
+			}
+			WidgetExplorer.drawWidget = new Rectangle(x, y, w.getWidth(), w.getHeight());
+		}
 	}
 	
 
@@ -197,9 +207,11 @@ public class WidgetExplorer extends ScriptBase {
 		private void widgetTreeValueChanged(TreeSelectionEvent e) {
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) widgetTree.getLastSelectedPathComponent();
 			if (selectedNode.isLeaf()) {
-				widgetInfo.setText(widgetToString(((WidgetWrapper)selectedNode.getUserObject()).widget));
-				log("setting new paint rectangle");
-				WidgetExplorer.paintWidget(((WidgetWrapper)selectedNode.getUserObject()).widget);
+				Widget wid = ((WidgetWrapper)selectedNode.getUserObject()).widget;
+				if (wid != null) {
+					widgetInfo.setText(widgetToString(wid));
+					WidgetExplorer.paintWidget(wid);
+				}
 			}
 		}
 

@@ -34,7 +34,7 @@ public final class SkillData {
 	}
 	
 	public String perHour(int gained) {
-		return formatNumber((int) ((gained) * 3600000D / (System.currentTimeMillis() - this.timer.getElapsed())));
+		return formatNumber((int) ((gained) * 3600000D / this.timer.getElapsed()));
 	}
 	
 	public String formatNumber(int start) {

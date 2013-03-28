@@ -29,17 +29,19 @@ import org.vinsert.bot.script.api.tools.Skills;
 
 import api.Node;
 import api.ScriptBase;
+import api.SkillData;
 import api.Timer;
 import api.Utilities;
 
 
-@ScriptManifest(name = "FightCave", authors = {"Fortruce"}, description = "Fight Cave Bot", version = 1.0)
+@ScriptManifest(name = "FightCave", authors = {"Fortruce"}, description = "Fight Cave Bottt", version = 1.0)
 public class FightCave extends ScriptBase{
 	
 	/**
 	 * Paint variables
 	 */
 	private static final Timer TIMER = new Timer(0);
+	private static SkillData SD;
 	
 	/**
 	 * Ids
@@ -116,9 +118,9 @@ public class FightCave extends ScriptBase{
 		return false;
 	}
 		
-	private boolean isEntranceOnscreen() {
+	private boolean isEntranceOnscreen() { 
 		GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
-		if (entrance != null && camera.isVisible(entrance) && localPlayer.getLocation().distanceTo(entrance.getLocation()) < 4)
+		if (entrance != null && camera.isVisible(entrance))
 			return true;
 		return false;
 		
@@ -343,6 +345,7 @@ public class FightCave extends ScriptBase{
 		bankTokkulEvery = 99999;
 		
 		utilities = new Utilities(this.getContext());
+		SD = new SkillData(this.getContext());
 		
 		submit(new SetCaveCenter());
 		submit(new WalkToBank());
@@ -376,26 +379,30 @@ public class FightCave extends ScriptBase{
 		
         g.drawString("Run Time:  " + TIMER.toElapsedString(), point[0], point[1] += height);
         
-		Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
-		if (enemy != null)
-			g.drawString("enemy: " + enemy.getName(), point[0], point[1]+=height);
-		else
-			g.drawString("null", point[0], point[1]+=height);
-		
-		if (ScriptBase.getActiveNode() != null)
-			g.drawString("Node: " + ScriptBase.getActiveNode().toString(), point[0], point[1]+=height);
-        g.drawString("caveCenterSet: " + String.valueOf(isCaveCenterSet()), point[0], point[1] += height);
-        g.drawString("isInCave: " + String.valueOf(isInCave()), point[0], point[1] += height);
-        g.drawString("enemyLoaded: " + String.valueOf(isEnemyLoaded()), point[0], point[1] += height);
-        g.drawString("enemyOnscreen: " + String.valueOf(isEnemyOnscreen()), point[0], point[1] += height);
-        g.drawString("needToBank: " + String.valueOf(needToBank()), point[0], point[1] += height);
-        g.drawString("bankerOnscreen: " + String.valueOf(isBankerOnscreen()), point[0], point[1] += height);
-        g.drawString("bankerLoaded: " + String.valueOf(isBankerLoaded()), point[0], point[1] += height);
-        g.drawString("entranceOnscreen: " + String.valueOf(isEntranceOnscreen()), point[0], point[1] += height);
-        g.drawString("entranceLoaded: " + String.valueOf(isEntranceLoaded()), point[0], point[1] += height);
-        g.drawString("inCombat: " + String.valueOf(isInCombat()), point[0], point[1] += height);
-        if (fightCaveCenter != null) {
-        	g.drawString("center: " + fightCaveCenter.toString(), point[0], point[1]+=height);
+        if (localPlayer != null) {
+        	g.drawString(SD.generateSkillString(Skills.STRENGTH, SD), point[0], point[1]+=height);
+
+        	Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
+        	if (enemy != null)
+        		g.drawString("enemy: " + enemy.getName(), point[0], point[1]+=height);
+        	else
+        		g.drawString("null", point[0], point[1]+=height);
+
+        	if (ScriptBase.getActiveNode() != null)
+        		g.drawString("Node: " + ScriptBase.getActiveNode().toString(), point[0], point[1]+=height);
+        	g.drawString("caveCenterSet: " + String.valueOf(isCaveCenterSet()), point[0], point[1] += height);
+        	g.drawString("isInCave: " + String.valueOf(isInCave()), point[0], point[1] += height);
+        	g.drawString("enemyLoaded: " + String.valueOf(isEnemyLoaded()), point[0], point[1] += height);
+        	g.drawString("enemyOnscreen: " + String.valueOf(isEnemyOnscreen()), point[0], point[1] += height);
+        	g.drawString("needToBank: " + String.valueOf(needToBank()), point[0], point[1] += height);
+        	g.drawString("bankerOnscreen: " + String.valueOf(isBankerOnscreen()), point[0], point[1] += height);
+        	g.drawString("bankerLoaded: " + String.valueOf(isBankerLoaded()), point[0], point[1] += height);
+        	g.drawString("entranceOnscreen: " + String.valueOf(isEntranceOnscreen()), point[0], point[1] += height);
+        	g.drawString("entranceLoaded: " + String.valueOf(isEntranceLoaded()), point[0], point[1] += height);
+        	g.drawString("inCombat: " + String.valueOf(isInCombat()), point[0], point[1] += height);
+        	if (fightCaveCenter != null) {
+        		g.drawString("center: " + fightCaveCenter.toString(), point[0], point[1]+=height);
+        	}
         }
 	}
 	
