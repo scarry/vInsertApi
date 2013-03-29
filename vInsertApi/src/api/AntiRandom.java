@@ -1,22 +1,13 @@
 package api;
 
 import org.vinsert.bot.script.ScriptContext;
+import org.vinsert.bot.script.randevent.RandomEvent;
 
 import java.awt.*;
 
-public abstract class AntiRandom extends Node {
+public abstract class AntiRandom extends RandomEvent {
 
     ScriptContext sc;
-
-    public AntiRandom(ScriptContext context) {
-        sc = context;
-    }
-
-    @Override
-    public abstract boolean activate();
-
-    @Override
-    public abstract void execute();
 
     //START: Code generated using Enfilade's Easel
     protected final Color color1 = new Color(255, 0, 50, 127);

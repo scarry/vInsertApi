@@ -1,5 +1,6 @@
 package randoms;
 
+import api.AntiRandom;
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.Npc;
@@ -7,7 +8,7 @@ import org.vinsert.bot.script.randevent.RandomEvent;
 import org.vinsert.bot.util.Utils;
 
 @ScriptManifest(name = "zPlant", authors = { "potofreak" })
-public class Plant extends RandomEvent {
+public class Plant extends AntiRandom {
 
     ScriptContext sc;
     public Npc plant;
