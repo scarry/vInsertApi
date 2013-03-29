@@ -4,29 +4,25 @@ import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.api.Npc;
 import org.vinsert.bot.script.api.Tile;
 import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
+import org.vinsert.bot.script.randevent.RandomEvent;
 import org.vinsert.bot.util.Utils;
 
 import api.AntiRandom;
 
-public class Frog extends AntiRandom{
+public class Frog extends RandomEvent {
 
 	ScriptContext sc;
 	Npc frog;
 	int[] frog2 = {2469, 2470};
 	Tile frogtile = new Tile(2464, 4776);
 	
-	public Frog(ScriptContext context) {
-		super(context);
-		sc = context;
-	}
-	
 	@Override
-	public boolean activate() {
+	public boolean init() {
 		return sc.npcs.getNearest(frog2) != null;
 	}
 
 	@Override
-	public void execute() {
+	public int pulse() {
 		frog = sc.npcs.getNearest(frog2);
 		if(frog != null) {
 			//log("starting frog");
@@ -50,7 +46,19 @@ public class Frog extends AntiRandom{
 				sc.navigation.navigate(frogtile, NavigationPolicy.MINIMAP);
 			}
 		}
-		
-	}
+
+        return 0;
+    }
+
+    @Override
+    public void close() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public RandomEventPriority priority() {
+        return RandomEventPriority.HIGH;
+    }
+
 
 }

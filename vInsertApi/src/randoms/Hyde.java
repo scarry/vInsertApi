@@ -3,28 +3,25 @@ package randoms;
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.api.Npc;
 import org.vinsert.bot.script.api.Widget;
+import org.vinsert.bot.script.randevent.RandomEvent;
 import org.vinsert.bot.util.Utils;
 
 import api.AntiRandom;
 
-public class Hyde extends AntiRandom{
+public class Hyde extends RandomEvent {
 
 	ScriptContext sc;
 	public static final int HYDE_ID = 2540;
 	Npc Hyde;
-	
-	public Hyde(ScriptContext context) {
-		super(context);
-		sc = context;
-	}
+
 
 	@Override
-	public boolean activate() {
+	public boolean init() {
 		return sc.npcs.getNearest(HYDE_ID) != null;
 	}
 
 	@Override
-	public void execute() {
+	public int pulse() {
 		Hyde = sc.npcs.getNearest(HYDE_ID);
 		Widget[] b = sc.widgets.get(241);
 		Widget[] c = sc.widgets.get(242);
@@ -51,7 +48,18 @@ public class Hyde extends AntiRandom{
 			}
 			//log("Dr Jekyll hyde random");
 		}
-		
-	}
-	
+
+        return 0;
+    }
+
+    @Override
+    public void close() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public RandomEventPriority priority() {
+        return RandomEventPriority.HIGH;
+    }
+
 }

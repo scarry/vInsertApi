@@ -3,28 +3,24 @@ package randoms;
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.api.Npc;
 import org.vinsert.bot.script.api.Widget;
+import org.vinsert.bot.script.randevent.RandomEvent;
 import org.vinsert.bot.util.Utils;
 
 import api.AntiRandom;
 
-public class Genie extends AntiRandom{
+public class Genie extends RandomEvent{
 
 	ScriptContext sc;
 	public static final int GENIE_ID = 409;
 	Npc Genie;
-	
-	public Genie(ScriptContext context) {
-		super(context);
-		sc = context;
-	}
 
 	@Override
-	public boolean activate() {
+	public boolean init() {
 		return sc.npcs.getNearest(GENIE_ID) != null;
 	}
 
 	@Override
-	public void execute() {
+	public int pulse() {
 		Genie = sc.npcs.getNearest(GENIE_ID);
 		Widget[] b = sc.widgets.get(241);
 		Widget[] c = sc.widgets.get(242);
@@ -43,7 +39,18 @@ public class Genie extends AntiRandom{
 			}
 			//log("Genie Random");
 		}
-		
-	}
-	
+
+        return 0;
+    }
+
+    @Override
+    public void close() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public RandomEventPriority priority() {
+        return RandomEventPriority.HIGH;
+    }
+
 }

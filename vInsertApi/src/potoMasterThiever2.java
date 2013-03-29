@@ -35,7 +35,7 @@ public class potoMasterThiever2 extends ScriptBase{
 	private final Timer timer = new Timer(0);
 	//private final SkillData sd = new SkillData(timer);
 	
-	long start_time = 0;
+	long     start_time = 0;
 	public String status = "Working on status";
 	boolean showPaint;	
 	
@@ -198,7 +198,7 @@ public class potoMasterThiever2 extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return farmer == null || Utils.random(1, 20) == 4;
+			return (farmer == null || Utils.random(1, 20) == 4) && npcs.getNearest(FARMER_ID) != null;
 		}
 
 		@Override
@@ -431,8 +431,8 @@ public class potoMasterThiever2 extends ScriptBase{
         //Draw Custom Background and Si
 
 
-        g.drawImage(back, 4, 342, null);
-	    g.drawImage(logo, 230, 305, null);
+        //g.drawImage(back, 4, 342, null);
+	    //g.drawImage(logo, 230, 305, null);
         
 	    g.setColor(COLOR_WHITE);
 	    g.setFont(expFont);
@@ -448,31 +448,32 @@ public class potoMasterThiever2 extends ScriptBase{
         g.drawString("Farmer visible: " + camera.isVisible(farmer), 13, 270);
 
 	    g.drawString("Health:" + health, 13, 365);
-	    g.drawString("Animation: " + players.getLocalPlayer().getAnimation(), 13, 385);
+	    //g.drawString("Animation: " + players.getLocalPlayer().getAnimation(), 13, 385);
 	   // g.drawString(generateString(Skills.THIEVING), 13, 405);
-	    g.drawString("Capacity: " + inventory.getCapacity(), 13, 425);
-	    g.drawString("Test test", 13, 445);
-	    g.drawString("Test test123", 13, 465);
+	    //g.drawString("Capacity: " + inventory.getCapacity(), 13, 425);
+	    //g.drawString("Test test", 13, 445);
+	    //g.drawString("Test test123", 13, 465);
 	    //g.setFont(statusFont);
 	    //String time = String.format("Time: %02d:%02d:%02d",hours,minutes,seconds);
-	    g.drawString("Time: " + timer.toElapsedString(), 320, 410);
+	    //g.drawString("Time: " + timer.toElapsedString(), 320, 410);
 	    
-	    g.drawString("Status: ", 340, 435);
-	    if(this.getActiveNode() != null)
-	    	g.drawString(status, 260, 460);
+	    //g.drawString("Status: ", 340, 435);
+	    //if(this.getActiveNode() != null)
+	    	//g.drawString(status, 260, 460);
 	    
-
+          /*
 	    if(farmer != null){
             Polygon[] drawing = farmer.getModel().getPolygons();
             g.setColor(COLOR_RANDOM);
 	     	//g.fillPolygon(farmer.hull());
-            for(Polygon i : drawing)
-                g.fillPolygon(i);
+            if(drawing.length > 0 ) {
+                for(Polygon i : drawing)
+                    g.fillPolygon(i);
+            }
             g.setColor(COLOR_BLACK);
             g.drawPolygon(farmer.hull());
-
-		//}
-		
+		}
+		  */
 		/*
 	    if(showPaint){
 			g.setColor(Color.GREEN);
@@ -491,8 +492,6 @@ public class potoMasterThiever2 extends ScriptBase{
 	   */
 	    
 	} 
-}
-	
 }
 
 
