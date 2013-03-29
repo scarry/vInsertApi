@@ -352,7 +352,8 @@ public class FishBot extends ScriptBase {
 
         @Override
         public void execute() {
-            //TODO add withdraw
+//            utilities.withdraw(Filters.objectId(fishSpot.equipment));
+
         }
     }
 

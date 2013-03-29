@@ -56,7 +56,6 @@ public final class SkillData {
         sb.append("(+" + this.level(index) + ")");
         sb.append(" - Exp/hr: ");
         sb.append(perHour(this.experience(index)));
-        sb.append("(+" + this.experience(index) + ")");
         sb.append(" - TTL: ");
         sb.append(Time.format(this.timeToLevel(Rate.HOUR, index)));
         return sb.toString();
