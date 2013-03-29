@@ -1,12 +1,14 @@
 package randoms;
 
 import org.vinsert.bot.script.ScriptContext;
+import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.Npc;
 import org.vinsert.bot.script.api.Tile;
 import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
 import org.vinsert.bot.script.randevent.RandomEvent;
 import org.vinsert.bot.util.Utils;
 
+@ScriptManifest(name = "zFrog", authors = { "potofreak" })
 public class Frog extends RandomEvent {
 
     ScriptContext sc;

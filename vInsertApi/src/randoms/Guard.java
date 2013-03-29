@@ -1,11 +1,13 @@
 package randoms;
 
 import org.vinsert.bot.script.ScriptContext;
+import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.Npc;
 import org.vinsert.bot.script.api.Widget;
 import org.vinsert.bot.script.randevent.RandomEvent;
 import org.vinsert.bot.util.Utils;
 
+@ScriptManifest(name = "zGuard", authors = { "potofreak" })
 public class Guard extends RandomEvent {
 
     ScriptContext sc;

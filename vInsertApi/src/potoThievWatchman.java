@@ -303,7 +303,7 @@ public class potoThievWatchman extends ScriptBase{
 	@Override
 	public boolean init() {
 		health = players.getLocalPlayer().getHealth();
-		new RandomHandler(new Tile(0,0), 0, this);
+		//new RandomHandler(new Tile(0,0), 0, this, );
 		submit(new getWatchman());
 		submit(new heal());
 		submit(new pickpocket());
