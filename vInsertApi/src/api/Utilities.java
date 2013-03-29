@@ -291,11 +291,16 @@ public class Utilities {
      * @param c2
      *      Second color in gradient
      */
-    public void drawProgressBar(ScriptBase script, Graphics2D g, SkillData sd, int skill, Point start, int width, int height, Color textColor, Color c1, Color c2){
+    public void drawProgressBar(Graphics2D g, SkillData sd, int skill, Point start, int width,
+                                int height, Color textColor, Color c1, Color c2){
+        drawProgressBar(g, sd, skill, start, width, height, textColor, c1, c2, new Point(10, 10), new Point(30, 30));
+    }
+    public void drawProgressBar(Graphics2D g, SkillData sd, int skill, Point start, int width,
+                                int height, Color textColor, Color c1, Color c2, Point p1, Point p2){
         /*
             Draw progress bar using gradient
          */
-        GradientPaint gradient = new GradientPaint(10,10,c1,30,30,c2,true);
+        GradientPaint gradient = new GradientPaint(p1.x,p1.y,c1,p2.x,p2.y,c2,true);
         g.setPaint(gradient);
         int expAtCurrLevel = Skills.EXPERIENCE_TABLE[sd.getLevel(skill)];
         int expAtNextLevel = Skills.EXPERIENCE_TABLE[sd.getLevel(skill)+1];
@@ -319,37 +324,7 @@ public class Utilities {
             Draw Progress text
          */
         g.setColor(textColor);
-        g.drawString(sd.generateSkillString(skill,sd),start.x+5,start.y+fontHeight);
-    }
-    public void drawProgressBar(ScriptBase script, Graphics2D g, SkillData sd, int skill, int startX, int startY, int width, int height, Color textColor, Color c1, Color c2, Point p1, Point p2){
-        /*
-            Draw progress bar using gradient
-         */
-        GradientPaint gradient = new GradientPaint(p1.x,p1.y,c1,p2.x,p2.y,c2,true);
-        g.setPaint(gradient);
-        int expAtCurrLevel = Skills.EXPERIENCE_TABLE[sd.getLevel(skill)];
-        int expAtNextLevel = Skills.EXPERIENCE_TABLE[sd.getLevel(skill)+1];
-        double totalExpNeeded = expAtNextLevel - expAtCurrLevel;
-        double progressWidth;
-        progressWidth = skills.getExperienceToNextLevel(skill) / totalExpNeeded;
-        progressWidth = 1 - progressWidth;
-        g.fillRect(startX,startY,(int)(width*progressWidth),height);
-        /*
-            Draw filler rectangle
-         */
-        g.setColor(COLOR_GREY);
-        g.fillRect(startX, startY, width, height);
-        /*
-            Draw outer border rectangle
-         */
-        g.setColor(Color.black);
-        g.drawRect(startX, startY, width, height);
-        int fontHeight = g.getFontMetrics().getHeight();
-        /*
-            Draw Progress text
-         */
-        g.setColor(textColor);
-        g.drawString(sd.generateSkillString(skill,sd),startX+5,startY+fontHeight);
+        g.drawString(sd.generateSkillString(skill),start.x+5,start.y+fontHeight);
     }
 
     public Point getClickPoint(int slot)
