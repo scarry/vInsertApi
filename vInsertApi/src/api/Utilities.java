@@ -8,6 +8,7 @@ import org.vinsert.bot.script.api.Player;
 import org.vinsert.bot.script.api.Tile;
 import org.vinsert.bot.script.api.tools.*;
 import org.vinsert.bot.script.api.tools.Menu;
+import org.vinsert.bot.util.Utils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.Collections;
 
 public class Utilities {
 
-    ScriptContext context;
+    ScriptContext ctx;
     protected Bank bank;
     protected Camera camera;
     protected Inventory inventory;
@@ -33,25 +34,25 @@ public class Utilities {
     protected Settings settings;
     protected Bot bot;
 
-    public Utilities(ScriptContext context) {
-        this.context = context;
+    public Utilities(ScriptContext ctx) {
+        this.ctx = ctx;
 
-        game = context.game;
-        bank = context.bank;
-        camera = context.camera;
-        inventory = context.inventory;
-        keyboard = context.keyboard;
-        menu = context.menu;
-        mouse = context.mouse;
-        navigation = context.navigation;
-        npcs = context.npcs;
-        objects = context.objects;
-        players = context.players;
-        widgets = context.widgets;
-        skills = context.skills;
-        settings = context.settings;
-        localPlayer = context.players.getLocalPlayer();
-        bot = context.getBot();
+        game = ctx.game;
+        bank = ctx.bank;
+        camera = ctx.camera;
+        inventory = ctx.inventory;
+        keyboard = ctx.keyboard;
+        menu = ctx.menu;
+        mouse = ctx.mouse;
+        navigation = ctx.navigation;
+        npcs = ctx.npcs;
+        objects = ctx.objects;
+        players = ctx.players;
+        widgets = ctx.widgets;
+        skills = ctx.skills;
+        settings = ctx.settings;
+        localPlayer = ctx.players.getLocalPlayer();
+        bot = ctx.getBot();
     }
 
     public void log(String string) {
@@ -105,7 +106,7 @@ public class Utilities {
         for (int i = 1; i < pathTiles.length - 1; i++)
             pathTiles[i] = new Tile(srcX + (adjustX * i), srcY + (adjustY * i));
 
-        return new Path(pathTiles, this.context);
+        return new Path(pathTiles, this.ctx);
     }
 
     public Path createPath(int distance, Tile... tiles) {
@@ -117,22 +118,41 @@ public class Utilities {
         for (Path p : paths) {
             Collections.addAll(cumulativeTiles, p.getTiles());
         }
-        return new Path(cumulativeTiles.toArray(new Tile[cumulativeTiles.size()]), this.context);
+        return new Path(cumulativeTiles.toArray(new Tile[cumulativeTiles.size()]), this.ctx);
     }
 
-    public void interact(Actor actor, String action) {
+    public boolean interact(Actor actor, String action)
+    {
         if (actor == null)
-            return;
+            return false;
+
+        int speed = this.ctx.mouse.getSpeed();
+        this.ctx.mouse.setSpeed(speed - 4);
+
         Point point = actor.hullPoint(actor.hull());
-        mouse.move(point.x, point.y);
-        int index = menu.getIndex(action);
-        if (index == -1)
-            return;
+        this.ctx.mouse.move(point.x, point.y);
+        Utils.sleep(Utils.random(15, 35));
+
+        int index = this.ctx.menu.getIndex(action);
+
         if (index == 0) {
-            mouse.click();
-            return;
+            this.ctx.mouse.click();
+//            Utils.sleep(Utils.random(200, 400));
+            this.ctx.mouse.setSpeed(speed);
+            return true;
         }
-        actor.interact(action);
+
+        if (index != -1) {
+            this.ctx.mouse.click(true);
+            Point menuPoint = this.ctx.menu.getClickPoint(index);
+            this.ctx.mouse.click(menuPoint.x, menuPoint.y);
+//            Utils.sleep(Utils.random(350, 650));
+            this.ctx.mouse.setSpeed(speed);
+            return true;
+        }
+
+        this.ctx.mouse.setSpeed(speed);
+        return false;
     }
 
     public Tile walkableLocation(Tile loc) {
