@@ -1,7 +1,11 @@
 package api;
 
 import org.vinsert.bot.script.ScriptContext;
-import org.vinsert.bot.script.api.*;
+import org.vinsert.bot.script.api.GroundItem;
+import org.vinsert.bot.script.api.Actor;
+import org.vinsert.bot.script.api.Npc;
+import org.vinsert.bot.script.api.Tile;
+import org.vinsert.bot.script.api.GameObject;
 import org.vinsert.bot.script.api.generic.Filters;
 import org.vinsert.bot.util.Utils;
 
@@ -14,10 +18,30 @@ public class Conditions {
         public abstract boolean validate(ScriptContext ctx);
     }
 
+    /**
+     * Waits for condition to be true.
+     * @param c
+     *      Condition to test.
+     * @param timeout
+     * @param ctx
+     * @return
+     *      Condition met.
+     */
     public static boolean waitFor(final Condition c, final int timeout, ScriptContext ctx) {
         return waitFor(c, timeout, 0, ctx);
     }
 
+    /**
+     * Waits for condition to be true with sleep.
+     * @param c
+     *      Condition to test.
+     * @param timeout
+     * @param sleepTime
+     *      Time to sleep on success.
+     * @param ctx
+     * @return
+     *      Condition met.
+     */
     public static boolean waitFor(final Condition c, final int timeout, final int sleepTime, ScriptContext ctx) {
         final Timer t = new Timer(timeout);
         while (t.isRunning() && !c.validate(ctx)) {
@@ -173,6 +197,17 @@ public class Conditions {
         @Override
         public boolean validate(ScriptContext ctx) {
             return !ctx.inventory.contains(Filters.itemId(itemIds));
+        }
+    }
+
+    public static class isInArea extends Condition {
+        private Area area;
+        public isInArea(Area area) {
+            this.area = area;
+        }
+        @Override
+        public boolean validate(ScriptContext ctx) {
+            return this.area.contains(ctx.players.getLocalPlayer().getLocation());
         }
     }
 }

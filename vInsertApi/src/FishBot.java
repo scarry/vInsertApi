@@ -1,12 +1,18 @@
 
 
+import api.Conditions;
 import api.Node;
 import api.ScriptBase;
 import api.Timer;
+import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.*;
+import org.vinsert.bot.script.api.generic.Filters;
+import org.vinsert.bot.script.api.tools.Navigation;
 import org.vinsert.bot.util.Filter;
-import org.vinsert.bot.util.Utils;
+
+import api.Path;
+import api.Area;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -44,7 +50,7 @@ public class FishBot extends ScriptBase {
      * Fish Ids
      */
     public static final int SHRIMP_ID = 318;
-    public static final int ANCHOVIE_ID = 322;
+    public static final int ANCHOVY_ID = 322;
     public static final int TROUT_ID = 336;
     public static final int SALMON_ID = 332;
     public static final int LOBSTER_ID = 378;
@@ -52,16 +58,16 @@ public class FishBot extends ScriptBase {
     public static final int TUNA_ID = 360;
     public static final int SHARK_ID = 384;
     @SuppressWarnings("serial")
-    public static final ArrayList<Integer> FISH_IDS = new ArrayList<Integer>() {{
-        add(SHRIMP_ID);
-        add(ANCHOVIE_ID);
-        add(TROUT_ID);
-        add(SALMON_ID);
-        add(LOBSTER_ID);
-        add(SWORDFISH_ID);
-        add(TUNA_ID);
-        add(SHARK_ID);
-    }};
+    public static final int[] FISH_IDS = new int[] {
+        SHRIMP_ID,
+        ANCHOVY_ID,
+        TROUT_ID,
+        SALMON_ID,
+        LOBSTER_ID,
+        SWORDFISH_ID,
+        TUNA_ID,
+        SHARK_ID
+    };
 
     /**
      * Equipment Ids
@@ -77,22 +83,42 @@ public class FishBot extends ScriptBase {
     /**
      * Bank Ids
      */
-    private static final int BANK_STALL = 16937;
+    private static final int BANK_STALL = 2213;
 
     /**
      * Bank Area
      */
-    private Area bankArea = new Area(new Tile(2586, 3418), new Tile(2589, 3422));
+    private Area FISHING_GUILD_BANK = new Area(new Tile(2586, 3418), new Tile(2589, 3422));
 
     /**
      * Path to the fish from bank
      */
-    private Path fishPath = new Path(
+    private Path FISHING_GUILD_PATH = new Path(new Tile[] {
             new Tile(2586, 3420),
             new Tile(2591, 3416),
-            new Tile(2595, 3414)
-    );
+            new Tile(2595, 3414)}, getContext());
+
+
+
     private Timer lastFishTimer = new Timer(0);
+    private FishSpot fishSpot = new FishSpot(CAGE_HARPOON_FISH_ID, CAGE_ID, FISHING_GUILD_PATH, FISHING_GUILD_BANK);
+
+
+
+    private class FishSpot {
+        public Path fishPath;
+        public Area bankArea;
+        public int[] fishType;
+        public int equipment;
+
+        public FishSpot(int[] fishType, int equipment, Path fishPath, Area bankArea) {
+            this.fishPath = fishPath;
+            this.bankArea = bankArea;
+            this.fishType = fishType;
+            this.equipment = equipment;
+        }
+    }
+
 
     private boolean needToBank() {
         return inventory.isFull() || needEquipment();
@@ -110,7 +136,7 @@ public class FishBot extends ScriptBase {
     }
 
     private boolean isAtBank() {
-        return bankArea.contains(localPlayer);
+        return fishSpot.bankArea.contains(localPlayer.getLocation());
     }
 
     private boolean isFishLoaded() {
@@ -150,27 +176,11 @@ public class FishBot extends ScriptBase {
     }
 
     private boolean needToDeposit() {
-        return inventory.isFull() || (bank.isOpen() && inventory.contains(new Filter<Item>() {
-            @Override
-            public boolean accept(Item item) {
-                if (FISH_IDS.contains(item.getId()))
-                    return true;
-                return false;
-            }
-        }));
+        return inventory.isFull() || (bank.isOpen() && inventory.contains(Filters.itemId(FISH_IDS)));
     }
 
     private boolean needToWithdraw() {
         return needEquipment();
-    }
-
-    private boolean actionsContain(GameObject object, String action) {
-        Point point = object.hullPoint(object.hull());
-        mouse.move(point.x, point.y);
-        Utils.sleep(Utils.random(50, 250));
-        int index = menu.getIndex(action);
-        if (index == -1) return false;
-        else return true;
     }
 
 //	@Override
@@ -303,8 +313,17 @@ public class FishBot extends ScriptBase {
 
         @Override
         public void execute() {
-            // TODO Auto-generated method stub
-
+            GameObject bankStall = objects.getNearest(Filters.objectId(BANK_STALL));
+            if (bankStall == null)
+                return;
+            if (!camera.isVisible(bankStall)) {
+                camera.rotateToObject(bankStall);
+                sleep(100, 300);
+            }
+            if (camera.isVisible(bankStall)) {
+                bankStall.interact("Bank");
+                Conditions.waitFor(new Conditions.isBankOpen(), random(500, 1000), random(100, 300), getContext());
+            }
         }
     }
 
@@ -318,8 +337,8 @@ public class FishBot extends ScriptBase {
 
         @Override
         public void execute() {
-            // TODO Auto-generated method stub
-
+            bank.depositAllExcept(Filters.itemId(fishSpot.equipment));
+            Conditions.waitFor(new Conditions.inventoryNotContains(FISH_IDS), random(400, 800), getContext());
         }
     }
 
@@ -333,8 +352,7 @@ public class FishBot extends ScriptBase {
 
         @Override
         public void execute() {
-            // TODO Auto-generated method stub
-
+            //TODO add withdraw
         }
     }
 
@@ -349,8 +367,16 @@ public class FishBot extends ScriptBase {
 
         @Override
         public void execute() {
-            // TODO Auto-generated method stub
-
+            Npc fish = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(fishSpot.fishType));
+            if (fish == null)
+                return;
+            fish.interact("Cage");
+            Conditions.waitFor(new Conditions.Condition() {
+                @Override
+                public boolean validate(ScriptContext ctx) {
+                    return isFishing();
+                }
+            }, random(300, 700), random(400, 600), getContext());
         }
     }
 
@@ -364,8 +390,11 @@ public class FishBot extends ScriptBase {
 
         @Override
         public void execute() {
-            // TODO Auto-generated method stub
-
+            Npc fish = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(fishSpot.fishType));
+            if (fish == null)
+                return;
+            navigation.navigate(fish.getLocation(), Navigation.NavigationPolicy.MINIMAP);
+            Conditions.waitFor(new Conditions.isVisible(fish), random(600, 1000), getContext());
         }
     }
 
@@ -379,8 +408,8 @@ public class FishBot extends ScriptBase {
 
         @Override
         public void execute() {
-            // TODO Auto-generated method stub
-
+            fishSpot.fishPath.traverse(false);
+            Conditions.waitFor(new Conditions.isInArea(fishSpot.bankArea), random(800, 1500), getContext());
         }
     }
 
@@ -394,15 +423,21 @@ public class FishBot extends ScriptBase {
 
         @Override
         public void execute() {
-            // TODO Auto-generated method stub
-
+            fishSpot.fishPath.traverse(true);
+            Conditions.waitFor(new Conditions.isNpcLoaded(fishSpot.fishType), random(800, 1500), getContext());
         }
     }
 
     @Override
     public boolean init() {
-        // TODO Auto-generated method stub
-        return false;
+        submit(new WalkToBank());
+        submit(new ApproachFish());
+        submit(new DepositBank());
+        submit(new WithdrawBank());
+        submit(new WalkToFish());
+        submit(new Fish());
+
+        return true;
     }
 
     @Override
@@ -420,7 +455,7 @@ public class FishBot extends ScriptBase {
         g.drawString("Fortruce - FishBot", point[0] + 5, point[1] += height);
         g.drawLine(389, 21, 499, 21);
 
-        if (bankArea != null) {
+        if (fishSpot != null) {
             g.drawString("nToBank:    " + String.valueOf(needToBank()), point[0], point[1] += height);
             g.drawString("nEquip:     " + String.valueOf(needEquipment()), point[0], point[1] += height);
             g.drawString("isAtBank:   " + String.valueOf(isAtBank()), point[0], point[1] += height);

@@ -202,6 +202,7 @@ public class FightCave extends ScriptBase {
             GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
             if (entrance != null) {
                 if (camera.isVisible(entrance)) {
+                    System.out.println("ENTERING NEW CAVE...");
                     entrance.interact("Enter");
                     Conditions.waitFor(new Conditions.isGameObjectLoaded(EXIT_ID), random(400, 700), getContext());
                 } else {
@@ -240,6 +241,10 @@ public class FightCave extends ScriptBase {
                  */
                 System.out.println("--------------Path Debugging----------------");
                 Tile[] idlePathTiles = fightCaveIdlePath.getTiles();
+                System.out.println(TIMER.toElapsedString());
+                System.out.printf("my location:\t%s%n", localPlayer.getLocation());
+                System.out.printf("center:\t%s%n", fightCaveCenter);
+                System.out.printf("exit:\t%s%n", exit.getLocation());
                 for (int i = 0; i < idlePathTiles.length - 1; i++) {
                     System.out.printf("tile: %s\tdistance:%d\n", idlePathTiles[i], idlePathTiles[i].distanceTo(idlePathTiles[i+1]));
                 }
@@ -378,55 +383,10 @@ public class FightCave extends ScriptBase {
         g.setColor(color3);
         g.drawString(SD.generateSkillString(Skills.STRENGTH), 128, 455);
         g.setFont(font3);
-        g.drawString(ScriptBase.getActiveNode(), 128, 425);
+        g.drawString(ScriptBase.getActiveNode().toString(), 128, 425);
         g.drawString("Run Time: " + TIMER.toElapsedString(), 128, 395);
     }
     //END: Code generated using Enfilade's Easel
-
-//    @Override
-//    public void render(Graphics2D g) {
-//
-//        int[] point = {385, 2};
-//
-//        //box
-//        g.setColor(new Color(63, 63, 43, 200));
-//        g.draw3DRect(375, 5, 139, 225, true);
-//        g.fill3DRect(375, 5, 139, 325, true);
-//
-//        int height = g.getFontMetrics().getHeight();
-//
-//        g.setColor(Color.WHITE);
-//        g.drawString("Fortruce - FightCave", point[0], point[1] += height);
-//        g.drawLine(383, 21, 495, 21);
-//
-//        g.drawString("Run Time:  " + TIMER.toElapsedString(), point[0], point[1] += height);
-//
-//        if (localPlayer != null) {
-//            g.drawString(SD.generateSkillString(Skills.STRENGTH, SD), point[0], point[1] += height);
-//
-//            Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
-//            if (enemy != null)
-//                g.drawString("enemy: " + enemy.getName(), point[0], point[1] += height);
-//            else
-//                g.drawString("null", point[0], point[1] += height);
-//
-//            if (ScriptBase.getActiveNode() != null)
-//                g.drawString((String.format("%s", "Node: " + ScriptBase.getActiveNode().toString())), point[0], point[1] += height);
-//            g.drawString("caveCenterSet: " + String.valueOf(isCaveCenterSet()), point[0], point[1] += height);
-//            g.drawString("isInCave: " + String.valueOf(isInCave()), point[0], point[1] += height);
-//            g.drawString("enemyLoaded: " + String.valueOf(isEnemyLoaded()), point[0], point[1] += height);
-//            g.drawString("enemyOnscreen: " + String.valueOf(isEnemyOnscreen()), point[0], point[1] += height);
-//            g.drawString("needToBank: " + String.valueOf(needToBank()), point[0], point[1] += height);
-//            g.drawString("bankerOnscreen: " + String.valueOf(isBankerOnscreen()), point[0], point[1] += height);
-//            g.drawString("bankerLoaded: " + String.valueOf(isBankerLoaded()), point[0], point[1] += height);
-//            g.drawString("entranceOnscreen: " + String.valueOf(isEntranceOnscreen()), point[0], point[1] += height);
-//            g.drawString("entranceLoaded: " + String.valueOf(isEntranceLoaded()), point[0], point[1] += height);
-//            g.drawString("inCombat: " + String.valueOf(isInCombat()), point[0], point[1] += height);
-//            if (fightCaveCenter != null) {
-//                g.drawString("center: " + fightCaveCenter.toString(), point[0], point[1] += height);
-//            }
-//        }
-//    }
 
 
     /* GUI STUFF */
