@@ -124,10 +124,16 @@ public class Utilities {
 
     public Path createPath(int distance, Tile ... tiles) {
         ArrayList<Path> paths = new ArrayList<>();
+        ArrayList<Tile> cumulativeTiles = new ArrayList<>();
         for (int i = 0; i < tiles.length - 1; i++) {
             paths.add(createPath(tiles[i], tiles[i+1], distance));
         }
-        return new Path(this.context, paths.toArray(new Path[paths.size()]));
+        for (Path p : paths) {
+            for (Tile t : p.getTiles()) {
+                cumulativeTiles.add(t);
+            }
+        }
+        return new Path(cumulativeTiles.toArray(new Tile[cumulativeTiles.size()]), this.context);
     }
 	
 	public void interact(Actor actor, String action) {

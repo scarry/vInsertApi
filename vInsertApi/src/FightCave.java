@@ -60,14 +60,16 @@ public class FightCave extends ScriptBase{
 	 */
 	private static Tile fightCaveCenter = null;
     private static Tile fightCaveTopLeft = null;
-    private static Tile fightcaveTopRight = null;
+    private static Tile fightCaveTopRight = null;
     private static Tile fightCaveBotLeft = null;
     private static Tile fightCaveBotRight = null;
     private static Path fightCaveIdlePath;
 	private static int bankTokkulEvery;
 	public static int skillToTrain;
+
+
 	private Utilities utilities;
-	
+
 	/**
 	 * Boolean helper methods
 	 */
@@ -271,10 +273,10 @@ public class FightCave extends ScriptBase{
                 fightCaveBotLeft = new Tile(centerX - 11, centerY - 14);
                 fightCaveBotRight = new Tile(centerX + 10, centerY - 6);
                 fightCaveTopLeft = new Tile(centerX - 10, centerY + 10);
-                fightcaveTopRight = new Tile(centerX + 6, centerY + 12);
+                fightCaveTopRight = new Tile(centerX + 6, centerY + 12);
 
                 //create idle path (for when enemy is attacking but not loaded
-                fightCaveIdlePath = utilities.createPath(5, fightCaveCenter, fightCaveTopLeft, fightcaveTopRight, fightCaveBotRight, fightCaveBotLeft);
+                fightCaveIdlePath = utilities.createPath(5, fightCaveCenter, fightCaveTopLeft, fightCaveTopRight, fightCaveBotRight, fightCaveBotLeft);
             }
 		}
 	}
@@ -290,7 +292,10 @@ public class FightCave extends ScriptBase{
 
         @Override
         public void execute() {
-            fightCaveIdlePath.traverse(true);
+            if (utilities.isOnMinimap(fightCaveIdlePath.getStart(true)))
+                fightCaveIdlePath.traverse(true);
+            else
+                navigation.navigate(utilities.walkableLocation(fightCaveIdlePath.getStart(true)), NavigationPolicy.MINIMAP);
             sleep(500, 1000);
         }
     }
@@ -310,7 +315,8 @@ public class FightCave extends ScriptBase{
 			Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
 			if (enemy != null) {
 				navigation.navigate(enemy.getLocation(), NavigationPolicy.MINIMAP);
-				sleep(500, 900);
+                Timer test = new Timer(0);
+                Conditions.waitFor(new Conditions.isNpcOnScreen(ENEMY_IDS), random(800, 1200), getContext());
 			}
 		}
 		
@@ -341,7 +347,8 @@ public class FightCave extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			if(isInCave() && !isEnemyLoaded() && fightCaveCenter != null && !isInCombat())
+			if(isInCave() && !isEnemyLoaded() && fightCaveCenter != null && !isInCombat()
+                    && localPlayer.getLocation().distanceTo(fightCaveCenter) > 3)
 				return true;
 			return false;
 		}
@@ -349,7 +356,7 @@ public class FightCave extends ScriptBase{
 		@Override
 		public void execute() {
 			navigation.navigate(utilities.walkableLocation(fightCaveCenter), NavigationPolicy.MINIMAP);
-			sleep(1000, 1700);
+			sleep(800, 1400);
 		}
 		
 	}
@@ -382,6 +389,7 @@ public class FightCave extends ScriptBase{
 		submit(new AttackEnemy());
 		submit(new EnterCave()); 
 		submit(new WalkToEntrance());
+        submit(new FindEnemy());
 		log("starting bot");
 		
 		return true;

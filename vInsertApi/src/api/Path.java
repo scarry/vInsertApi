@@ -76,27 +76,8 @@ public class Path {
         return reverse;
     }
 
-    public Path(ScriptContext context, final Path ... paths) {
-        ArrayList<Tile> tiles = new ArrayList<>();
-        ArrayList<TraversableObject> traversableObjects = new ArrayList<>();
-        for (Path p : paths) {
-            for (Tile t : p.tiles) {
-                tiles.add(t);
-            }
-            for (TraversableObject object : p.objects) {
-                traversableObjects.add(object);
-            }
-        }
-
-        this.tiles = tiles.toArray(new Tile[tiles.size()]);
-        this.reverseTiles = reverseTiles(this.tiles);
-        if (traversableObjects.isEmpty())
-            this.objects = null;
-        else
-            this.objects = traversableObjects.toArray(new TraversableObject[traversableObjects.size()]);
-        this.context = context;
-        this.utilities = new Utilities(context);
-        this.localPlayer = context.players.getLocalPlayer();
+    public Tile[] getTiles() {
+        return this.tiles;
     }
 
 	public Tile getStart(boolean forward) {
