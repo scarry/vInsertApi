@@ -44,10 +44,6 @@ public class FightCave extends ScriptBase {
      * Center of the fight cave
      */
     private static Tile fightCaveCenter = null;
-    private static Tile fightCaveTopLeft = null;
-    private static Tile fightCaveTopRight = null;
-    private static Tile fightCaveBotLeft = null;
-    private static Tile fightCaveBotRight = null;
     private static Path fightCaveIdlePath;
     private static int bankTokkulEvery;
     public static int skillToTrain;
@@ -59,65 +55,47 @@ public class FightCave extends ScriptBase {
      * Boolean helper methods
      */
     private boolean isCaveCenterSet() {
-        if (fightCaveCenter != null)
-            return true;
-        return false;
+        return fightCaveCenter != null;
     }
 
     private boolean isInCave() {
         Npc entranceNpc = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENTRANCE_NPC_ID));
-        if (entranceNpc == null)
-            return true;
-        return false;
+        return entranceNpc == null;
     }
 
     private boolean isEnemyLoaded() {
         Npc enemy = npcs.getNearest(ENEMY_IDS);
-        if (enemy != null) //TODO add enemy.getLocation().isWalkable()
-            return true;
-        return false;
+        return enemy != null;
     }
 
     private boolean isEnemyOnscreen() {
         Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
-        if (enemy != null && camera.isVisible(enemy)) //TODO add !isDead && enemy.getLocation().isWalkable()
-            return true;
-        return false;
+        return enemy != null && camera.isVisible(enemy);
     }
 
     private boolean needToBank() {
-        if (inventory.getCount(true, TOKKUL_ID) > bankTokkulEvery)
-            return true;
-        return false;
+        return inventory.getCount(true, TOKKUL_ID) > bankTokkulEvery;
     }
 
     private boolean isBankerOnscreen() {
         Npc banker = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(BANK_NPC_ID));
-        if (banker != null && camera.isVisible(banker))
-            return true;
-        return false;
+        return banker != null && camera.isVisible(banker);
     }
 
     private boolean isBankerLoaded() {
         Npc banker = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(BANK_NPC_ID));
-        if (banker != null)
-            return true;
-        return false;
+        return banker != null;
     }
 
     private boolean isEntranceOnscreen() {
         GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
-        if (entrance != null && camera.isVisible(entrance))
-            return true;
-        return false;
+        return entrance != null && camera.isVisible(entrance);
 
     }
 
     private boolean isEntranceLoaded() {
         GameObject entrance = objects.getNearest(Filters.objectId(ENTRANCE_ID));
-        if (entrance != null)
-            return true;
-        return false;
+        return entrance != null;
     }
 
     private boolean isInCombat() {
@@ -149,9 +127,7 @@ public class FightCave extends ScriptBase {
 
         @Override
         public boolean activate() {
-            if (!isInCave() && needToBank() && !bank.isOpen() && isBankerOnscreen())
-                return true;
-            return false;
+            return !isInCave() && needToBank() && !bank.isOpen() && isBankerOnscreen();
         }
 
         @Override
@@ -246,10 +222,10 @@ public class FightCave extends ScriptBase {
                 int centerX = exit.getLocation().getX() + CENTER_X_OFFSET;
                 int centerY = exit.getLocation().getY() + CENTER_Y_OFFSET;
                 fightCaveCenter = new Tile(centerX, centerY);
-                fightCaveBotLeft = new Tile(centerX - 11, centerY - 14);
-                fightCaveBotRight = new Tile(centerX + 10, centerY - 6);
-                fightCaveTopLeft = new Tile(centerX - 10, centerY + 10);
-                fightCaveTopRight = new Tile(centerX + 6, centerY + 12);
+                Tile fightCaveBotLeft = new Tile(centerX - 11, centerY - 14);
+                Tile fightCaveBotRight = new Tile(centerX + 10, centerY - 6);
+                Tile fightCaveTopLeft = new Tile(centerX - 10, centerY + 10);
+                Tile fightCaveTopRight = new Tile(centerX + 6, centerY + 12);
 
                 //create idle path (for when enemy is attacking but not loaded
                 fightCaveIdlePath = utilities.createPath(5, fightCaveCenter, fightCaveTopLeft, fightCaveTopRight, fightCaveBotRight, fightCaveBotLeft);

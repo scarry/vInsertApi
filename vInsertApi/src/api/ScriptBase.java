@@ -1,49 +1,24 @@
 package api;
 
-import java.awt.Graphics2D;
-import java.io.PipedReader;
-import java.util.ArrayList;
-
 import org.vinsert.bot.script.Script;
-import org.vinsert.bot.Bot;
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.randevent.RandomEventPool;
-import randoms.*;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public abstract class ScriptBase extends Script {
 
 	private static String currnode;
 	ArrayList<Node> nodes = new ArrayList<>();
-	private static int ret = 50;
     protected Utilities utilities;
     RandomEventPool randomEventPool;
-
-    public ScriptBase(){
-//        randomEventPool = new RandomEventPool(getContext().getBot());
-//        randomEventPool.register(new DrunkenDwarf());
-//        randomEventPool.register(new Frog());
-//        randomEventPool.register(new Genie());
-//        randomEventPool.register(new Guard());
-//        randomEventPool.register(new Hyde());
-//        randomEventPool.register(new OldMan());
-//        randomEventPool.register(new Pirate());
-//        randomEventPool.register(new Plant());
-//        randomEventPool.register(new Rick());
-    }
 
     @Override
     public void create(ScriptContext context) throws RuntimeException {
         super.create(context);
         this.utilities = new Utilities(getContext());
     }
-
-    public static int getReturn() {
-		return ret;
-	}
-	
-	public static void setReturn(int millis) {
-		ret = millis;
-	}
 	
 	public static String getActiveNode() {
 		return currnode;
@@ -79,7 +54,7 @@ public abstract class ScriptBase extends Script {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		return getReturn();
+        return 50;
 	}
 
 	@Override

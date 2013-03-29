@@ -31,10 +31,8 @@ public class PathTester extends ScriptBase {
     public class InArea extends Node {
         @Override
         public boolean activate() {
-            if ((fishingGuildArea.contains(localPlayer.getLocation()) ||
-                    ardyArea.contains(localPlayer.getLocation())))
-                return true;
-            return false;
+            return (fishingGuildArea.contains(localPlayer.getLocation()) ||
+                    ardyArea.contains(localPlayer.getLocation()));
         }
 
         @Override
