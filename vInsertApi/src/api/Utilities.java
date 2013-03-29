@@ -1,14 +1,29 @@
 package api;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 import org.vinsert.bot.Bot;
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.api.Actor;
 import org.vinsert.bot.script.api.Item;
 import org.vinsert.bot.script.api.Player;
 import org.vinsert.bot.script.api.Tile;
-import org.vinsert.bot.script.api.tools.*;
+import org.vinsert.bot.script.api.tools.Bank;
+import org.vinsert.bot.script.api.tools.Camera;
+import org.vinsert.bot.script.api.tools.Game;
+import org.vinsert.bot.script.api.tools.Inventory;
+import org.vinsert.bot.script.api.tools.Keyboard;
 import org.vinsert.bot.script.api.tools.Menu;
 import org.vinsert.bot.util.Utils;
+import org.vinsert.bot.script.api.tools.Mouse;
+import org.vinsert.bot.script.api.tools.Navigation;
+import org.vinsert.bot.script.api.tools.Npcs;
+import org.vinsert.bot.script.api.tools.Objects;
+import org.vinsert.bot.script.api.tools.Players;
+import org.vinsert.bot.script.api.tools.Settings;
+import org.vinsert.bot.script.api.tools.Skills;
+import org.vinsert.bot.script.api.tools.Widgets;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -142,6 +157,7 @@ public class Utilities {
             return true;
         }
 
+
         if (index != -1) {
             this.ctx.mouse.click(true);
             Point menuPoint = this.ctx.menu.getClickPoint(index);
@@ -164,5 +180,24 @@ public class Utilities {
 
     public boolean isOnMinimap(Tile t) {
         return localPlayer.getLocation().distanceTo(t) < 17;
+    }
+
+    /**
+     * Call within a script's render in order to print Node debug information
+     * @param script
+     *      Current script
+     * @param g
+     *      Graphics in script's render
+     * @param startX
+     *      X position to start the list of Nodes
+     * @param startY
+     */
+    public void renderNodes(ScriptBase script, Graphics2D g, int startX, int startY){
+        int y_dist = 15;
+        if(script.getNodes().size() > 0){
+            for(int x = 0; x < script.getNodes().size(); x++){
+                script.getNodes().get(x).render(g,startX,startY+(y_dist*x));
+            }
+        }
     }
 }
