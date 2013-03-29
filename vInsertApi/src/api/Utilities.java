@@ -59,6 +59,16 @@ public class Utilities {
         bot.log("Util", string);
     }
 
+
+    /**
+     * Havles distance between two tiles.
+     * @param a
+     *      Source tile.
+     * @param b
+     *      Destination tile.
+     * @return
+     *      Midpoint tile.
+     */
     public Tile halveDistance(Tile a, Tile b) {
         int x, y;
         x = a.getX() + b.getX();
@@ -68,15 +78,19 @@ public class Utilities {
         return new Tile(x, y);
     }
 
-    public boolean clickItem(Item item) {
+    /**
+     * Clicks item in inventory.
+     * @param item
+     *      Item to click.
+     */
+    public void clickItem(Item item) {
         int slot = inventory.indexOf(item);
         Point point = inventory.getClickPoint(slot);
         mouse.click(point.x, point.y);
-        return false;
     }
 
     /**
-     * Creates a path between src and dest tiles.
+     * Creates a path between src and dest tiles excludes dest tile.
      *
      * @param src      The start tile of the path.
      * @param dest     The destination tile of the path.
@@ -90,7 +104,7 @@ public class Utilities {
         int totalDistance = src.distanceTo(dest);
         int numberOfTiles = totalDistance / distance;
 
-        Tile[] pathTiles = new Tile[numberOfTiles + 1];
+        Tile[] pathTiles = new Tile[numberOfTiles];
 
         int srcX = src.getX();
         int srcY = src.getY();
@@ -102,13 +116,21 @@ public class Utilities {
         int adjustY = deltaY / numberOfTiles;
 
         pathTiles[0] = src;
-        pathTiles[pathTiles.length - 1] = dest;
-        for (int i = 1; i < pathTiles.length - 1; i++)
+        for (int i = 1; i < pathTiles.length; i++)
             pathTiles[i] = new Tile(srcX + (adjustX * i), srcY + (adjustY * i));
 
         return new Path(pathTiles, this.ctx);
     }
 
+    /**
+     * Creates a path between any number of tiles.
+     * @param distance
+     *      Distance between tiles.
+     * @param tiles
+     *      Tiles along path.
+     * @return
+     *      Created path.
+     */
     public Path createPath(int distance, Tile... tiles) {
         ArrayList<Path> paths = new ArrayList<>();
         ArrayList<Tile> cumulativeTiles = new ArrayList<>();
@@ -118,9 +140,19 @@ public class Utilities {
         for (Path p : paths) {
             Collections.addAll(cumulativeTiles, p.getTiles());
         }
+        cumulativeTiles.add(tiles[tiles.length-1]);
         return new Path(cumulativeTiles.toArray(new Tile[cumulativeTiles.size()]), this.ctx);
     }
 
+    /**
+     * Interacts with Actor.
+     * @param actor
+     *      Actor to interact with.
+     * @param action
+     *      Action to perform.
+     * @return
+     *      Did interact.
+     */
     public boolean interact(Actor actor, String action)
     {
         if (actor == null)
@@ -137,7 +169,6 @@ public class Utilities {
 
         if (index == 0) {
             this.ctx.mouse.click();
-//            Utils.sleep(Utils.random(200, 400));
             this.ctx.mouse.setSpeed(speed);
             return true;
         }
@@ -146,7 +177,6 @@ public class Utilities {
             this.ctx.mouse.click(true);
             Point menuPoint = this.ctx.menu.getClickPoint(index);
             this.ctx.mouse.click(menuPoint.x, menuPoint.y);
-//            Utils.sleep(Utils.random(350, 650));
             this.ctx.mouse.setSpeed(speed);
             return true;
         }
@@ -155,6 +185,13 @@ public class Utilities {
         return false;
     }
 
+    /**
+     * Gives a walkable location between player and loc.
+     * @param loc
+     *      Destination.
+     * @return
+     *      Walkable tile.
+     */
     public Tile walkableLocation(Tile loc) {
         if (isOnMinimap(loc))
             return loc;
@@ -162,6 +199,13 @@ public class Utilities {
         return walkableLocation(halfway);
     }
 
+    /**
+     * Is tile on minimap
+     * @param t
+     *      Tile.
+     * @return
+     *      Is on Minimap.
+     */
     public boolean isOnMinimap(Tile t) {
         return localPlayer.getLocation().distanceTo(t) < 17;
     }

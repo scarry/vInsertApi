@@ -229,6 +229,16 @@ public class FightCave extends ScriptBase {
 
                 //create idle path (for when enemy is attacking but not loaded
                 fightCaveIdlePath = utilities.createPath(5, fightCaveCenter, fightCaveTopLeft, fightCaveTopRight, fightCaveBotRight, fightCaveBotLeft);
+
+                /**
+                 * Path Debugging
+                 */
+                System.out.println("--------------Path Debugging----------------");
+                Tile[] idlePathTiles = fightCaveIdlePath.getTiles();
+                for (int i = 0; i < idlePathTiles.length - 1; i++) {
+                    System.out.printf("tile: %s\tdistance:%d\n", idlePathTiles[i], idlePathTiles[i].distanceTo(idlePathTiles[i+1]));
+                }
+                System.out.println("----------END PATH--------");
             }
         }
     }
@@ -237,7 +247,7 @@ public class FightCave extends ScriptBase {
 
         @Override
         public boolean activate() {
-            if (isInCave() && !isEnemyLoaded() && fightCaveCenter != null && isInCombat())
+            if (isInCave() && fightCaveCenter != null && !isEnemyLoaded())
                 return true;
             return false;
         }
@@ -293,23 +303,23 @@ public class FightCave extends ScriptBase {
         }
     }
 
-    public class WalkToCenter extends Node {
-
-        @Override
-        public boolean activate() {
-            if (isInCave() && !isEnemyLoaded() && fightCaveCenter != null && !isInCombat()
-                    && localPlayer.getLocation().distanceTo(fightCaveCenter) > 3)
-                return true;
-            return false;
-        }
-
-        @Override
-        public void execute() {
-            navigation.navigate(utilities.walkableLocation(fightCaveCenter), NavigationPolicy.MINIMAP);
-            Conditions.waitFor(new Conditions.isNearTile(fightCaveCenter, 4), random(800, 1500), getContext());
-        }
-
-    }
+//    public class WalkToCenter extends Node {
+//
+//        @Override
+//        public boolean activate() {
+//            if (isInCave() && !isEnemyLoaded() && fightCaveCenter != null && !isInCombat()
+//                    && localPlayer.getLocation().distanceTo(fightCaveCenter) > 3)
+//                return true;
+//            return false;
+//        }
+//
+//        @Override
+//        public void execute() {
+//            navigation.navigate(utilities.walkableLocation(fightCaveCenter), NavigationPolicy.MINIMAP);
+//            Conditions.waitFor(new Conditions.isNearTile(fightCaveCenter, 4), random(800, 1500), getContext());
+//        }
+//
+//    }
 
     @Override
     public boolean init() {
@@ -333,7 +343,7 @@ public class FightCave extends ScriptBase {
         submit(new WalkToBank());
         submit(new OpenBank());
         submit(new DepositBank());
-        submit(new WalkToCenter());
+//        submit(new WalkToCenter());
         submit(new WalkToEnemy());
         submit(new AttackEnemy());
         submit(new EnterCave());
