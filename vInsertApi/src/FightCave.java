@@ -59,8 +59,8 @@ public class FightCave extends ScriptBase {
     }
 
     private boolean isInCave() {
-        Npc entranceNpc = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENTRANCE_NPC_ID));
-        return entranceNpc == null;
+        GameObject exit = objects.getNearest(Filters.objectId(EXIT_ID));
+        return exit != null;
     }
 
     private boolean isEnemyLoaded() {
