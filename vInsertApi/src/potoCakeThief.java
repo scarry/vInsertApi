@@ -7,6 +7,7 @@ import org.vinsert.bot.script.api.Item;
 import org.vinsert.bot.script.api.Tile;
 import org.vinsert.bot.script.api.generic.Filters;
 import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
+import org.vinsert.bot.util.Perspective;
 import org.vinsert.bot.util.Utils;
 
 import api.Node;
@@ -75,7 +76,7 @@ public class potoCakeThief extends ScriptBase{
 			return (localPlayer.getLocation().distanceTo(CAKE_TILE) > 2 ||
 					localPlayer.getLocation().getX() <= 2656) && 
 					!localPlayer.isInCombat() && 
-					health >= 8;
+					health >= localPlayer.getMaxHealth();
 		}
 
 		@Override
@@ -116,10 +117,10 @@ public class potoCakeThief extends ScriptBase{
 
 		@Override
 		public boolean activate() {
-			return health < 8 && 
+			return health < localPlayer.getMaxHealth() &&
 					inventory.getItem(FOOD_ID) != null && 
-					localPlayer.getLocation().distanceTo(SAFE_TILE) < 6 &&
-					!localPlayer.isInCombat();
+					((localPlayer.getLocation().distanceTo(SAFE_TILE) < 6 &&
+					!localPlayer.isInCombat()) || (localPlayer.isInCombat() && localPlayer.isMoving()));
 		}
 
 		@Override
@@ -140,24 +141,19 @@ public class potoCakeThief extends ScriptBase{
 	@Override
 	public boolean init() {
 		submit(new StealFromStall());
+        submit(new Heal());
 		submit(new RunToSafeSpot());
 		submit(new RunToStall());
 		submit(new MakeRoom());
-		submit(new Heal());
 		return true;
 	}
 
 	@Override
 	public void render(Graphics2D g) {
 		health = players.getLocalPlayer().getHealth();
-		g.drawString("Health: " + health, 13, 240);
-		utilities.renderNodes(this,g,13,255);
-		//g.drawString("StealFromStall: " + new StealFromStall().activate(),13, 255);
-		//g.drawString("RunToSafeSpot: " + new RunToSafeSpot().activate(),13,270);
-		//g.drawString("RunToStall: " + new RunToStall().activate(), 13, 285);
-		//g.drawString("MakeRoom: " + new MakeRoom().activate(), 13, 300);
-		//g.drawString("Heal: " + new Heal().activate(), 13, 315);
-	}
-	
+		g.drawString(String.format("Health: %d", health), 13, 240);
+		utilities.renderNodes(this, g, 13, 255);
+        utilities.drawTile(this,g,CAKE_TILE);
+    }
 
 }

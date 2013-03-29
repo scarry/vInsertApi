@@ -1,5 +1,6 @@
 package randoms;
 
+import api.AntiRandom;
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.Npc;
@@ -8,7 +9,7 @@ import org.vinsert.bot.script.randevent.RandomEvent;
 import org.vinsert.bot.util.Utils;
 
 @ScriptManifest(name = "zHyde", authors = { "potofreak" })
-public class Hyde extends RandomEvent {
+public class Hyde extends AntiRandom {
 
     ScriptContext sc;
     public static final int HYDE_ID = 2540;

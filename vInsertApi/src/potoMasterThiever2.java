@@ -65,7 +65,9 @@ public class potoMasterThiever2 extends ScriptBase{
 	int expPerHour = 0;
 	int health = 10;
 	int currentState = 0;
-	
+
+    SkillData sd;
+
 	int thievExp, thievStartExp;
 
 	/*
@@ -172,9 +174,10 @@ public class potoMasterThiever2 extends ScriptBase{
 		@Override
 		public void execute() {
 			status = "Withdrawing food";
-			bank.withdraw(Filters.itemId(BREAD_ID), NumOfFood);
-			sleep(Utils.random(500,800));
-			foodAvailable = true;			
+			if(utilities.withdraw(Filters.itemId(BREAD_ID), NumOfFood))
+                return;
+            else
+			    sleep(600);
 		}		
 	}
 	
@@ -346,6 +349,7 @@ public class potoMasterThiever2 extends ScriptBase{
 		//submit(new TestCastle());
 		//new RandomHandler(BANK_TILE,Skills.HITPOINTS,this);
 		utilities = new Utilities(getContext());
+        sd = new SkillData(this.getContext());
         submit(new Heal());
 		submit(new GetFarmer());
 		submit(new PickpocketFarmer());
@@ -389,7 +393,7 @@ public class potoMasterThiever2 extends ScriptBase{
             return null;
         }
 	}
-	
+
 	private final Color COLOR_BLACK = new Color(0,0,0);
 	private final Color COLOR_WHITE = new Color(255,255,255);
 	private final Color COLOR_RANDOM = new Color(227, 72, 15, 238);
@@ -433,19 +437,14 @@ public class potoMasterThiever2 extends ScriptBase{
 
         //g.drawImage(back, 4, 342, null);
 	    //g.drawImage(logo, 230, 305, null);
-        
+
+        Point progBar = new Point(10,300);
+        utilities.drawProgressBar(this,g,sd,Skills.THIEVING,progBar,500,22,Color.yellow,Color.red,Color.black);
+
 	    g.setColor(COLOR_WHITE);
 	    g.setFont(expFont);
 
-        g.drawString("PickpocketFarmer: " + new PickpocketFarmer().activate(),13,150);
-        g.drawString("Heal: " + new Heal().activate(),13,165);
-        g.drawString("WalkToBank: " + new WalkToBank().activate(),13,180);
-        g.drawString("OpenBank: " + new OpenBank().activate(),13,195);
-        g.drawString("DepositAll: " + new DepositAll().activate(),13,210);
-        g.drawString("WithdrawFood: " + new WithdrawFood().activate(),13,225);
-        g.drawString("WalkToFarmerTile: " + new WalkToFarmerTile().activate(),13,240);
-        g.drawString("WalkToFarmer: " + new WalkToFarmer().activate(),13,255);
-        g.drawString("Farmer visible: " + camera.isVisible(farmer), 13, 270);
+        utilities.renderNodes(this,g,15,130);
 
 	    g.drawString("Health:" + health, 13, 365);
 	    //g.drawString("Animation: " + players.getLocalPlayer().getAnimation(), 13, 385);

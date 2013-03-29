@@ -1,5 +1,6 @@
 package randoms;
 
+import api.AntiRandom;
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.Npc;
@@ -10,7 +11,7 @@ import org.vinsert.bot.util.Utils;
 //import api.AntiRandom;
 @ScriptManifest(name = "zDrunkenDwarf", authors = { "potofreak" })
 
-public class DrunkenDwarf extends RandomEvent {
+public class DrunkenDwarf extends AntiRandom {
 
     ScriptContext sc;
     public static final int DWARF_ID = 956;
