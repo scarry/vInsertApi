@@ -19,17 +19,15 @@ public abstract class ScriptBase extends Script {
 	ArrayList<Node> nodes = new ArrayList<>();
 	private static int ret = 50;
     protected Utilities utilities;
-    RandomEventPool randomEventPool;
-    /*
-    public ScriptBase(){
-        utilities = new Utilities(getContext());
+    protected SkillData skillData;
+    protected RandomEventPool randomEventPool;
 
-    }
-    */
     @Override
     public void create(ScriptContext context) throws RuntimeException {
         super.create(context);
         this.utilities = new Utilities(getContext());
+        this.skillData = new SkillData(getContext());
+
         randomEventPool = new RandomEventPool(getContext().getBot());
         randomEventPool.register(new DrunkenDwarf());
         randomEventPool.register(new Frog());
