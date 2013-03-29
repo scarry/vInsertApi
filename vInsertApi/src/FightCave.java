@@ -225,8 +225,8 @@ public class FightCave extends ScriptBase {
             log("setting cave center");
             GameObject exit = objects.getNearest(Filters.objectId(EXIT_ID));
             if (exit != null) {
-                int centerX = exit.getLocation().getX() + CENTER_X_OFFSET;
-                int centerY = exit.getLocation().getY() + CENTER_Y_OFFSET;
+                int centerX = localPlayer.getLocation().getX() + CENTER_X_OFFSET;
+                int centerY = localPlayer.getLocation().getY() + CENTER_Y_OFFSET;
                 fightCaveCenter = new Tile(centerX, centerY);
                 Tile fightCaveBotLeft = new Tile(centerX - 11, centerY - 14);
                 Tile fightCaveBotRight = new Tile(centerX + 10, centerY - 6);
