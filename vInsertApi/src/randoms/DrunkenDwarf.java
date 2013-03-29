@@ -10,9 +10,9 @@ import org.vinsert.bot.util.Utils;
 
 public class DrunkenDwarf extends RandomEvent {
 
-	ScriptContext sc;
-	public static final int DWARF_ID = 956;
-	Npc DrunkenDwarf;
+    ScriptContext sc;
+    public static final int DWARF_ID = 956;
+    Npc DrunkenDwarf;
 
     @Override
     public boolean init() {
@@ -26,14 +26,14 @@ public class DrunkenDwarf extends RandomEvent {
         Widget[] c = sc.widgets.get(242);
         Widget[] d = sc.widgets.get(243);
         Widget[] e = sc.widgets.get(244);
-        if(DrunkenDwarf != null) {
-            if(DrunkenDwarf.getLocation().distanceTo(sc.players.getLocalPlayer().getLocation()) <= 2){
+        if (DrunkenDwarf != null) {
+            if (DrunkenDwarf.getLocation().distanceTo(sc.players.getLocalPlayer().getLocation()) <= 2) {
                 sc.camera.rotateToTile(DrunkenDwarf.getLocation());
                 DrunkenDwarf.interact("Talk-to Drunken Dwarf");
-                Utils.sleep(Utils.random(1000,2500));
-                if(b != null && b.length > 0 || c.length > 0 || d.length > 0 || e.length > 0) {
+                Utils.sleep(Utils.random(1000, 2500));
+                if (b != null && b.length > 0 || c.length > 0 || d.length > 0 || e.length > 0) {
                     sc.mouse.move(Utils.random(196, 404), Utils.random(445, 455));
-                    Utils.sleep(Utils.random(1000,1200));
+                    Utils.sleep(Utils.random(1000, 1200));
                     sc.mouse.click(true);
                 }
             }
