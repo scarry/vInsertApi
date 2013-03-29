@@ -362,9 +362,9 @@ public class FightCave extends ScriptBase {
     @Override
     public void render(Graphics2D g) {
         g.setColor(color1);
-        g.fillRect(2, 340, 512, 136);
+        g.fillRect(2, 340, 514, 137);
         g.setStroke(stroke1);
-        g.drawRect(2, 340, 512, 136);
+        g.drawRect(2, 340, 514, 137);
         g.drawImage(img1, 3, 342, null);
         g.setFont(font1);
         g.setColor(color2);

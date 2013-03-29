@@ -101,8 +101,7 @@ public class FishBot extends ScriptBase {
 
 
     private Timer lastFishTimer = new Timer(0);
-    private FishSpot fishSpot = new FishSpot(CAGE_HARPOON_FISH_ID, "Cage", CAGE_ID, FISHING_GUILD_PATH, FISHING_GUILD_BANK);
-
+    private FishSpot fishSpot;
 
 
     private class FishSpot {
@@ -411,7 +410,7 @@ public class FishBot extends ScriptBase {
 
         @Override
         public void execute() {
-            fishSpot.fishPath.traverse(false);
+            fishSpot.fishPath.traverse(true, true, 1);
             Conditions.waitFor(new Conditions.isInArea(fishSpot.bankArea), random(800, 1500), getContext());
         }
     }
@@ -426,7 +425,7 @@ public class FishBot extends ScriptBase {
 
         @Override
         public void execute() {
-            fishSpot.fishPath.traverse(true);
+            fishSpot.fishPath.traverse(false);
             Conditions.waitFor(new Conditions.isNpcLoaded(fishSpot.fishType), random(800, 1500), getContext());
         }
     }
@@ -434,10 +433,18 @@ public class FishBot extends ScriptBase {
     @Override
     public boolean init() {
 
-        FISHING_GUILD_PATH = new Path(new Tile[]{
-                new Tile(2586, 3420),
-                new Tile(2591, 3416),
-                new Tile(2595, 3414)}, getContext());
+//        FISHING_GUILD_PATH = new Path(new Tile[]{
+//                new Tile(2586, 3420),
+//                new Tile(2591, 3416),
+//                new Tile(2595, 3414)}, getContext());
+        
+        FISHING_GUILD_PATH = new Path(new Tile[] { new Tile(2603, 3413), new Tile(2603, 3409), new Tile(2603, 3405),
+                new Tile(2598, 3408), new Tile(2596, 3412), new Tile(2595, 3416),
+                new Tile(2593, 3420), new Tile(2598, 3421), new Tile(2601, 3421),
+                new Tile(2596, 3421), new Tile(2593, 3418), new Tile(2590, 3417),
+                new Tile(2587, 3420), new Tile(2586, 3420) }, getContext());
+
+        fishSpot = new FishSpot(CAGE_HARPOON_FISH_ID, "Cage", CAGE_ID, FISHING_GUILD_PATH, FISHING_GUILD_BANK);
 
         submit(new WalkToBank());
         submit(new ApproachFish());
@@ -475,9 +482,9 @@ public class FishBot extends ScriptBase {
     @Override
     public void render(Graphics2D g) {
         g.setColor(color1);
-        g.fillRect(2, 340, 512, 136);
+        g.fillRect(2, 340, 514, 137);
         g.setStroke(stroke1);
-        g.drawRect(2, 340, 512, 136);
+        g.drawRect(2, 340, 514, 137);
         g.drawImage(img1, 3, 342, null);
         g.setFont(font1);
         g.setColor(color2);
