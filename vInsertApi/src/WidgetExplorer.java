@@ -125,13 +125,13 @@ public class WidgetExplorer extends ScriptBase {
         if (w != null) {
             int x, y;
             Widget parent = w.getParent();
-            if (parent != null) {
-                x = parent.getBounds().x + w.getBounds().x;
-                y = parent.getBounds().y + w.getBounds().y;
-            } else {
+//            if (parent != null) {
+//                x = parent.getBounds().x + w.getBounds().x;
+//                y = parent.getBounds().y + w.getBounds().y;
+//            } else {
                 x = w.getBounds().x;
                 y = w.getBounds().y;
-            }
+//            }
             WidgetExplorer.drawWidget = new Rectangle(x, y, w.getWidth(), w.getHeight());
         }
     }

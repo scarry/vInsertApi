@@ -373,11 +373,11 @@ public class FightCave extends ScriptBase {
         g.drawString("- FightCave", 214, 365);
         g.setFont(font4);
         g.setColor(color3);
-//        g.drawString(skillData.generateSkillString(Skills.STRENGTH), 128, 455);
         utilities.drawProgressBar(g, skillData, Skills.STRENGTH, new Point(120, 440), 380, 20,
                 color3, Color.black, Color.blue, Color.white, new Color(222, 0, 6, 123), new Point(10,10), new Point(30,30));
         g.setFont(font3);
-        g.drawString(ScriptBase.getActiveNode().toString(), 120, 425);
+        if (ScriptBase.getActiveNode() != null)
+            g.drawString(ScriptBase.getActiveNode().toString(), 120, 425);
         g.drawString("Run Time: " + runTime.toElapsedString(), 120, 395);
     }
     //END: Code generated using Enfilade's Easel

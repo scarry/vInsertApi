@@ -9,12 +9,16 @@ import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.*;
 import org.vinsert.bot.script.api.generic.Filters;
 import org.vinsert.bot.script.api.tools.Navigation;
+import org.vinsert.bot.script.api.tools.Skills;
 import org.vinsert.bot.util.Filter;
 
 import api.Path;
 import api.Area;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -93,15 +97,11 @@ public class FishBot extends ScriptBase {
     /**
      * Path to the fish from bank
      */
-    private Path FISHING_GUILD_PATH = new Path(new Tile[] {
-            new Tile(2586, 3420),
-            new Tile(2591, 3416),
-            new Tile(2595, 3414)}, getContext());
-
+    private Path FISHING_GUILD_PATH;
 
 
     private Timer lastFishTimer = new Timer(0);
-    private FishSpot fishSpot = new FishSpot(CAGE_HARPOON_FISH_ID, CAGE_ID, FISHING_GUILD_PATH, FISHING_GUILD_BANK);
+    private FishSpot fishSpot = new FishSpot(CAGE_HARPOON_FISH_ID, "Cage", CAGE_ID, FISHING_GUILD_PATH, FISHING_GUILD_BANK);
 
 
 
@@ -110,12 +110,14 @@ public class FishBot extends ScriptBase {
         public Area bankArea;
         public int[] fishType;
         public int equipment;
+        public String interact;
 
-        public FishSpot(int[] fishType, int equipment, Path fishPath, Area bankArea) {
+        public FishSpot(int[] fishType, String interact, int equipment, Path fishPath, Area bankArea) {
             this.fishPath = fishPath;
             this.bankArea = bankArea;
             this.fishType = fishType;
             this.equipment = equipment;
+            this.interact = interact;
         }
     }
 
@@ -352,8 +354,7 @@ public class FishBot extends ScriptBase {
 
         @Override
         public void execute() {
-//            utilities.withdraw(Filters.objectId(fishSpot.equipment));
-
+            utilities.withdraw(Filters.itemId(fishSpot.equipment), 1);
         }
     }
 
@@ -371,7 +372,8 @@ public class FishBot extends ScriptBase {
             Npc fish = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(fishSpot.fishType));
             if (fish == null)
                 return;
-            fish.interact("Cage");
+            if (utilities.interact(fish, fishSpot.interact))
+                lastFishTimer = new Timer(0);
             Conditions.waitFor(new Conditions.Condition() {
                 @Override
                 public boolean validate(ScriptContext ctx) {
@@ -431,42 +433,66 @@ public class FishBot extends ScriptBase {
 
     @Override
     public boolean init() {
+
+        FISHING_GUILD_PATH = new Path(new Tile[]{
+                new Tile(2586, 3420),
+                new Tile(2591, 3416),
+                new Tile(2595, 3414)}, getContext());
+
         submit(new WalkToBank());
         submit(new ApproachFish());
         submit(new DepositBank());
         submit(new WithdrawBank());
         submit(new WalkToFish());
         submit(new Fish());
+        submit(new OpenBank());
 
         return true;
     }
 
-    @Override
-    public void render(Graphics2D g) {
-        //box
-        g.setColor(new Color(63, 63, 43, 200));
-        g.draw3DRect(375, 5, 139, 300, true);
-        g.fill3DRect(375, 5, 139, 300, true);
-
-        int[] point = {385, 2};
-        int height = g.getFontMetrics().getHeight();
-
-        //text
-        g.setColor(Color.WHITE);
-        g.drawString("Fortruce - FishBot", point[0] + 5, point[1] += height);
-        g.drawLine(389, 21, 499, 21);
-
-        if (fishSpot != null) {
-            g.drawString("nToBank:    " + String.valueOf(needToBank()), point[0], point[1] += height);
-            g.drawString("nEquip:     " + String.valueOf(needEquipment()), point[0], point[1] += height);
-            g.drawString("isAtBank:   " + String.valueOf(isAtBank()), point[0], point[1] += height);
-            g.drawString("isFishLoad:  " + String.valueOf(isFishLoaded()), point[0], point[1] += height);
-            g.drawString("isFClose:   " + String.valueOf(isFishClose()), point[0], point[1] += height);
-            g.drawString("canFish:    " + String.valueOf(canFish()), point[0], point[1] += height);
-            g.drawString("isFishing:  " + String.valueOf(isFishing()), point[0], point[1] += height);
-            g.drawString("nToDeposit: " + String.valueOf(needToDeposit()), point[0], point[1] += height);
-            g.drawString("nToWithdrw: " + String.valueOf(needToWithdraw()), point[0], point[1] += height);
+    //START: Code generated using Enfilade's Easel
+    private Image getImage(String url) {
+        try {
+            return ImageIO.read(new URL(url));
+        } catch(IOException e) {
+            return null;
         }
     }
+
+    final Color color1 = new Color(0, 0, 0);
+    final Color color2 = new Color(51, 51, 255);
+    final Color color3 = new Color(153, 255, 255);
+
+    final BasicStroke stroke1 = new BasicStroke(1);
+
+    final Font font1 = new Font("DialogInput", 0, 20);
+    final Font font2 = new Font("DialogInput", 0, 18);
+    final Font font3 = new Font("DialogInput", 0, 14);
+    final Font font4 = new Font("DialogInput", 0, 10);
+
+    final Image img1 = getImage("http://puu.sh/2q9sZ/1a25387d57");
+
+    @Override
+    public void render(Graphics2D g) {
+        g.setColor(color1);
+        g.fillRect(2, 340, 512, 136);
+        g.setStroke(stroke1);
+        g.drawRect(2, 340, 512, 136);
+        g.drawImage(img1, 3, 342, null);
+        g.setFont(font1);
+        g.setColor(color2);
+        g.drawString("fortruce", 106, 365);
+        g.setFont(font2);
+        g.drawString("- FishBot", 214, 365);
+        g.setFont(font4);
+        g.setColor(color3);
+        utilities.drawProgressBar(g, skillData, Skills.FISHING, new Point(120, 440), 380, 20,
+                color3, Color.black, Color.blue, Color.white, new Color(222, 0, 6, 123), new Point(10,10), new Point(30,30));
+        g.setFont(font3);
+        if (ScriptBase.getActiveNode() != null)
+            g.drawString(ScriptBase.getActiveNode(), 120, 425);
+        g.drawString("Run Time: " + runTime.toElapsedString(), 120, 395);
+    }
+    //END: Code generated using Enfilade's Easel
 
 }
