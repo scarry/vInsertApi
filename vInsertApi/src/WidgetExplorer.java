@@ -87,6 +87,9 @@ public class WidgetExplorer extends ScriptBase {
     public String widgetToString(Widget wid) {
         StringBuilder widgetInfo = new StringBuilder();
         if (wid != null) {
+            widgetInfo.append("Name: ");
+            widgetInfo.append(wid.getName());
+            widgetInfo.append("\n");
             widgetInfo.append("Height: ");
             widgetInfo.append(wid.getHeight());
             widgetInfo.append("\nWidth: ");
@@ -115,6 +118,15 @@ public class WidgetExplorer extends ScriptBase {
             widgetInfo.append("\n");
             widgetInfo.append("SpellName: ");
             widgetInfo.append(wid.getSpellName());
+            widgetInfo.append("\n");
+            widgetInfo.append("Text: ");
+            widgetInfo.append(wid.getText());
+            widgetInfo.append("\n");
+            widgetInfo.append("String1: ");
+            widgetInfo.append(wid.getString1());
+            widgetInfo.append("\n");
+            widgetInfo.append("String2: ");
+            widgetInfo.append(wid.getString2());
             widgetInfo.append("\n");
             return widgetInfo.toString();
         }

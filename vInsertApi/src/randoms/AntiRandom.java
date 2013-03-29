@@ -1,5 +1,6 @@
 package randoms;
 
+import api.Utilities;
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.randevent.RandomEvent;
 
@@ -7,7 +8,15 @@ import java.awt.*;
 
 public abstract class AntiRandom extends RandomEvent {
 
-    ScriptContext sc;
+    protected ScriptContext sc;
+    protected Utilities utilities;
+
+    @Override
+    public void create(ScriptContext context) throws RuntimeException {
+        super.create(context);    //To change body of overridden methods use File | Settings | File Templates.
+        sc = context;
+        utilities = new Utilities(sc);
+    }
 
     //START: Code generated using Enfilade's Easel
     protected final Color color1 = new Color(255, 0, 50, 127);

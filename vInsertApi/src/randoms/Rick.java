@@ -9,7 +9,6 @@ import org.vinsert.bot.util.Utils;
 @ScriptManifest(name = "zRick", authors = { "potofreak" })
 public class Rick extends AntiRandom {
 
-    ScriptContext sc;
     public static final int RICK_ID = 2476;
     Npc Rick;
 

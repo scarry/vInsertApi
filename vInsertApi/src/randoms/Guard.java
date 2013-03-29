@@ -9,7 +9,6 @@ import org.vinsert.bot.util.Utils;
 @ScriptManifest(name = "zGuard", authors = { "potofreak" })
 public class Guard extends AntiRandom {
 
-    ScriptContext sc;
     public static final int GUARD_ID = 4375;
     Npc Guard;
 

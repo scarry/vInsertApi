@@ -11,7 +11,6 @@ import org.vinsert.bot.util.Utils;
 
 public class DrunkenDwarf extends AntiRandom {
 
-    ScriptContext sc;
     public static final int DWARF_ID = 956;
     Npc DrunkenDwarf;
 

@@ -24,6 +24,7 @@ import org.vinsert.bot.script.api.tools.Settings;
 import org.vinsert.bot.script.api.tools.Skills;
 import org.vinsert.bot.script.api.tools.Widgets;
 import org.vinsert.component.debug.DebugTiles;
+import org.vinsert.insertion.IWidget;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -427,5 +428,42 @@ public class Utilities {
             }
         }
         return false;
+    }
+
+    public Widget getWidget(ScriptContext ctx,int widget, int child){
+        if(ctx.getClient().getWidgets() != null){
+            if(ctx.getClient().getWidgets()[widget] != null){
+                IWidget[] iWids = ctx.getClient().getWidgets()[widget];
+                Widget[] wids = new Widget[iWids.length];
+                for (int j = 0; j < iWids.length; j++) {
+                    if (iWids[j] != null)
+                    {
+                        Widget w = new Widget(ctx, ctx.getClient().getWidgets()[widget][j]);
+                        wids[j] = w;
+                    }
+                }
+                if(wids[child] != null){
+                    log("w: " + widget + " c: " + child + " t: " + wids[child].getText());
+                    return wids[child];
+                }
+                else{
+                    log("wids child failed");
+                    return null;
+                }
+
+            }
+        }
+        return null;
+
+    }
+
+    public void clickWidget(Widget wid){
+        int x = random(wid.getLocation().x + 4, wid.getLocation().x + wid.getBounds().width -4);
+        int y = random(wid.getLocation().y + 4, wid.getLocation().y + wid.getBounds().height -4);
+        Point point = new Point(x,y);
+        //this.ctx.mouse.click(point.x, point.y);
+        this.ctx.mouse.move(point.x,point.y);
+        Utils.sleep(20000);
+        Utils.sleep(random(45, 150));
     }
 }

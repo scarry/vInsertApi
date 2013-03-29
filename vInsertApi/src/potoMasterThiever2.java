@@ -43,7 +43,7 @@ public class potoMasterThiever2 extends ScriptBase{
 	int[] DROPABLES_ID = {5100, 5306, 5105, 5098, 5283, 5106, 5282, 5310, 5307, 5325, 5320, 5281, 5099, 5308, 5312, 5311, 5104, 5102, 5309, 5097, 5103, 5319, 5292, 5293, 5294};
 	static int FARMER_ID = 2234;
 	
-	Tile BANK_TILE = new Tile(Utils.random(3092,3095), Utils.random(3242,3244));
+	Tile BANK_TILE = new Tile(3092, 3243);
 	Tile FARMER_TILE = new Tile(Utils.random(3078,3081),Utils.random(3249,3251));
 	
 	int NumOfFood = 6;
@@ -55,8 +55,6 @@ public class potoMasterThiever2 extends ScriptBase{
 	
 	int STUN_ANIMATION = 424;
 	int STEAL_ANIMATION = 881;
-
-    Utilities utilities;
 	
 	public Npc farmer;
 	
@@ -65,8 +63,6 @@ public class potoMasterThiever2 extends ScriptBase{
 	int expPerHour = 0;
 	int health = 10;
 	int currentState = 0;
-
-    SkillData sd;
 
 	int thievExp, thievStartExp;
 
@@ -348,8 +344,6 @@ public class potoMasterThiever2 extends ScriptBase{
 	public boolean init() {
 		//submit(new TestCastle());
 		//new RandomHandler(BANK_TILE,Skills.HITPOINTS,this);
-		utilities = new Utilities(getContext());
-        sd = new SkillData(this.getContext());
         submit(new Heal());
 		submit(new GetFarmer());
 		submit(new PickpocketFarmer());
@@ -439,7 +433,7 @@ public class potoMasterThiever2 extends ScriptBase{
 	    //g.drawImage(logo, 230, 305, null);
 
         Point progBar = new Point(10,300);
-        utilities.drawProgressBar(g,sd,Skills.THIEVING,progBar,500,22,Color.yellow,Color.red,Color.black);
+        utilities.drawProgressBar(g,skillData,Skills.THIEVING,progBar,500,22,Color.yellow,Color.red,Color.black);
 
 	    g.setColor(COLOR_WHITE);
 	    g.setFont(expFont);

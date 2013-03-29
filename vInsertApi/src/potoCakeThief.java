@@ -1,5 +1,4 @@
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.GameObject;
@@ -7,6 +6,7 @@ import org.vinsert.bot.script.api.Item;
 import org.vinsert.bot.script.api.Tile;
 import org.vinsert.bot.script.api.generic.Filters;
 import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
+import org.vinsert.bot.script.api.tools.Skills;
 import org.vinsert.bot.util.Perspective;
 import org.vinsert.bot.util.Utils;
 
@@ -154,6 +154,8 @@ public class potoCakeThief extends ScriptBase{
 		g.drawString(String.format("Health: %d", health), 13, 240);
 		utilities.renderNodes(this, g, 13, 255);
         utilities.drawTile(this,g,CAKE_TILE);
+        Point progBar = new Point(10,300);
+        utilities.drawProgressBar(g,skillData,Skills.THIEVING,progBar,500,22, Color.yellow,Color.red,Color.black);
     }
 
 }

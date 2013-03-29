@@ -45,7 +45,8 @@ public class Conditions {
     public static boolean waitFor(final Condition c, final int timeout, final int sleepTime, ScriptContext ctx) {
         final Timer t = new Timer(timeout);
         while (t.isRunning() && !c.validate(ctx)) {
-            Utils.sleep(timeout);
+            //Utils.sleep(timeout);
+            Utils.sleep(10);
         }
         if (c.validate(ctx)) {
             Utils.sleep(sleepTime);

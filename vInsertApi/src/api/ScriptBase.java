@@ -2,16 +2,18 @@ package api;
 
 import java.awt.Graphics2D;
 import java.io.PipedReader;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.vinsert.bot.script.Script;
 import org.vinsert.bot.Bot;
 import org.vinsert.bot.script.ScriptContext;
+import org.vinsert.bot.script.randevent.RandomEvent;
 import org.vinsert.bot.script.randevent.RandomEventPool;
 import randoms.*;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ScriptBase extends Script {
 
@@ -67,7 +69,7 @@ public abstract class ScriptBase extends Script {
 
 	@Override
 	public void close() {
-		log("Script finished.");
+		log("Script finished!!");
 	}
 
 	@Override
@@ -75,10 +77,12 @@ public abstract class ScriptBase extends Script {
 
 	@Override
 	public int pulse() {
+        randomEventPool.check();
 		try {
 			if(nodes.size() > 0) {
 				for (Node n : nodes) {
 					if (n.activate()) {
+                        System.out.println("Nodes");
 						currnode = n.getClass().getSimpleName();
 						n.execute();
 						return 0; // getReturn();

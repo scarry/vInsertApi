@@ -8,7 +8,6 @@ import org.vinsert.bot.util.Utils;
 @ScriptManifest(name = "zPlant", authors = { "potofreak" })
 public class Plant extends AntiRandom {
 
-    ScriptContext sc;
     public Npc plant;
 
 
