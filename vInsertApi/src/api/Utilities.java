@@ -270,8 +270,6 @@ public class Utilities {
 
     /**
      * Draws a progress bar
-     * @param script
-     *      ScriptBase of the script (usually simply "this")
      * @param g
      *      Graphics2D of the script
      * @param sd
@@ -295,6 +293,32 @@ public class Utilities {
                                 int height, Color textColor, Color c1, Color c2){
         drawProgressBar(g, sd, skill, start, width, height, textColor, c1, c2, new Point(10, 10), new Point(30, 30));
     }
+
+    /**
+     * Draws a progress bar
+     * @param g
+     *      Graphics2D of the script
+     * @param sd
+     *      SkillData of the script
+     * @param skill
+     *      Skill for the progress bar (Skills.THIEVING)
+     * @param start
+     *      Upper left point to draw progres bar
+     * @param width
+     *      Width of the progress bar
+     * @param height
+     *      Height of the progress bar
+     * @param textColor
+     *      Color of the Text
+     * @param c1
+     *      First color in gradient
+     * @param c2
+     *      Second color in gradient
+     * @param p1
+     *      First point of gradient.
+     * @param p2
+     *      Second point of gradient.
+     */
     public void drawProgressBar(Graphics2D g, SkillData sd, int skill, Point start, int width,
                                 int height, Color textColor, Color c1, Color c2, Point p1, Point p2){
         /*
