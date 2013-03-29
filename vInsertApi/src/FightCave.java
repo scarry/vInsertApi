@@ -288,7 +288,7 @@ public class FightCave extends ScriptBase {
             Npc enemy = npcs.getNearest(ENEMY_IDS);
             if (enemy != null && (enemy.getInteracting() != null || enemy.isMoving())) {
                 utilities.interact(enemy, "Attack");
-                Conditions.waitFor(new Conditions.isNotMoving(), random(300, 600), random(400, 700), getContext());
+                Conditions.waitFor(new Conditions.isInteracting(), random(200, 300), random(400, 700), getContext());
             }
         }
     }
@@ -327,7 +327,6 @@ public class FightCave extends ScriptBase {
 
         bankTokkulEvery = 99999;
 
-//        utilities = new Utilities(this.getContext());
         SD = new SkillData(this.getContext());
 
         submit(new SetCaveCenter());
@@ -340,7 +339,6 @@ public class FightCave extends ScriptBase {
         submit(new EnterCave());
         submit(new WalkToEntrance());
         submit(new FindEnemy());
-        log("starting bot");
 
         return true;
     }

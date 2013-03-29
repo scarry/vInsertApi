@@ -82,6 +82,13 @@ public class Conditions {
         }
     }
 
+    public static class isInteracting extends Condition {
+        @Override
+        public boolean validate(ScriptContext ctx) {
+            return ctx.players.getLocalPlayer().getInteracting() != null;
+        }
+    }
+
     public static class isNearTile extends Condition {
         private int distance;
         private Tile tile;
