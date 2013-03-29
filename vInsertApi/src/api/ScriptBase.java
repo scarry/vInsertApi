@@ -21,12 +21,14 @@ public abstract class ScriptBase extends Script {
     protected Utilities utilities;
     protected SkillData skillData;
     protected RandomEventPool randomEventPool;
+    protected Timer runTime;
 
     @Override
     public void create(ScriptContext context) throws RuntimeException {
         super.create(context);
         this.utilities = new Utilities(getContext());
         this.skillData = new SkillData(getContext());
+        this.runTime = new Timer(0);
 
         randomEventPool = new RandomEventPool(getContext().getBot());
         randomEventPool.register(new DrunkenDwarf());

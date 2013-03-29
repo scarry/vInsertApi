@@ -1,5 +1,3 @@
-import api.*;
-import api.Timer;
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.GameObject;
 import org.vinsert.bot.script.api.Npc;
@@ -17,15 +15,11 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.net.URL;
 
+import api.*;
+
 
 @ScriptManifest(name = "FightCave", authors = {"Fortruce"}, description = "Fight Cave Bot", version = 1.0)
 public class FightCave extends ScriptBase {
-
-    /**
-     * Paint variables
-     */
-    private static final Timer TIMER = new Timer(0);
-    private static SkillData SD;
 
     /**
      * Ids
@@ -241,7 +235,7 @@ public class FightCave extends ScriptBase {
                  */
                 System.out.println("--------------Path Debugging----------------");
                 Tile[] idlePathTiles = fightCaveIdlePath.getTiles();
-                System.out.println(TIMER.toElapsedString());
+                System.out.println(runTime.toElapsedString());
                 System.out.printf("my location:\t%s%n", localPlayer.getLocation());
                 System.out.printf("center:\t%s%n", fightCaveCenter);
                 System.out.printf("exit:\t%s%n", exit.getLocation());
@@ -329,8 +323,6 @@ public class FightCave extends ScriptBase {
 
         bankTokkulEvery = 99999;
 
-        SD = new SkillData(this.getContext());
-
         submit(new SetCaveCenter());
         submit(new WalkToBank());
         submit(new OpenBank());
@@ -381,10 +373,12 @@ public class FightCave extends ScriptBase {
         g.drawString("- FightCave", 214, 365);
         g.setFont(font4);
         g.setColor(color3);
-        g.drawString(SD.generateSkillString(Skills.STRENGTH), 128, 455);
+//        g.drawString(skillData.generateSkillString(Skills.STRENGTH), 128, 455);
+        utilities.drawProgressBar(g, skillData, Skills.STRENGTH, new Point(120, 440), 380, 20,
+                color3, Color.black, Color.blue, Color.white, new Color(222, 0, 6, 123), new Point(10,10), new Point(30,30));
         g.setFont(font3);
-        g.drawString(ScriptBase.getActiveNode().toString(), 128, 425);
-        g.drawString("Run Time: " + TIMER.toElapsedString(), 128, 395);
+        g.drawString(ScriptBase.getActiveNode().toString(), 120, 425);
+        g.drawString("Run Time: " + runTime.toElapsedString(), 120, 395);
     }
     //END: Code generated using Enfilade's Easel
 

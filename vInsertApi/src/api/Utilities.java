@@ -284,14 +284,14 @@ public class Utilities {
      *      Height of the progress bar
      * @param textColor
      *      Color of the Text
-     * @param c1
+     * @param gradient1
      *      First color in gradient
-     * @param c2
+     * @param gradient2
      *      Second color in gradient
      */
     public void drawProgressBar(Graphics2D g, SkillData sd, int skill, Point start, int width,
-                                int height, Color textColor, Color c1, Color c2){
-        drawProgressBar(g, sd, skill, start, width, height, textColor, c1, c2, new Point(10, 10), new Point(30, 30));
+                                int height, Color textColor, Color gradient1, Color gradient2){
+        drawProgressBar(g, sd, skill, start, width, height, textColor, gradient1, gradient2, Color.black, COLOR_GREY, new Point(10, 10), new Point(30, 30));
     }
 
     /**
@@ -310,9 +310,9 @@ public class Utilities {
      *      Height of the progress bar
      * @param textColor
      *      Color of the Text
-     * @param c1
+     * @param gradient1
      *      First color in gradient
-     * @param c2
+     * @param gradient2
      *      Second color in gradient
      * @param p1
      *      First point of gradient.
@@ -320,28 +320,30 @@ public class Utilities {
      *      Second point of gradient.
      */
     public void drawProgressBar(Graphics2D g, SkillData sd, int skill, Point start, int width,
-                                int height, Color textColor, Color c1, Color c2, Point p1, Point p2){
+                                int height, Color textColor, Color gradient1, Color gradient2,
+                                Color border, Color fill, Point p1, Point p2){
         /*
             Draw progress bar using gradient
          */
-        GradientPaint gradient = new GradientPaint(p1.x,p1.y,c1,p2.x,p2.y,c2,true);
-        g.setPaint(gradient);
+        GradientPaint gradient = new GradientPaint(p1.x,p1.y,gradient1,p2.x,p2.y,gradient2,true);
         int expAtCurrLevel = Skills.EXPERIENCE_TABLE[sd.getLevel(skill)];
         int expAtNextLevel = Skills.EXPERIENCE_TABLE[sd.getLevel(skill)+1];
         double totalExpNeeded = expAtNextLevel - expAtCurrLevel;
         double progressWidth;
         progressWidth = skills.getExperienceToNextLevel(skill) / totalExpNeeded;
         progressWidth = 1 - progressWidth;
-        g.fillRect(start.x,start.y,(int)(width*progressWidth),height);
         /*
             Draw filler rectangle
          */
-        g.setColor(COLOR_GREY);
+        g.setColor(fill);
         g.fillRect(start.x, start.y, width, height);
+
+        g.setPaint(gradient);
+        g.fillRect(start.x,start.y,(int)(width*progressWidth),height);
         /*
             Draw outer border rectangle
          */
-        g.setColor(Color.black);
+        g.setColor(border);
         g.drawRect(start.x, start.y, width, height);
         int fontHeight = g.getFontMetrics().getHeight();
         /*

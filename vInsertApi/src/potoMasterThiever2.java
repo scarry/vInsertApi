@@ -439,7 +439,7 @@ public class potoMasterThiever2 extends ScriptBase{
 	    //g.drawImage(logo, 230, 305, null);
 
         Point progBar = new Point(10,300);
-        utilities.drawProgressBar(this,g,sd,Skills.THIEVING,progBar,500,22,Color.yellow,Color.red,Color.black);
+        utilities.drawProgressBar(g,sd,Skills.THIEVING,progBar,500,22,Color.yellow,Color.red,Color.black);
 
 	    g.setColor(COLOR_WHITE);
 	    g.setFont(expFont);
