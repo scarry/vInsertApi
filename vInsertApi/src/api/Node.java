@@ -14,7 +14,8 @@ public abstract class Node implements ProjectionListener{
 	
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName();
+        String s = this.getClass().getSimpleName();
+		return s != null ? s : "";
 	}
 
     public void render(Graphics2D g, int x, int y){

@@ -13,6 +13,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.imageio.ImageIO;
+import java.io.IOException;
+import java.net.URL;
+
 
 @ScriptManifest(name = "FightCave", authors = {"Fortruce"}, description = "Fight Cave Bot", version = 1.0)
 public class FightCave extends ScriptBase {
@@ -60,7 +64,8 @@ public class FightCave extends ScriptBase {
 
     private boolean isInCave() {
         GameObject exit = objects.getNearest(Filters.objectId(EXIT_ID));
-        return exit != null;
+        Npc entranceNpc = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENTRANCE_NPC_ID));
+        return exit != null && entranceNpc == null;
     }
 
     private boolean isEnemyLoaded() {
@@ -334,50 +339,94 @@ public class FightCave extends ScriptBase {
         return true;
     }
 
-    @Override
-    public void render(Graphics2D g) {
 
-        int[] point = {385, 2};
-
-        //box
-        g.setColor(new Color(63, 63, 43, 200));
-        g.draw3DRect(375, 5, 139, 225, true);
-        g.fill3DRect(375, 5, 139, 325, true);
-
-        int height = g.getFontMetrics().getHeight();
-
-        g.setColor(Color.WHITE);
-        g.drawString("Fortruce - FightCave", point[0], point[1] += height);
-        g.drawLine(383, 21, 495, 21);
-
-        g.drawString("Run Time:  " + TIMER.toElapsedString(), point[0], point[1] += height);
-
-        if (localPlayer != null) {
-            g.drawString(SD.generateSkillString(Skills.STRENGTH, SD), point[0], point[1] += height);
-
-            Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
-            if (enemy != null)
-                g.drawString("enemy: " + enemy.getName(), point[0], point[1] += height);
-            else
-                g.drawString("null", point[0], point[1] += height);
-
-            if (ScriptBase.getActiveNode() != null)
-                g.drawString((String.format("%s", "Node: " + ScriptBase.getActiveNode().toString())), point[0], point[1] += height);
-            g.drawString("caveCenterSet: " + String.valueOf(isCaveCenterSet()), point[0], point[1] += height);
-            g.drawString("isInCave: " + String.valueOf(isInCave()), point[0], point[1] += height);
-            g.drawString("enemyLoaded: " + String.valueOf(isEnemyLoaded()), point[0], point[1] += height);
-            g.drawString("enemyOnscreen: " + String.valueOf(isEnemyOnscreen()), point[0], point[1] += height);
-            g.drawString("needToBank: " + String.valueOf(needToBank()), point[0], point[1] += height);
-            g.drawString("bankerOnscreen: " + String.valueOf(isBankerOnscreen()), point[0], point[1] += height);
-            g.drawString("bankerLoaded: " + String.valueOf(isBankerLoaded()), point[0], point[1] += height);
-            g.drawString("entranceOnscreen: " + String.valueOf(isEntranceOnscreen()), point[0], point[1] += height);
-            g.drawString("entranceLoaded: " + String.valueOf(isEntranceLoaded()), point[0], point[1] += height);
-            g.drawString("inCombat: " + String.valueOf(isInCombat()), point[0], point[1] += height);
-            if (fightCaveCenter != null) {
-                g.drawString("center: " + fightCaveCenter.toString(), point[0], point[1] += height);
-            }
+    //START: Code generated using Enfilade's Easel
+    private Image getImage(String url) {
+        try {
+            return ImageIO.read(new URL(url));
+        } catch(IOException e) {
+            return null;
         }
     }
+
+    final Color color1 = new Color(0, 0, 0);
+    final Color color2 = new Color(51, 51, 255);
+    final Color color3 = new Color(153, 255, 255);
+
+    final BasicStroke stroke1 = new BasicStroke(1);
+
+    final Font font1 = new Font("DialogInput", 0, 20);
+    final Font font2 = new Font("DialogInput", 0, 18);
+    final Font font3 = new Font("DialogInput", 0, 14);
+    final Font font4 = new Font("DialogInput", 0, 10);
+
+    final Image img1 = getImage("http://puu.sh/2q9sZ/1a25387d57");
+
+    @Override
+    public void render(Graphics2D g) {
+        g.setColor(color1);
+        g.fillRect(2, 340, 512, 136);
+        g.setStroke(stroke1);
+        g.drawRect(2, 340, 512, 136);
+        g.drawImage(img1, 3, 342, null);
+        g.setFont(font1);
+        g.setColor(color2);
+        g.drawString("fortruce", 106, 365);
+        g.setFont(font2);
+        g.drawString("- FightCave", 214, 365);
+        g.setFont(font4);
+        g.setColor(color3);
+        g.drawString(SD.generateSkillString(Skills.STRENGTH), 128, 455);
+        g.setFont(font3);
+        g.drawString(ScriptBase.getActiveNode(), 128, 425);
+        g.drawString("Run Time: " + TIMER.toElapsedString(), 128, 395);
+    }
+    //END: Code generated using Enfilade's Easel
+
+//    @Override
+//    public void render(Graphics2D g) {
+//
+//        int[] point = {385, 2};
+//
+//        //box
+//        g.setColor(new Color(63, 63, 43, 200));
+//        g.draw3DRect(375, 5, 139, 225, true);
+//        g.fill3DRect(375, 5, 139, 325, true);
+//
+//        int height = g.getFontMetrics().getHeight();
+//
+//        g.setColor(Color.WHITE);
+//        g.drawString("Fortruce - FightCave", point[0], point[1] += height);
+//        g.drawLine(383, 21, 495, 21);
+//
+//        g.drawString("Run Time:  " + TIMER.toElapsedString(), point[0], point[1] += height);
+//
+//        if (localPlayer != null) {
+//            g.drawString(SD.generateSkillString(Skills.STRENGTH, SD), point[0], point[1] += height);
+//
+//            Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
+//            if (enemy != null)
+//                g.drawString("enemy: " + enemy.getName(), point[0], point[1] += height);
+//            else
+//                g.drawString("null", point[0], point[1] += height);
+//
+//            if (ScriptBase.getActiveNode() != null)
+//                g.drawString((String.format("%s", "Node: " + ScriptBase.getActiveNode().toString())), point[0], point[1] += height);
+//            g.drawString("caveCenterSet: " + String.valueOf(isCaveCenterSet()), point[0], point[1] += height);
+//            g.drawString("isInCave: " + String.valueOf(isInCave()), point[0], point[1] += height);
+//            g.drawString("enemyLoaded: " + String.valueOf(isEnemyLoaded()), point[0], point[1] += height);
+//            g.drawString("enemyOnscreen: " + String.valueOf(isEnemyOnscreen()), point[0], point[1] += height);
+//            g.drawString("needToBank: " + String.valueOf(needToBank()), point[0], point[1] += height);
+//            g.drawString("bankerOnscreen: " + String.valueOf(isBankerOnscreen()), point[0], point[1] += height);
+//            g.drawString("bankerLoaded: " + String.valueOf(isBankerLoaded()), point[0], point[1] += height);
+//            g.drawString("entranceOnscreen: " + String.valueOf(isEntranceOnscreen()), point[0], point[1] += height);
+//            g.drawString("entranceLoaded: " + String.valueOf(isEntranceLoaded()), point[0], point[1] += height);
+//            g.drawString("inCombat: " + String.valueOf(isInCombat()), point[0], point[1] += height);
+//            if (fightCaveCenter != null) {
+//                g.drawString("center: " + fightCaveCenter.toString(), point[0], point[1] += height);
+//            }
+//        }
+//    }
 
 
     /* GUI STUFF */

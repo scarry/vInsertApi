@@ -48,17 +48,17 @@ public final class SkillData {
         return "" + start;
     }
 
-    public final String generateSkillString(int index, SkillData sd) {
+    public final String generateSkillString(int index) {
         final StringBuilder sb = new StringBuilder();
         sb.append(getName(index));
         sb.append(" - Level: ");
-        sb.append(sd.getLevel(index));
-        sb.append("(+" + sd.level(index) + ")");
+        sb.append(this.getLevel(index));
+        sb.append("(+" + this.level(index) + ")");
         sb.append(" - Exp/hr: ");
-        sb.append(perHour(sd.experience(index)));
-        sb.append("(+" + sd.experience(index) + ")");
+        sb.append(perHour(this.experience(index)));
+        sb.append("(+" + this.experience(index) + ")");
         sb.append(" - TTL: ");
-        sb.append(Time.format(sd.timeToLevel(Rate.HOUR, index)));
+        sb.append(Time.format(this.timeToLevel(Rate.HOUR, index)));
         return sb.toString();
     }
 
