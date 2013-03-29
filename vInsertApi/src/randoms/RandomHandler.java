@@ -60,9 +60,9 @@ public class RandomHandler {
         noRandoms = noRand;
         noCombat = noComb;
         sc = script.getContext();
-        Bot bot = sc.getBot();
-        RandomEventPool rep = new RandomEventPool(bot);
-        rep.register(new DrunkenDwarf());
+//        Bot bot = sc.getBot();
+//        RandomEventPool rep = new RandomEventPool(bot);
+//        rep.register(new DrunkenDwarf());
         //script.submit(new DrunkenDwarf(sc));
         //script.submit(new Frog(sc));
         //script.submit(new Genie(sc));

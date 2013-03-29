@@ -53,7 +53,7 @@ public class FightCave extends ScriptBase {
     public static int skillToTrain;
 
 
-    private Utilities utilities;
+//    private Utilities utilities;
 
     /**
      * Boolean helper methods
@@ -200,7 +200,7 @@ public class FightCave extends ScriptBase {
             if (entrance != null) {
                 camera.rotateToTile(ENTRANCE_LOC);
                 navigation.navigate(ENTRANCE_LOC, NavigationPolicy.MINIMAP);
-                sleep(1000, 1200);
+                Conditions.waitFor(new Conditions.isVisible(entrance), random(700, 1400), getContext());
             }
         }
     }
@@ -222,9 +222,10 @@ public class FightCave extends ScriptBase {
             if (entrance != null) {
                 if (camera.isVisible(entrance)) {
                     entrance.interact("Enter");
-                    sleep(1000, 1500);
+                    Conditions.waitFor(new Conditions.isGameObjectLoaded(EXIT_ID), random(400, 700), getContext());
                 } else {
                     camera.rotateToObject(entrance);
+                    sleep(100, 300);
                 }
             }
         }
@@ -290,7 +291,7 @@ public class FightCave extends ScriptBase {
             Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
             if (enemy != null) {
                 navigation.navigate(enemy.getLocation(), NavigationPolicy.MINIMAP);
-                Conditions.waitFor(new Conditions.isNpcOnScreen(ENEMY_IDS), random(800, 1200), getContext());
+                Conditions.waitFor(new Conditions.isVisible(enemy), random(800, 1200), getContext());
             }
         }
 
@@ -309,9 +310,9 @@ public class FightCave extends ScriptBase {
         @Override
         public void execute() {
             Npc enemy = npcs.getNearest(ENEMY_IDS);
-            if (enemy != null) {
+            if (enemy != null && (enemy.getInteracting() != null || enemy.isMoving())) {
                 utilities.interact(enemy, "Attack");
-                Conditions.waitFor(new Conditions.isNotMoving(), random(300, 600), getContext());
+                Conditions.waitFor(new Conditions.isNotMoving(), random(300, 600), random(400, 700), getContext());
             }
         }
     }
@@ -350,7 +351,7 @@ public class FightCave extends ScriptBase {
 
         bankTokkulEvery = 99999;
 
-        utilities = new Utilities(this.getContext());
+//        utilities = new Utilities(this.getContext());
         SD = new SkillData(this.getContext());
 
         submit(new SetCaveCenter());

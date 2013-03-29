@@ -67,6 +67,21 @@ public class Conditions {
         }
     }
 
+    public static class isGameObjectLoaded extends Condition {
+
+        private int[] gameObjects;
+
+        public isGameObjectLoaded(int... gameObjects) {
+            this.gameObjects = gameObjects;
+        }
+
+        @Override
+        public boolean validate(ScriptContext ctx) {
+            GameObject object = ctx.objects.getNearest(Filters.objectId(this.gameObjects));
+            return object != null;
+        }
+    }
+
     public static class isNearTile extends Condition {
         private int distance;
         private Tile tile;
