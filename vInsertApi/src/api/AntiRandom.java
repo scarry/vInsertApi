@@ -1,25 +1,22 @@
 package api;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-
 import org.vinsert.bot.script.ScriptContext;
 
-public abstract class AntiRandom extends Node{
+import java.awt.*;
 
-	ScriptContext sc;
-	
-	public AntiRandom(ScriptContext context){
-		sc = context;
-	}
-	
-	@Override
-	public abstract boolean activate();
+public abstract class AntiRandom extends Node {
 
-	@Override
-	public abstract void execute();
+    ScriptContext sc;
+
+    public AntiRandom(ScriptContext context) {
+        sc = context;
+    }
+
+    @Override
+    public abstract boolean activate();
+
+    @Override
+    public abstract void execute();
 
     //START: Code generated using Enfilade's Easel
     protected final Color color1 = new Color(255, 0, 50, 127);
@@ -31,8 +28,8 @@ public abstract class AntiRandom extends Node{
     protected final Font font1 = new Font("Calibri", 0, 32);
 
     @Override
-	public void render(Graphics2D g1) {
-        Graphics2D g = (Graphics2D)g1;
+    public void render(Graphics2D g1) {
+        Graphics2D g = (Graphics2D) g1;
         g.setColor(color1);
         g.fillRect(1, 1, 761, 502);
         g.setColor(color2);

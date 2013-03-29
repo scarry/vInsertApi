@@ -1,62 +1,61 @@
 package api;
 
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-
 import org.vinsert.bot.script.Script;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 public abstract class ScriptBase extends Script {
-	
-	private static String currnode;
-	ArrayList<Node> nodes = new ArrayList<>();
-	private static int ret = 50;
-	
-	public static int getReturn() {
-		return ret;
-	}
-	
-	public static void setReturn(int millis) {
-		ret = millis;
-	}
-	
-	public static String getActiveNode() {
-		return currnode;
-	}
 
-	public void submit(Node node) {
-		if (!nodes.contains(node)) {
-			nodes.add(node);
-		}
-	}
+    private static String currnode;
+    ArrayList<Node> nodes = new ArrayList<>();
+    private static int ret = 50;
 
-	@Override
-	public void close() {
-		log("Script finished.");
-	}
+    public static int getReturn() {
+        return ret;
+    }
 
-	@Override
-	public abstract boolean init();
+    public static void setReturn(int millis) {
+        ret = millis;
+    }
 
-	@Override
-	public int pulse() {
-		try {
-			if(nodes.size() > 0) {
-				for (Node n : nodes) {
-					if (n.activate()) {
-						currnode = n.getClass().getSimpleName();
-						n.execute();
-						return 0; // getReturn();
-					}
-				}
-			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		return getReturn();
-	}
+    public static String getActiveNode() {
+        return currnode;
+    }
 
-	@Override
-	public abstract void render(Graphics2D arg0);
+    public void submit(Node node) {
+        if (!nodes.contains(node)) {
+            nodes.add(node);
+        }
+    }
+
+    @Override
+    public void close() {
+        log("Script finished.");
+    }
+
+    @Override
+    public abstract boolean init();
+
+    @Override
+    public int pulse() {
+        try {
+            if (nodes.size() > 0) {
+                for (Node n : nodes) {
+                    if (n.activate()) {
+                        currnode = n.getClass().getSimpleName();
+                        n.execute();
+                        return 0; // getReturn();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return getReturn();
+    }
+
+    @Override
+    public abstract void render(Graphics2D arg0);
 
 }

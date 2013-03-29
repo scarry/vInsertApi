@@ -1,197 +1,178 @@
 
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-
+import api.Node;
+import api.ScriptBase;
+import api.Timer;
 import org.vinsert.bot.script.ScriptManifest;
-import org.vinsert.bot.script.StatefulScript;
-import org.vinsert.bot.script.api.GameObject;
-import org.vinsert.bot.script.api.Item;
-import org.vinsert.bot.script.api.Npc;
-import org.vinsert.bot.script.api.Path;
-import org.vinsert.bot.script.api.Player;
-import org.vinsert.bot.script.api.Tile;
-import org.vinsert.bot.script.api.Area;
-import org.vinsert.bot.script.api.generic.Filters;
-import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
+import org.vinsert.bot.script.api.*;
 import org.vinsert.bot.util.Filter;
 import org.vinsert.bot.util.Utils;
 
-import api.ScriptBase;
-import api.Timer;
-import api.Node;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 @ScriptManifest(name = "FishBot", authors = {"Fortruce"}, description = "fishing bot", version = 1.0)
 public class FishBot extends ScriptBase {
 
-	/**
-	 * Animation Ids
-	 */
-	public static final int CAGE_ANIMATION_ID = 619;
-	public static final int HARPOON_ANIMATION_ID = 618; 
-	public static final int SMALL_NET_ANIMATION_ID = 621;
-	public static final int BIG_NET_ANIMATION_ID = 620; 
-	public static final int LURE_ANIMATION_ID = 623;
-	public static final int LURE_CAST_ANIMTION_ID = 622;
-	@SuppressWarnings("serial")
-	public static final ArrayList<Integer> LURE_ANIMATION_IDS = new ArrayList<Integer>() {{
-		add(LURE_ANIMATION_ID);
-		add(LURE_CAST_ANIMTION_ID);
-	}};
-	@SuppressWarnings("serial")
-	public static final ArrayList<Integer> FISH_ANIMATION_IDS = new ArrayList<Integer>() {{
-		add(CAGE_ANIMATION_ID); 
-		add(HARPOON_ANIMATION_ID);
-		add(SMALL_NET_ANIMATION_ID);
-		add(BIG_NET_ANIMATION_ID);
-		for(int i = 0; i < LURE_ANIMATION_IDS.size(); i++) {
-			add(LURE_ANIMATION_IDS.get(i));
-		}
-		}};
-	
-	/**
-	 * Fish Ids
-	 */
-		public static final int SHRIMP_ID = 318;
-		public static final int ANCHOVIE_ID = 322;
-		public static final int TROUT_ID = 336;
-		public static final int SALMON_ID = 332;
-		public static final int LOBSTER_ID = 378;
-		public static final int SWORDFISH_ID = 372;
-		public static final int TUNA_ID = 360;
-		public static final int SHARK_ID = 384;
-		@SuppressWarnings("serial")
-		public static final ArrayList<Integer> FISH_IDS = new ArrayList<Integer>() {{
-			add(SHRIMP_ID);
-			add(ANCHOVIE_ID);
-			add(TROUT_ID);
-			add(SALMON_ID);
-			add(LOBSTER_ID);
-			add(SWORDFISH_ID);
-			add(TUNA_ID);
-			add(SHARK_ID);
-			}};
-	
-	/**
-	 * Equipment Ids
-	 */
-	public static final int HARPOON_ID = 312; 
-	public static final int CAGE_ID = 302;
+    /**
+     * Animation Ids
+     */
+    public static final int CAGE_ANIMATION_ID = 619;
+    public static final int HARPOON_ANIMATION_ID = 618;
+    public static final int SMALL_NET_ANIMATION_ID = 621;
+    public static final int BIG_NET_ANIMATION_ID = 620;
+    public static final int LURE_ANIMATION_ID = 623;
+    public static final int LURE_CAST_ANIMTION_ID = 622;
+    @SuppressWarnings("serial")
+    public static final ArrayList<Integer> LURE_ANIMATION_IDS = new ArrayList<Integer>() {{
+        add(LURE_ANIMATION_ID);
+        add(LURE_CAST_ANIMTION_ID);
+    }};
+    @SuppressWarnings("serial")
+    public static final ArrayList<Integer> FISH_ANIMATION_IDS = new ArrayList<Integer>() {{
+        add(CAGE_ANIMATION_ID);
+        add(HARPOON_ANIMATION_ID);
+        add(SMALL_NET_ANIMATION_ID);
+        add(BIG_NET_ANIMATION_ID);
+        for (int i = 0; i < LURE_ANIMATION_IDS.size(); i++) {
+            add(LURE_ANIMATION_IDS.get(i));
+        }
+    }};
 
-	/**
-	 * Fish Spot Ids
-	 */
-	public static final int[] CAGE_HARPOON_FISH_ID = {321, 312};
-	
-	/**
-	 * Bank Ids
-	 */
-	private static final int BANK_STALL = 16937;
-	
-	/**
-	 * Bank Area
-	 */
-	private Area bankArea = new Area(new Tile(2586, 3418), new Tile(2589, 3422));
-	
-	/**
-	 * Path to the fish from bank
-	 */
-	private Path fishPath = new Path(
-			new Tile(2586, 3420),
-			new Tile(2591, 3416),
-			new Tile(2595, 3414)
-			);
-	private Timer lastFishTimer = new Timer(0);
-	
-	private boolean needToBank() {
-		if (inventory.isFull() || needEquipment())
-			return true;
-		return false;
-	}
-	private boolean needEquipment() {
-		if (inventory.contains(new Filter<Item>() {
-			@Override
-			public boolean accept(Item item) {
-				if (item.getId() == CAGE_ID)
-					return true;
-				return false;
-			}
-			}))
-			return false;
-		return true;
-	}
-	private boolean isAtBank() {
-		return bankArea.contains(localPlayer);
-	}
-	private boolean isFishLoaded() {
-		Npc fish = npcs.getNearest(localPlayer.getLocation(), new Filter<Npc>() {
-			@Override
-			public boolean accept(Npc npc) {
-				for (int id : CAGE_HARPOON_FISH_ID) {
-					if (id == npc.getId() && npc.containsAction("Cage"))
-						return true;
-				}
-				return false;
-			}
-		});
-		if (fish != null)
-			return true;
-		return false;
-	}
-	private boolean isFishClose() {
-		Npc fish = npcs.getNearest(localPlayer.getLocation(), new Filter<Npc>() {
-			@Override
-			public boolean accept(Npc npc) {
-				for (int id : CAGE_HARPOON_FISH_ID) {
-					if (id == npc.getId() && npc.containsAction("Cage") && camera.isVisible(npc))
-						return true;
-				}
-				return false;
-			}
-		});
-		if (fish != null)
-			return true;
-		return false;
-	}
-	private boolean canFish() {
-		if (!needEquipment() && !inventory.isFull())
-			return true;
-		return false;
-	}
-	private boolean isFishing() {
-		if (FISH_ANIMATION_IDS.contains(localPlayer.getAnimation()))
-			return true;
-		return false;
-	}
-	private boolean needToDeposit() {
-		if (inventory.isFull() || (bank.isOpen() && inventory.contains(new Filter<Item>() {
-			@Override
-			public boolean accept(Item item) {
-				if (FISH_IDS.contains(item.getId()))
-					return true;
-				return false;
-			}
-		})))
-			return true;
-		return false;
-	}
-	private boolean needToWithdraw() {
-		if (needEquipment())
-			return true;
-		return false;
-	}
-	private boolean actionsContain(GameObject object, String action) {
-		Point point = object.hullPoint(object.hull());
-		mouse.move(point.x, point.y);
-		Utils.sleep(Utils.random(50, 250));
-		int index = menu.getIndex(action);
-		if (index == -1) return false;
-		else return true;
-	}
-	
+    /**
+     * Fish Ids
+     */
+    public static final int SHRIMP_ID = 318;
+    public static final int ANCHOVIE_ID = 322;
+    public static final int TROUT_ID = 336;
+    public static final int SALMON_ID = 332;
+    public static final int LOBSTER_ID = 378;
+    public static final int SWORDFISH_ID = 372;
+    public static final int TUNA_ID = 360;
+    public static final int SHARK_ID = 384;
+    @SuppressWarnings("serial")
+    public static final ArrayList<Integer> FISH_IDS = new ArrayList<Integer>() {{
+        add(SHRIMP_ID);
+        add(ANCHOVIE_ID);
+        add(TROUT_ID);
+        add(SALMON_ID);
+        add(LOBSTER_ID);
+        add(SWORDFISH_ID);
+        add(TUNA_ID);
+        add(SHARK_ID);
+    }};
+
+    /**
+     * Equipment Ids
+     */
+    public static final int HARPOON_ID = 312;
+    public static final int CAGE_ID = 302;
+
+    /**
+     * Fish Spot Ids
+     */
+    public static final int[] CAGE_HARPOON_FISH_ID = {321, 312};
+
+    /**
+     * Bank Ids
+     */
+    private static final int BANK_STALL = 16937;
+
+    /**
+     * Bank Area
+     */
+    private Area bankArea = new Area(new Tile(2586, 3418), new Tile(2589, 3422));
+
+    /**
+     * Path to the fish from bank
+     */
+    private Path fishPath = new Path(
+            new Tile(2586, 3420),
+            new Tile(2591, 3416),
+            new Tile(2595, 3414)
+    );
+    private Timer lastFishTimer = new Timer(0);
+
+    private boolean needToBank() {
+        return inventory.isFull() || needEquipment();
+    }
+
+    private boolean needEquipment() {
+        return !inventory.contains(new Filter<Item>() {
+            @Override
+            public boolean accept(Item item) {
+                if (item.getId() == CAGE_ID)
+                    return true;
+                return false;
+            }
+        });
+    }
+
+    private boolean isAtBank() {
+        return bankArea.contains(localPlayer);
+    }
+
+    private boolean isFishLoaded() {
+        Npc fish = npcs.getNearest(localPlayer.getLocation(), new Filter<Npc>() {
+            @Override
+            public boolean accept(Npc npc) {
+                for (int id : CAGE_HARPOON_FISH_ID) {
+                    if (id == npc.getId() && npc.containsAction("Cage"))
+                        return true;
+                }
+                return false;
+            }
+        });
+        return fish != null;
+    }
+
+    private boolean isFishClose() {
+        Npc fish = npcs.getNearest(localPlayer.getLocation(), new Filter<Npc>() {
+            @Override
+            public boolean accept(Npc npc) {
+                for (int id : CAGE_HARPOON_FISH_ID) {
+                    if (id == npc.getId() && npc.containsAction("Cage") && camera.isVisible(npc))
+                        return true;
+                }
+                return false;
+            }
+        });
+        return fish != null;
+    }
+
+    private boolean canFish() {
+        return !needEquipment() && !inventory.isFull();
+    }
+
+    private boolean isFishing() {
+        return FISH_ANIMATION_IDS.contains(localPlayer.getAnimation());
+    }
+
+    private boolean needToDeposit() {
+        return inventory.isFull() || (bank.isOpen() && inventory.contains(new Filter<Item>() {
+            @Override
+            public boolean accept(Item item) {
+                if (FISH_IDS.contains(item.getId()))
+                    return true;
+                return false;
+            }
+        }));
+    }
+
+    private boolean needToWithdraw() {
+        return needEquipment();
+    }
+
+    private boolean actionsContain(GameObject object, String action) {
+        Point point = object.hullPoint(object.hull());
+        mouse.move(point.x, point.y);
+        Utils.sleep(Utils.random(50, 250));
+        int index = menu.getIndex(action);
+        if (index == -1) return false;
+        else return true;
+    }
+
 //	@Override
 //	public ScriptState determine() {
 //		Player player = localPlayer;
@@ -311,138 +292,145 @@ public class FishBot extends ScriptBase {
 //		}
 //		return random(50, 100);
 //	}
-	
-	public class OpenBank extends Node {
-		@Override
-		public boolean activate() {
-			if (!bank.isOpen() && isAtBank() && (needToDeposit() || needToWithdraw()))
-				return true;
-			return false;
-		}
-		@Override
-		public void execute() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
-	public class DepositBank extends Node {
-		@Override
-		public boolean activate() {
-			if (bank.isOpen() && needToDeposit())
-				return true;
-			return false;
-		}
-		@Override
-		public void execute() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
-	public class WithdrawBank extends Node {
-		@Override
-		public boolean activate() {
-			if (bank.isOpen() && needToWithdraw())
-				return true;
-			return false;
-		}
-		@Override
-		public void execute() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
-	public class Fish extends Node {
-		@Override
-		public boolean activate() {
-			if (isFishClose() && canFish() && 
-					(!isFishing() || TimeUnit.SECONDS.convert(lastFishTimer.getElapsed(), TimeUnit.MILLISECONDS) > random(75, 250)))
-					return true;
-			return false;
-		}
-		@Override
-		public void execute() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
-	public class ApproachFish extends Node {
-		@Override
-		public boolean activate() {
-			if ((isFishLoaded() && !isFishClose()) && canFish() && localPlayer.getInteracting() == null)
-				return true;
-			return false;
-		}
-		@Override
-		public void execute() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
-	public class WalkToBank extends Node {
-		@Override
-		public boolean activate() {
-			if (needToBank() && !isAtBank())
-				return true;
-			return false;
-		}
-		@Override
-		public void execute() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
-	public class WalkToFish extends Node {
-		@Override
-		public boolean activate() {
-			if (!isFishLoaded() && canFish())
-				return true;
-			return false;
-		}
-		@Override
-		public void execute() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
 
-	@Override
-	public boolean init() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
-	public void render(Graphics2D g) {
-		//box
+    public class OpenBank extends Node {
+        @Override
+        public boolean activate() {
+            if (!bank.isOpen() && isAtBank() && (needToDeposit() || needToWithdraw()))
+                return true;
+            return false;
+        }
+
+        @Override
+        public void execute() {
+            // TODO Auto-generated method stub
+
+        }
+    }
+
+    public class DepositBank extends Node {
+        @Override
+        public boolean activate() {
+            if (bank.isOpen() && needToDeposit())
+                return true;
+            return false;
+        }
+
+        @Override
+        public void execute() {
+            // TODO Auto-generated method stub
+
+        }
+    }
+
+    public class WithdrawBank extends Node {
+        @Override
+        public boolean activate() {
+            if (bank.isOpen() && needToWithdraw())
+                return true;
+            return false;
+        }
+
+        @Override
+        public void execute() {
+            // TODO Auto-generated method stub
+
+        }
+    }
+
+    public class Fish extends Node {
+        @Override
+        public boolean activate() {
+            if (isFishClose() && canFish() &&
+                    (!isFishing() || TimeUnit.SECONDS.convert(lastFishTimer.getElapsed(), TimeUnit.MILLISECONDS) > random(75, 250)))
+                return true;
+            return false;
+        }
+
+        @Override
+        public void execute() {
+            // TODO Auto-generated method stub
+
+        }
+    }
+
+    public class ApproachFish extends Node {
+        @Override
+        public boolean activate() {
+            if ((isFishLoaded() && !isFishClose()) && canFish() && localPlayer.getInteracting() == null)
+                return true;
+            return false;
+        }
+
+        @Override
+        public void execute() {
+            // TODO Auto-generated method stub
+
+        }
+    }
+
+    public class WalkToBank extends Node {
+        @Override
+        public boolean activate() {
+            if (needToBank() && !isAtBank())
+                return true;
+            return false;
+        }
+
+        @Override
+        public void execute() {
+            // TODO Auto-generated method stub
+
+        }
+    }
+
+    public class WalkToFish extends Node {
+        @Override
+        public boolean activate() {
+            if (!isFishLoaded() && canFish())
+                return true;
+            return false;
+        }
+
+        @Override
+        public void execute() {
+            // TODO Auto-generated method stub
+
+        }
+    }
+
+    @Override
+    public boolean init() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void render(Graphics2D g) {
+        //box
         g.setColor(new Color(63, 63, 43, 200));
         g.draw3DRect(375, 5, 139, 300, true);
         g.fill3DRect(375, 5, 139, 300, true);
-       
+
         int[] point = {385, 2};
         int height = g.getFontMetrics().getHeight();
-        
+
         //text
         g.setColor(Color.WHITE);
         g.drawString("Fortruce - FishBot", point[0] + 5, point[1] += height);
         g.drawLine(389, 21, 499, 21);
-        
+
         if (bankArea != null) {
-        g.drawString("nToBank:    " + String.valueOf(needToBank()), point[0], point[1]+=height);
-        g.drawString("nEquip:     " + String.valueOf(needEquipment()), point[0], point[1]+=height);
-        g.drawString("isAtBank:   " + String.valueOf(isAtBank()), point[0], point[1]+=height);
-        g.drawString("isFishLoad:  " + String.valueOf(isFishLoaded()), point[0], point[1]+=height);
-        g.drawString("isFClose:   " + String.valueOf(isFishClose()), point[0], point[1]+=height);
-        g.drawString("canFish:    " + String.valueOf(canFish()), point[0], point[1]+=height);
-        g.drawString("isFishing:  " + String.valueOf(isFishing()), point[0], point[1]+=height);
-        g.drawString("nToDeposit: " + String.valueOf(needToDeposit()), point[0], point[1]+=height);
-        g.drawString("nToWithdrw: " + String.valueOf(needToWithdraw()), point[0], point[1]+=height);
+            g.drawString("nToBank:    " + String.valueOf(needToBank()), point[0], point[1] += height);
+            g.drawString("nEquip:     " + String.valueOf(needEquipment()), point[0], point[1] += height);
+            g.drawString("isAtBank:   " + String.valueOf(isAtBank()), point[0], point[1] += height);
+            g.drawString("isFishLoad:  " + String.valueOf(isFishLoaded()), point[0], point[1] += height);
+            g.drawString("isFClose:   " + String.valueOf(isFishClose()), point[0], point[1] += height);
+            g.drawString("canFish:    " + String.valueOf(canFish()), point[0], point[1] += height);
+            g.drawString("isFishing:  " + String.valueOf(isFishing()), point[0], point[1] += height);
+            g.drawString("nToDeposit: " + String.valueOf(needToDeposit()), point[0], point[1] += height);
+            g.drawString("nToWithdrw: " + String.valueOf(needToWithdraw()), point[0], point[1] += height);
         }
-	}
+    }
 
 }
