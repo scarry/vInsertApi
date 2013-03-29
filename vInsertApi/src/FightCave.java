@@ -276,7 +276,7 @@ public class FightCave extends ScriptBase {
         public void execute() {
             Npc enemy = npcs.getNearest(localPlayer.getLocation(), Filters.npcId(ENEMY_IDS));
             if (enemy != null) {
-                navigation.navigate(enemy.getLocation(), NavigationPolicy.MINIMAP);
+                navigation.navigate(utilities.walkableLocation(enemy.getLocation()), NavigationPolicy.MINIMAP);
                 Conditions.waitFor(new Conditions.isVisible(enemy), random(800, 1200), getContext());
             }
         }
@@ -303,24 +303,6 @@ public class FightCave extends ScriptBase {
         }
     }
 
-//    public class WalkToCenter extends Node {
-//
-//        @Override
-//        public boolean activate() {
-//            if (isInCave() && !isEnemyLoaded() && fightCaveCenter != null && !isInCombat()
-//                    && localPlayer.getLocation().distanceTo(fightCaveCenter) > 3)
-//                return true;
-//            return false;
-//        }
-//
-//        @Override
-//        public void execute() {
-//            navigation.navigate(utilities.walkableLocation(fightCaveCenter), NavigationPolicy.MINIMAP);
-//            Conditions.waitFor(new Conditions.isNearTile(fightCaveCenter, 4), random(800, 1500), getContext());
-//        }
-//
-//    }
-
     @Override
     public boolean init() {
         camera.adjustPitch(100);
@@ -343,7 +325,6 @@ public class FightCave extends ScriptBase {
         submit(new WalkToBank());
         submit(new OpenBank());
         submit(new DepositBank());
-//        submit(new WalkToCenter());
         submit(new WalkToEnemy());
         submit(new AttackEnemy());
         submit(new EnterCave());
