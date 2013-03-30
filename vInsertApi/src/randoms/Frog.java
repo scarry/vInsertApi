@@ -32,7 +32,6 @@ public class Frog extends AntiRandom {
 
     @Override
     public boolean init() {
-        System.out.println("in frog");
         return sc.npcs.getNearest(frog2) != null;
     }
 

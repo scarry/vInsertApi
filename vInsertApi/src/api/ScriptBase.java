@@ -44,18 +44,9 @@ public abstract class ScriptBase extends Script {
         randomEventPool.register(new Rick());
     }
 
-    public static int getReturn() {
-		return ret;
-	}
-
     public ArrayList<Node> getNodes(){
         return nodes;
     }
-
-
-	public static void setReturn(int millis) {
-		ret = millis;
-	}
 	
 	public static String getActiveNode() {
 		return currnode;
@@ -82,7 +73,6 @@ public abstract class ScriptBase extends Script {
 			if(nodes.size() > 0) {
 				for (Node n : nodes) {
 					if (n.activate()) {
-                        System.out.println("Nodes");
 						currnode = n.getClass().getSimpleName();
 						n.execute();
 						return 0; // getReturn();
@@ -93,7 +83,7 @@ public abstract class ScriptBase extends Script {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		return getReturn();
+		return 50;
 	}
 
 	@Override

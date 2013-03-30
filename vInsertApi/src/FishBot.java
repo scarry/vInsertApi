@@ -129,9 +129,7 @@ public class FishBot extends ScriptBase {
         return !inventory.contains(new Filter<Item>() {
             @Override
             public boolean accept(Item item) {
-                if (item.getId() == CAGE_ID)
-                    return true;
-                return false;
+                return item.getId() == CAGE_ID;
             }
         });
     }
@@ -307,9 +305,7 @@ public class FishBot extends ScriptBase {
     public class OpenBank extends Node {
         @Override
         public boolean activate() {
-            if (!bank.isOpen() && isAtBank() && (needToDeposit() || needToWithdraw()))
-                return true;
-            return false;
+            return !bank.isOpen() && isAtBank() && (needToDeposit() || needToWithdraw());
         }
 
         @Override
@@ -331,9 +327,7 @@ public class FishBot extends ScriptBase {
     public class DepositBank extends Node {
         @Override
         public boolean activate() {
-            if (bank.isOpen() && needToDeposit())
-                return true;
-            return false;
+            return bank.isOpen() && needToDeposit();
         }
 
         @Override
@@ -442,7 +436,7 @@ public class FishBot extends ScriptBase {
                 new Tile(2598, 3408), new Tile(2596, 3412), new Tile(2595, 3416),
                 new Tile(2593, 3420), new Tile(2598, 3421), new Tile(2601, 3421),
                 new Tile(2596, 3421), new Tile(2593, 3418), new Tile(2590, 3417),
-                new Tile(2587, 3420), new Tile(2586, 3420) }, getContext());
+                new Tile(2587, 3419), new Tile(2587, 3419) }, getContext());
 
         fishSpot = new FishSpot(CAGE_HARPOON_FISH_ID, "Cage", CAGE_ID, FISHING_GUILD_PATH, FISHING_GUILD_BANK);
 
