@@ -2,6 +2,7 @@ import api.ScriptBase;
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.Widget;
+import org.vinsert.bot.util.Filter;
 import org.vinsert.insertion.IClient;
 import org.vinsert.insertion.IWidget;
 
@@ -15,7 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 
 @ScriptManifest(authors = {"Fortruce"}, name = "WidgetExplorer")
 public class WidgetExplorer extends ScriptBase {
@@ -38,45 +40,79 @@ public class WidgetExplorer extends ScriptBase {
         return true;
     }
 
+//    public DefaultMutableTreeNode getWidgets(DefaultMutableTreeNode root) {
+//        ScriptContext ctx = getContext();
+//        IClient client = ctx.getClient();
+//        IWidget[][] widgs = client.getWidgets();
+//        ArrayList<Integer> parents = new ArrayList<Integer>();
+//        if (widgs == null) {
+//            log("widgs == null");
+//            return null;
+//        }
+//        for (int i = 0; i < widgs.length; i++) {
+//            if (widgs[i] != null) {
+//                for (int j = 0; j < widgs[i].length; j++) {
+//                    if (widgs[i][j] != null) {
+//                        Widget w = new Widget(ctx, widgs[i][j]);
+//                        if (w != null) {
+//                            if (!parents.contains(w.getParentId())) {
+//                                parents.add(w.getParentId());
+//                                log(String.format("parent added: %d  - index: %d", w.getParentId(), i));
+//                            }
+//                            //log(String.format("%d - %d", w.getParentId(), w.getId()));
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        log("PARENTS");
+//        for (Integer w : parents) {
+//            log(printWidget(w));
+//            DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode(w);
+//            root.add(parentNode);
+//            if (widgs.length > w) {
+//                for (int j = 0; j < widgs[w].length; j++) {
+//                    if (widgs[w][j] != null) {
+//                        WidgetWrapper child = new WidgetWrapper(new Widget(ctx, widgs[w][j]));
+//                        if (child != null)
+//                            parentNode.add(new DefaultMutableTreeNode(child));
+//                    }
+//                }
+//            }
+//        }
+//        log("END");
+//        return root;
+//    }
+
     public DefaultMutableTreeNode getWidgets(DefaultMutableTreeNode root) {
         ScriptContext ctx = getContext();
-        IClient client = ctx.getClient();
-        IWidget[][] widgs = client.getWidgets();
-        ArrayList<Integer> parents = new ArrayList<Integer>();
-        if (widgs == null) {
-            log("widgs == null");
-            return null;
+        ArrayList<DefaultMutableTreeNode> parents = new ArrayList<>();
+        ArrayList<Integer> parentIds = new ArrayList<>();
+
+        final List<Widget> validated = ctx.widgets.getValidated();
+
+        for (Widget w : validated) {
+            final int parentId = w.getParentId();
+            if (!parentIds.contains(parentId)) {
+                parentIds.add(parentId);
+            }
         }
-        for (int i = 0; i < widgs.length; i++) {
-            if (widgs[i] != null) {
-                for (int j = 0; j < widgs[i].length; j++) {
-                    if (widgs[i][j] != null) {
-                        Widget w = new Widget(ctx, widgs[i][j]);
-                        if (w != null) {
-                            if (!parents.contains(w.getParentId())) {
-                                parents.add(w.getParentId());
-                                log(String.format("parent added: %d  - index: %d", w.getParentId(), i));
-                            }
-                            //log(String.format("%d - %d", w.getParentId(), w.getId()));
-                        }
-                    }
+
+        for (final Integer id : parentIds) {
+            final List<Widget> validated1 = widgets.getValidated(new Filter<Widget>() {
+                @Override
+                public boolean accept(Widget widget) {
+                    return widget.getParentId() == id;
+                }
+            });
+            if (!validated1.isEmpty()) {
+                DefaultMutableTreeNode parent = new DefaultMutableTreeNode(id);
+                root.add(parent);
+                for (Widget w : validated1) {
+                    parent.add(new DefaultMutableTreeNode(new WidgetWrapper(w)));
                 }
             }
         }
-        log("PARENTS");
-        for (Integer w : parents) {
-            log(printWidget(w));
-            DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode(w);
-            root.add(parentNode);
-            for (int j = 0; j < widgs[w].length; j++) {
-                if (widgs[w][j] != null) {
-                    WidgetWrapper child = new WidgetWrapper(new Widget(ctx, widgs[w][j]));
-                    if (child != null)
-                        parentNode.add(new DefaultMutableTreeNode(child));
-                }
-            }
-        }
-        log("END");
         return root;
     }
 
@@ -95,11 +131,9 @@ public class WidgetExplorer extends ScriptBase {
             widgetInfo.append("\nWidth: ");
             widgetInfo.append(wid.getWidth());
             widgetInfo.append("\n");
-            if (wid.getLocation() != null) {
-                widgetInfo.append("Location: ");
-                widgetInfo.append(String.format("[%d,  %d]", wid.getLocation().x, wid.getLocation().y));
-                widgetInfo.append("\n");
-            }
+            widgetInfo.append("Location: ");
+            widgetInfo.append(String.format("[%d,  %d]", wid.getX(), wid.getY()));
+            widgetInfo.append("\n");
             if (wid.getActions() != null) {
                 widgetInfo.append("Actions: ");
                 for (int x = 0; x < wid.getActions().length; x++) {
