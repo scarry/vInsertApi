@@ -40,4 +40,9 @@ public abstract class AntiRandom extends RandomEvent {
         g.drawString(this.toString(), 15, 38);
     }
 
+    @Override
+    public String toString() {
+        String s = this.getClass().getSimpleName();
+        return s != null ? s : "";
+    }
 }
