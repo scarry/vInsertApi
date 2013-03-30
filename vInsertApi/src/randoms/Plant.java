@@ -28,7 +28,8 @@ public class Plant extends AntiRandom {
         if (plant != null) {
             if (plant.getLocation().distanceTo(sc.players.getLocalPlayer().getLocation()) <= 2) {
                 sc.camera.rotateToTile(plant.getLocation());
-                plant.interact("Pick");
+                utilities.interact(plant,"Pick");
+                //plant.interact("Pick");
                 Utils.sleep(random(2000, 4000));
                 sc.mouse.click(300, 455);
                 Utils.sleep(random(2000, 4000));
