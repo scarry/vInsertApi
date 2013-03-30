@@ -20,6 +20,10 @@ public class Hyde extends AntiRandom {
 
     @Override
     public int pulse() {
+        if(!init()){
+            requestExit();
+            return 0;
+        }
         Hyde = sc.npcs.getNearest(HYDE_ID);
         Widget[] b = sc.widgets.get(241);
         Widget[] c = sc.widgets.get(242);
@@ -28,20 +32,20 @@ public class Hyde extends AntiRandom {
         if (Hyde != null) {
             if (Hyde.getLocation().distanceTo(sc.players.getLocalPlayer().getLocation()) <= 2) {
                 sc.camera.rotateToTile(Hyde.getLocation());
-                Hyde.interact("Talk-to Dr Jekyll");
+                utilities.interact(Hyde,"Talk-to");
+                //Hyde.interact("Talk-to Dr Jekyll");
                 Utils.sleep(Utils.random(1000, 2500));
                 if (b != null && b.length > 0 || c.length > 0 || d.length > 0 || e.length > 0) {
-                    sc.mouse.move(Utils.random(196, 404), Utils.random(445, 455));
-
-                    Utils.sleep(Utils.random(2000, 4000));
-                    sc.mouse.click(true);
-                    Utils.sleep(Utils.random(2000, 4000));
-                    sc.mouse.click(true);
-                    Utils.sleep(Utils.random(2000, 4000));
-                    sc.mouse.click(true);
-                    Utils.sleep(Utils.random(2000, 4000));
-                    sc.mouse.click(true);
-                    Utils.sleep(Utils.random(2000, 4000));
+                    utilities.clickToContinue();
+                    Utils.sleep(random(2000, 4000));
+                    utilities.clickToContinue();
+                    Utils.sleep(random(2000, 4000));
+                    utilities.clickToContinue();
+                    Utils.sleep(random(2000, 4000));
+                    utilities.clickToContinue();
+                    Utils.sleep(random(2000, 4000));
+                    utilities.clickToContinue();
+                    Utils.sleep(random(2000, 4000));
                 }
             }
             //log("Dr Jekyll hyde random");

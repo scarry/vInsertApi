@@ -462,8 +462,14 @@ public class Utilities {
         int y = random(wid.getLocation().y + 4, wid.getLocation().y + wid.getBounds().height -4);
         Point point = new Point(x,y);
         //this.ctx.mouse.click(point.x, point.y);
-        this.ctx.mouse.move(point.x,point.y);
-        Utils.sleep(20000);
+        ctx.mouse.move(point.x,point.y);
         Utils.sleep(random(45, 150));
+    }
+
+    public void clickToContinue(){
+        int x = random(148,280);
+        int y = random(448,453);
+        ctx.mouse.click(x,y);
+        Utils.sleep(random(30,50));
     }
 }

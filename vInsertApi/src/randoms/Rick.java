@@ -20,6 +20,10 @@ public class Rick extends AntiRandom {
 
     @Override
     public int pulse() {
+        if(!init()){
+            requestExit();
+            return 0;
+        }
         Rick = sc.npcs.getNearest(RICK_ID);
         Widget[] b = sc.widgets.get(241);
         Widget[] c = sc.widgets.get(242);
@@ -28,12 +32,11 @@ public class Rick extends AntiRandom {
         if (Rick != null) {
             if (Rick.getLocation().distanceTo(sc.players.getLocalPlayer().getLocation()) <= 2) {
                 sc.camera.rotateToTile(Rick.getLocation());
-                Rick.interact("Talk-to Rick Turpentine");
-                Utils.sleep(Utils.random(1000, 2500));
+                //Rick.interact("Talk-to Rick Turpentine");
+                utilities.interact(Rick,"Talk-to");
+                Utils.sleep(random(1000, 2500));
                 if (b != null && b.length > 0 || c.length > 0 || d.length > 0 || e.length > 0) {
-                    sc.mouse.move(Utils.random(196, 404), Utils.random(445, 455));
-                    Utils.sleep(Utils.random(1000, 1200));
-                    sc.mouse.click(true);
+                    utilities.clickToContinue();
                 }
             }
             //log("Rick Random");

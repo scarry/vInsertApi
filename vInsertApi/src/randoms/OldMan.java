@@ -19,6 +19,10 @@ public class OldMan extends AntiRandom {
 
     @Override
     public int pulse() {
+        if(!init()){
+            requestExit();
+            return 0;
+        }
         OldMan = sc.npcs.getNearest(OLDMAN_ID);
         Widget[] b = sc.widgets.get(241);
         Widget[] c = sc.widgets.get(242);
@@ -27,12 +31,11 @@ public class OldMan extends AntiRandom {
         if (OldMan != null) {
             if (OldMan.getLocation().distanceTo(sc.players.getLocalPlayer().getLocation()) <= 2) {
                 sc.camera.rotateToTile(OldMan.getLocation());
-                OldMan.interact("Talk-to Mysterious Old Man");
-                Utils.sleep(Utils.random(1000, 2500));
+                //OldMan.interact("Talk-to Mysterious Old Man");
+                utilities.interact(OldMan,"Talk-to");
+                Utils.sleep(random(1000, 2500));
                 if (b != null && b.length > 0 || c.length > 0 || d.length > 0 || e.length > 0) {
-                    sc.mouse.move(Utils.random(196, 404), Utils.random(445, 455));
-                    Utils.sleep(Utils.random(1000, 1200));
-                    sc.mouse.click(true);
+                    utilities.clickToContinue();
                 }
             }
             //log("OldMan Random");

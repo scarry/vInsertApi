@@ -19,6 +19,10 @@ public class Pirate extends AntiRandom {
 
     @Override
     public int pulse() {
+        if(!init()){
+            requestExit();
+            return 0;
+        }
         pirate = sc.npcs.getNearest(PIRATE_ID);
         Widget[] b = sc.widgets.get(241);
         Widget[] c = sc.widgets.get(242);
@@ -27,12 +31,11 @@ public class Pirate extends AntiRandom {
         if (pirate != null) {
             if (pirate.getLocation().distanceTo(sc.players.getLocalPlayer().getLocation()) <= 2) {
                 sc.camera.rotateToTile(pirate.getLocation());
-                pirate.interact("Talk-to Cap'n Hand");
-                Utils.sleep(Utils.random(1000, 2500));
+                utilities.interact(pirate,"Talk-to");
+                //pirate.interact("Talk-to Cap'n Hand");
+                Utils.sleep(random(1000, 2500));
                 if (b != null && b.length > 0 || c.length > 0 || d.length > 0 || e.length > 0) {
-                    sc.mouse.move(Utils.random(196, 404), Utils.random(445, 455));
-                    Utils.sleep(Utils.random(1000, 1200));
-                    sc.mouse.click(true);
+                    utilities.clickToContinue();
                 }
             }
             //log("Pirate Random");

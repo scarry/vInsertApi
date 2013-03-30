@@ -20,14 +20,18 @@ public class Plant extends AntiRandom {
 
     @Override
     public int pulse() {
+        if(!init()){
+            requestExit();
+            return 0;
+        }
         plant = sc.npcs.getNearest(plant2);
         if (plant != null) {
             if (plant.getLocation().distanceTo(sc.players.getLocalPlayer().getLocation()) <= 2) {
                 sc.camera.rotateToTile(plant.getLocation());
                 plant.interact("Pick");
-                Utils.sleep(Utils.random(2000, 4000));
+                Utils.sleep(random(2000, 4000));
                 sc.mouse.click(300, 455);
-                Utils.sleep(Utils.random(2000, 4000));
+                Utils.sleep(random(2000, 4000));
                 //log("Strange plant :o");
             }
         }

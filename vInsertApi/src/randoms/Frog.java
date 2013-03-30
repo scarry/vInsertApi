@@ -72,6 +72,10 @@ public class Frog extends AntiRandom {
 
     @Override
     public int pulse() {
+        if(!init()){
+            requestExit();
+            return 0;
+        }
         frog = sc.npcs.getNearest(frog2);
         if (frog != null) {
             //log("starting frog");
@@ -83,7 +87,6 @@ public class Frog extends AntiRandom {
                     Utils.sleep(300);
                 }
                 if(!new isChat1Open().validate(this.getContext())){
-                    log("phase 1");
                     utilities.interact(frog,"Talk-to");
                     if(!Conditions.waitFor(new isChat1Open(),1000,this.getContext()))
                         return 0;
@@ -92,10 +95,7 @@ public class Frog extends AntiRandom {
                 }
                 if(!new isChat2Open().validate(this.getContext())) {
                     if(utilities.getWidget(sc,CHAT1_WIDGET,CHAT1_CONTINUE) != null){
-                        log("phase 2");
-                        wid = widgets.get(CHAT1_WIDGET,CHAT1_CONTINUE);
-                        log(wid.getText());
-                        utilities.clickWidget(wid);
+                        utilities.clickToContinue();
                         if(!Conditions.waitFor(new isChat2Open(),4000,this.getContext()))
                             return 0;
 
@@ -104,25 +104,20 @@ public class Frog extends AntiRandom {
                 }
                 if(!new isChat3Open().validate(this.getContext())) {
                     if(utilities.getWidget(sc,CHAT2_WIDGET,CHAT2_CONTINUE) != null){
-                        log("phase 3");
-                        wid = widgets.get(CHAT2_WIDGET,CHAT2_CONTINUE);
-                        utilities.clickWidget(wid);
+                        utilities.clickToContinue();
                         if(!Conditions.waitFor(new isChat2Open(),2000,this.getContext()))
                             return 0;
-
                         sleep(200);
                     }
                 }
 
-                if(widgets.get(CHAT3_WIDGET,CHAT3_CONTINUE).isValid()){
-                    chat3 = widgets.get(CHAT3_WIDGET,CHAT3_CONTINUE);
-                    if(chat3.isValid()){
-                        chat3.click();
+                if(new isChat3Open().validate(this.getContext())){
+                    if(widgets.get(CHAT3_WIDGET,CHAT3_CONTINUE).isValid()){
+                        utilities.clickToContinue();
+                        if(Conditions.waitFor(new isChat3Open(),2000,this.getContext()))
+                            return 0;
+                        sleep(200);
                     }
-                    if(Conditions.waitFor(new isChat3Open(),2000,this.getContext()))
-                        return 0;
-
-                    sleep(200);
                 }
                 //log("Frawgie random :D");
             } else {
