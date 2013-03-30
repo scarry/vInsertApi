@@ -42,6 +42,7 @@ public abstract class ScriptBase extends Script {
         randomEventPool.register(new Pirate());
         randomEventPool.register(new Plant());
         randomEventPool.register(new Rick());
+        randomEventPool.register(new Mime());
     }
 
     public ArrayList<Node> getNodes(){

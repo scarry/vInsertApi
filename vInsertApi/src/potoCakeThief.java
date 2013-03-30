@@ -19,7 +19,7 @@ public class potoCakeThief extends ScriptBase{
 
 	
 	public static Tile CAKE_TILE =  	new Tile(2658, 3312);
-	public static Tile SAFE_TILE =  	new Tile(2650, 3306);
+	public static Tile SAFE_TILE =  	new Tile(2648, 3316);
 	public static int[] STALL_ID = 		{2561};
 	int CAKE_3 = 						1892;
 	int CAKE_2 = 						1894;
@@ -152,8 +152,9 @@ public class potoCakeThief extends ScriptBase{
 	public void render(Graphics2D g) {
 		health = players.getLocalPlayer().getHealth();
 		g.drawString(String.format("Health: %d", health), 13, 240);
-		utilities.renderNodes(this, g, 13, 255);
+		utilities.renderNodes(this, g, 13, 205);
         utilities.drawTile(this,g,CAKE_TILE);
+        utilities.drawTile(this,g,SAFE_TILE);
         Point progBar = new Point(10,300);
         utilities.drawProgressBar(g,skillData,Skills.THIEVING,progBar,500,22, Color.yellow,Color.red,Color.black);
     }
