@@ -14,7 +14,7 @@ public class OldMan extends AntiRandom {
 
     @Override
     public boolean init() {
-        return sc.npcs.getNearest(OLDMAN_ID) != null;
+        return sc.npcs.getNearest(OLDMAN_ID) != null && sc.npcs.getNearest(OLDMAN_ID).getLocation().distanceTo(localPlayer.getLocation()) <= 2;
     }
 
     @Override

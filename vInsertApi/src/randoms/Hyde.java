@@ -15,7 +15,7 @@ public class Hyde extends AntiRandom {
 
     @Override
     public boolean init() {
-        return sc.npcs.getNearest(HYDE_ID) != null;
+        return sc.npcs.getNearest(HYDE_ID) != null && sc.npcs.getNearest(HYDE_ID).getLocation().distanceTo(localPlayer.getLocation()) <= 2;
     }
 
     @Override

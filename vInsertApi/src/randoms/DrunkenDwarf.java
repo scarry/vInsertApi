@@ -4,6 +4,7 @@ import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.Npc;
 import org.vinsert.bot.script.api.Widget;
+import org.vinsert.bot.script.api.tools.Navigation;
 import org.vinsert.bot.util.Utils;
 
 //import randoms.AntiRandom;
@@ -16,7 +17,7 @@ public class DrunkenDwarf extends AntiRandom {
 
     @Override
     public boolean init() {
-        return sc.npcs.getNearest(DWARF_ID) != null;
+        return sc.npcs.getNearest(DWARF_ID) != null && sc.npcs.getNearest(DWARF_ID).getLocation().distanceTo(localPlayer.getLocation()) <= 2;
     }
 
     @Override

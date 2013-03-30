@@ -14,7 +14,7 @@ public class Guard extends AntiRandom {
 
     @Override
     public boolean init() {
-        return sc.npcs.getNearest(GUARD_ID) != null;
+        return sc.npcs.getNearest(GUARD_ID) != null && sc.npcs.getNearest(GUARD_ID).getLocation().distanceTo(localPlayer.getLocation()) <= 2;
     }
 
     @Override

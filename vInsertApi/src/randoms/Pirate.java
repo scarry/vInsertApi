@@ -14,7 +14,7 @@ public class Pirate extends AntiRandom {
 
     @Override
     public boolean init() {
-        return sc.npcs.getNearest(PIRATE_ID) != null;
+        return sc.npcs.getNearest(PIRATE_ID) != null && sc.npcs.getNearest(PIRATE_ID).getLocation().distanceTo(localPlayer.getLocation()) <= 2;
     }
 
     @Override

@@ -15,7 +15,7 @@ public class Plant extends AntiRandom {
 
     @Override
     public boolean init() {
-        return sc.npcs.getNearest(plant2) != null;
+        return sc.npcs.getNearest(plant2) != null && sc.npcs.getNearest(plant2).getLocation().distanceTo(localPlayer.getLocation()) <= 2;
     }
 
     @Override

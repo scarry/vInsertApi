@@ -15,7 +15,7 @@ public class Genie extends AntiRandom {
 
     @Override
     public boolean init() {
-        return sc.npcs.getNearest(GENIE_ID) != null;
+        return sc.npcs.getNearest(GENIE_ID) != null && sc.npcs.getNearest(GENIE_ID).getLocation().distanceTo(localPlayer.getLocation()) <= 2;
     }
 
     @Override
@@ -39,6 +39,7 @@ public class Genie extends AntiRandom {
                     utilities.clickToContinue();
                 }
             }
+
             //log("Genie Random");
         }
 
