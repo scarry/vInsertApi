@@ -83,29 +83,29 @@ public class Mime extends AntiRandom{
                     break;
                  case 866: //dance
                     child = 5;
-                     191,425
+                     emotePoint = new Point(191,425);
                     break;
                  case 1130://climb rope
                     child = 6;
-                     270,386
+                     emotePoint = new Point(270,386);
                     break;
                  case 1129://lean on air
                     child = 7;
-                     264,424
+                     emotePoint = new Point(264,424);
                     break;
                  case 1128://glass wall
                     child = 8;
-                     373,426
+                     emotePoint = new Point(373,426);
                     break;
                  case 1131://glass box
                     child = 9;
-                     373,384
+                    emotePoint = new Point(373,384);
                     break;
                     
            }
                if(utilities.getWidget(getContext(),188,child) != null){
                    //utilities.getWidget(getContext(),188, child).click();
-
+                   clickEmote(emotePoint);
                    mimeEmote = -1;
                    yourTurn = false;
                    turns++;

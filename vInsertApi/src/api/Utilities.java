@@ -205,6 +205,7 @@ public class Utilities {
         return false;
     }
 
+
     /**
      * Gives a walkable location between player and loc.
      * @param loc
@@ -357,6 +358,7 @@ public class Utilities {
     public Point getClickPoint(int slot)
     {
         Point loc = getMidpoint(slot);
+
         loc.setLocation(loc.x + random(-20, 10) + random(0, 5), loc.y + random(-25, -10) + random(10, 20));
         return loc;
     }
@@ -385,9 +387,12 @@ public class Utilities {
             Item i = items[slot];
             if ((i != null) && (withdrawals.accept(i))) {
                 Point point = getClickPoint(slot);
-                this.ctx.mouse.move(point.x, point.y);
-                Utils.sleep(random(125, 250));
-                this.ctx.mouse.click(true);
+                log("1");
+                ctx.mouse.move(point.x,point.y);
+                Utils.sleep(10000);
+                //this.ctx.mouse.move(point.x, point.y);
+                //Utils.sleep(random(125, 250));
+                //this.ctx.mouse.click(true);
 
                 int index = -1;
                 if (amount == 0)
@@ -407,8 +412,10 @@ public class Utilities {
 
                     Point p = this.ctx.menu.getClickPoint(4);
                     Utils.sleep(random(125, 250));
-                    this.ctx.mouse.click(p.x, p.y);
-
+                    //this.ctx.mouse.click(p.x, p.y);
+                    log("2");
+                    ctx.mouse.move(p.x,p.y);
+                    Utils.sleep(10000);
                     Utils.sleep(random(900, 1350));
 
                     this.ctx.keyboard.type(String.valueOf(amount));
@@ -422,7 +429,10 @@ public class Utilities {
                 }
 
                 Point p = this.ctx.menu.getClickPoint(index);
-                this.ctx.mouse.click(p.x, p.y);
+                log("3");
+                ctx.mouse.move(p.x,p.y);
+                Utils.sleep(10000);
+                //this.ctx.mouse.click(p.x, p.y);
                 Utils.sleep(random(500, 900));
                 return true;
             }
@@ -456,7 +466,7 @@ public class Utilities {
         return null;
 
     }
-
+    /*
     public void clickWidget(Widget wid){
         int x = random(wid.getX() + 4, wid.getX() + wid.getBounds().width -4);
         int y = random(wid.getX() + 4, wid.getY() + wid.getBounds().height -4);
@@ -465,7 +475,7 @@ public class Utilities {
         ctx.mouse.move(point.x,point.y);
         Utils.sleep(random(45, 150));
     }
-
+    */
     public void clickToContinue(){
         int x = random(148,280);
         int y = random(448,453);

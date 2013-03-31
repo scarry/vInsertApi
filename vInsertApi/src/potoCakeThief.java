@@ -5,6 +5,7 @@ import org.vinsert.bot.script.api.GameObject;
 import org.vinsert.bot.script.api.Item;
 import org.vinsert.bot.script.api.Tile;
 import org.vinsert.bot.script.api.generic.Filters;
+import org.vinsert.bot.script.api.tools.Game;
 import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
 import org.vinsert.bot.script.api.tools.Skills;
 import org.vinsert.bot.util.Perspective;
@@ -125,6 +126,10 @@ public class potoCakeThief extends ScriptBase{
 
 		@Override
 		public void execute() {
+            if(game.getCurrentTab() != Game.Tabs.INVENTORY){
+                game.openTab(Game.Tabs.INVENTORY);
+                Utils.sleep(random(300,500));
+            }
 			Item food;
 			if(inventory.getItem(FOOD_ID) != null){
 				food = inventory.getItem(FOOD_ID);

@@ -11,6 +11,7 @@ import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.*;
 import org.vinsert.bot.script.api.generic.Filters;
 import org.vinsert.bot.script.api.generic.Interactable;
+import org.vinsert.bot.script.api.tools.Game;
 import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
 import org.vinsert.bot.script.api.tools.Skills;
 import org.vinsert.bot.util.Utils;
@@ -25,7 +26,7 @@ import api.Time;
 import api.Timer;
 import api.Utilities;
 
-@ScriptManifest(name = "potoMasterThiver", authors = { "potofreak" }, description = "Thieves Master Farmer", version = 0.3)
+@ScriptManifest(name = "potoMasterThiver", authors = { "potofreak" }, description = "Thieves Master Farmer", version = 0.4)
 
 public class potoMasterThiever2 extends ScriptBase{
 	
@@ -320,6 +321,10 @@ public class potoMasterThiever2 extends ScriptBase{
 
 		@Override
 		public void execute() {
+            if(game.getCurrentTab() != Game.Tabs.INVENTORY){
+                game.openTab(Game.Tabs.INVENTORY);
+                Utils.sleep(random(300,500));
+            }
 			status = "Healing";
 			Item food = inventory.getItem(BREAD_ID);
 			if(food != null){
@@ -430,7 +435,8 @@ public class potoMasterThiever2 extends ScriptBase{
         //long minutes = millis / (1000*60);
         //millis -= minutes * (1000*60);
         //long seconds = millis / 1000;
-        /*
+
+        /**
         float expPerSec = 0;
         if((minutes > 0 || hours > 0 || seconds > 0) && expPerSec > 0){
         	expPerSec = ((float) BoltCounter)/(float)(seconds + (minutes*60) + (hours*60*60));
