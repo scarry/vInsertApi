@@ -12,11 +12,7 @@ import javax.imageio.ImageIO;
 
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.StatefulScript;
-import org.vinsert.bot.script.api.GameObject;
-import org.vinsert.bot.script.api.Item;
-import org.vinsert.bot.script.api.Npc;
-import org.vinsert.bot.script.api.Player;
-import org.vinsert.bot.script.api.Tile;
+import org.vinsert.bot.script.api.*;
 import org.vinsert.bot.script.api.generic.Interactable;
 import org.vinsert.bot.script.api.tools.Camera;
 import org.vinsert.bot.script.api.tools.Game;
@@ -299,14 +295,17 @@ public class potoThievWatchman extends ScriptBase{
 		}
 		
 	}
-	
+
+
 	@Override
 	public boolean init() {
 		health = players.getLocalPlayer().getHealth();
 		//new RandomHandler(new Tile(0,0), 0, this, );
-		submit(new getWatchman());
+        //submit(new hideReport());
+        submit(new getWatchman());
 		submit(new heal());
 		submit(new pickpocket());
+
 		//submit(new walkToWatchman());
 		return true;
 	}

@@ -8,10 +8,7 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 
 import org.vinsert.bot.script.ScriptManifest;
-import org.vinsert.bot.script.api.GameObject;
-import org.vinsert.bot.script.api.Item;
-import org.vinsert.bot.script.api.Npc;
-import org.vinsert.bot.script.api.Tile;
+import org.vinsert.bot.script.api.*;
 import org.vinsert.bot.script.api.generic.Filters;
 import org.vinsert.bot.script.api.generic.Interactable;
 import org.vinsert.bot.script.api.tools.Navigation.NavigationPolicy;
@@ -138,7 +135,7 @@ public class potoMasterThiever2 extends ScriptBase{
 			if(banker != null){
 				camera.rotateToActor(banker);
 				sleep(Utils.random(300, 500));
-				banker.interact("Bank");
+				utilities.interact(banker,"Bank");
 				sleep(Utils.random(800, 1300));
 			}			
 		}
@@ -274,6 +271,20 @@ public class potoMasterThiever2 extends ScriptBase{
 			}
 	}
 
+    public class hideReport extends Node{
+
+        @Override
+        public boolean activate() {
+            return utilities.getWidget(getContext(),553,10) != null;
+        }
+
+        @Override
+        public void execute() {
+            Widget wid = utilities.getWidget(getContext(),553,10);
+            wid.click();
+            sleep(random(200,500));
+        }
+    }
 
 
 	/*
@@ -344,6 +355,7 @@ public class potoMasterThiever2 extends ScriptBase{
 	public boolean init() {
 		//submit(new TestCastle());
 		//new RandomHandler(BANK_TILE,Skills.HITPOINTS,this);
+        //submit(new hideReport());
         submit(new Heal());
 		submit(new GetFarmer());
 		submit(new PickpocketFarmer());
