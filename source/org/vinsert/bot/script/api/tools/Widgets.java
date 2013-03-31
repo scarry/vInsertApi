@@ -31,7 +31,9 @@ public class Widgets {
 	 */
 	public Widget[] get(int group) {
 		if (group >= ctx.getClient().getWidgets().length
-				|| ctx.getClient().getWidgets()[group] == null) return new Widget[0];
+				|| ctx.getClient().getWidgets()[group] == null)
+            return null;
+
 		IWidget[] widgets = ctx.getClient().getWidgets()[group];
 		Widget[] valid = new Widget[widgets.length];
 		
@@ -39,7 +41,8 @@ public class Widgets {
 			if (widgets[j] == null) continue;
 				
 			Widget w = new Widget(ctx, ctx.getClient().getWidgets()[group][j]);
-			valid[j] = w;
+            if (w != null)
+			    valid[j] = w;
 		}
 		
 		return valid;
@@ -53,7 +56,7 @@ public class Widgets {
 	 */
 	public Widget get(int group, int child) {
  		Widget[] widgets = get(group);
- 		if (widgets != null && widgets[child] != null) {
+ 		if (widgets != null && widgets.length > child && widgets[child] != null) {
  			return widgets[child];
  		}
  		
