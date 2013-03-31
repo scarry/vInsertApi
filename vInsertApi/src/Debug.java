@@ -28,6 +28,15 @@ public class Debug extends ScriptBase {
     }
 
     @Override
+    public boolean init() {
+
+        fWidgets = new FWidgets(getContext());
+
+        submit(new Test());
+        return true;
+    }
+
+    @Override
     public void render(Graphics2D arg0) {
     }
 }
