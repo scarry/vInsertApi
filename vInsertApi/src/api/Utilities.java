@@ -458,8 +458,8 @@ public class Utilities {
     }
 
     public void clickWidget(Widget wid){
-        int x = random(wid.getLocation().x + 4, wid.getLocation().x + wid.getBounds().width -4);
-        int y = random(wid.getLocation().y + 4, wid.getLocation().y + wid.getBounds().height -4);
+        int x = random(wid.getX() + 4, wid.getX() + wid.getBounds().width -4);
+        int y = random(wid.getX() + 4, wid.getY() + wid.getBounds().height -4);
         Point point = new Point(x,y);
         //this.ctx.mouse.click(point.x, point.y);
         ctx.mouse.move(point.x,point.y);

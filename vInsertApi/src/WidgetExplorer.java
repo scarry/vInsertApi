@@ -1,10 +1,9 @@
+import api.FWidgets;
 import api.ScriptBase;
 import org.vinsert.bot.script.ScriptContext;
 import org.vinsert.bot.script.ScriptManifest;
 import org.vinsert.bot.script.api.Widget;
 import org.vinsert.bot.util.Filter;
-import org.vinsert.insertion.IClient;
-import org.vinsert.insertion.IWidget;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -26,6 +25,8 @@ public class WidgetExplorer extends ScriptBase {
     private static boolean guiWait = true;
     public static Rectangle drawWidget;
 
+    private FWidgets fWidgets;
+
     @Override
     public boolean init() {
         // TODO Auto-generated method stub
@@ -35,6 +36,7 @@ public class WidgetExplorer extends ScriptBase {
 //		while(guiWait) sleep(500);
 
 //		getWidgets(new DefaultMutableTreeNode("widgets"));
+        fWidgets = new FWidgets(getContext());
         (new GuiThread(getContext())).start();
 
         return true;
@@ -55,11 +57,11 @@ public class WidgetExplorer extends ScriptBase {
 //                    if (widgs[i][j] != null) {
 //                        Widget w = new Widget(ctx, widgs[i][j]);
 //                        if (w != null) {
-//                            if (!parents.contains(w.getParentId())) {
-//                                parents.add(w.getParentId());
-//                                log(String.format("parent added: %d  - index: %d", w.getParentId(), i));
+//                            if (!parents.contains(w.getGroupIndex())) {
+//                                parents.add(w.getGroupIndex());
+//                                log(String.format("parent added: %d  - index: %d", w.getGroupIndex(), i));
 //                            }
-//                            //log(String.format("%d - %d", w.getParentId(), w.getId()));
+//                            //log(String.format("%d - %d", w.getGroupIndex(), w.getIndex()));
 //                        }
 //                    }
 //                }
@@ -87,29 +89,37 @@ public class WidgetExplorer extends ScriptBase {
     public DefaultMutableTreeNode getWidgets(DefaultMutableTreeNode root) {
         ScriptContext ctx = getContext();
         ArrayList<DefaultMutableTreeNode> parents = new ArrayList<>();
-        ArrayList<Integer> parentIds = new ArrayList<>();
+        ArrayList<Integer> parentIndexes = new ArrayList<>();
 
         final List<Widget> validated = ctx.widgets.getValidated();
 
-        for (Widget w : validated) {
-            final int parentId = w.getParentId();
-            if (!parentIds.contains(parentId)) {
-                parentIds.add(parentId);
+//        for (Widget w : validated) {
+//            final int parentId = w.getParentId();
+//            if (!parentIndexes.contains(parentId)) {
+//                parentIndexes.add(parentId);
+//            }
+//        }
+
+        //add parentids
+        for (int i = 0; i < getContext().getClient().getWidgets().length; i++) {
+            if (getContext().getClient().getWidgets()[i] != null) {
+                if (!parentIndexes.contains(i))
+                    parentIndexes.add(i);
             }
         }
 
-        for (final Integer id : parentIds) {
+        for (final Integer id : parentIndexes) {
             final List<Widget> validated1 = widgets.getValidated(new Filter<Widget>() {
                 @Override
                 public boolean accept(Widget widget) {
-                    return widget.getParentId() == id;
+                    return fWidgets.getGroupIndex(widget) == id;
                 }
             });
             if (!validated1.isEmpty()) {
                 DefaultMutableTreeNode parent = new DefaultMutableTreeNode(id);
                 root.add(parent);
                 for (Widget w : validated1) {
-                    parent.add(new DefaultMutableTreeNode(new WidgetWrapper(w)));
+                    parent.add(new DefaultMutableTreeNode(new WidgetWrapper(w, fWidgets)));
                 }
             }
         }
@@ -351,23 +361,25 @@ public class WidgetExplorer extends ScriptBase {
     class WidgetWrapper {
 
         private Widget widget;
+        private FWidgets fWidgets;
 
-        public WidgetWrapper(Widget widget) {
+        public WidgetWrapper(Widget widget, FWidgets fWidgets) {
             this.widget = widget;
+            this.fWidgets = fWidgets;
         }
 
         @Override
         public String toString() {
             // TODO Auto-generated method stub
-            return String.format("%d", this.getId());
+            return String.format("%d", this.getIndex());
         }
 
         private int getParentId() {
-            return this.widget.getParentId();
+            return fWidgets.getGroupIndex(this.widget);
         }
 
-        private int getId() {
-            return widget.getId();
+        private int getIndex() {
+            return widget.getIndex();
         }
     }
 
